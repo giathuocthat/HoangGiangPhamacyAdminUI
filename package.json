@@ -6,9 +6,11 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
+    "api": "node server/index.js",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "jest --runInBand"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
@@ -27,8 +29,13 @@
     "react-select": "^5.10.2",
     "react-simple-wysiwyg": "^3.4.1",
     "react-star-ratings": "^2.3.0"
+    ,"express": "^4.18.2",
+    "cors": "^2.8.5",
+    "papaparse": "^5.4.1"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0",
     "@babel/cli": "^7.28.3",
     "@babel/core": "^7.28.5",
     "@babel/preset-env": "^7.28.5",

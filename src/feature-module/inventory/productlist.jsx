@@ -1,197 +1,94 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Brand from "../../core/modals/inventory/brand";
 import { all_routes } from "../../routes/all_routes";
 import PrimeDataTable from "../../components/data-table";
-import {
-
-  expireProduct01,
-  expireProduct02,
-  expireProduct03,
-  expireProduct04,
-
-  stockImg02,
-  stockImg03,
-  stockImg04,
-  stockImg05,
-  stockImg06,
-  user04,
-  user08,
-
-  user10,
-  user13,
-
-  user30,
-  stockImg1,
-  user11,
-  user3,
-  user2,
-  user5,
-  user01 } from
-"../../utils/imagepath";
+import { user30 } from "../../utils/imagepath";
 import TableTopHead from "../../components/table-top-head";
 import DeleteModal from "../../components/delete-modal";
 import SearchFromApi from "../../components/data-table/search";
+import ImageLightbox from "../../components/image-lightbox";
 
-export const productlistdata = [
-{
-  id: 1,
-  product: "Lenovo 3rd Generatio",
-  productImage: stockImg1,
-  sku: "PT001",
-  category: "Laptop",
-  brand: "Lenovo",
-  price: "$12500.00",
-  unit: "Pc",
-  qty: "100",
-  createdby: "Arroon",
-  img: user30
-},
-{
-  id: 2,
-  product: "Bold V3.2",
-  productImage: stockImg06,
-  sku: "PT002",
-  category: "Electronics",
-  brand: "Bolt",
-  price: "$1600.00",
-  unit: "Pc",
-  qty: "140",
-  createdby: "Kenneth",
-  img: user13
-},
-{
-  id: 3,
-  product: "Nike Jordan",
-  productImage: stockImg02,
-  sku: "PT003",
-  category: "Shoe",
-  brand: "Nike",
-  price: "$6000.00",
-  unit: "Pc",
-  qty: "780",
-  createdby: "Gooch",
-  img: user11
-},
-{
-  id: 4,
-  product: "Apple Series 5 Watch",
-  productImage: stockImg03,
-  sku: "PT004",
-  category: "Electronics",
-  brand: "Apple",
-  price: "$25000.00",
-  unit: "Pc",
-  qty: "450",
-  createdby: "Nathan",
-  img: user3
-},
-{
-  id: 5,
-  product: "Amazon Echo Dot",
-  productImage: stockImg04,
-  sku: "PT005",
-  category: "Speaker",
-  brand: "Amazon",
-  price: "$1600.00",
-  unit: "Pc",
-  qty: "477",
-  createdby: "Alice",
-  img: user2
-},
-{
-  id: 6,
-  product: "Lobar Handy",
-  productImage: stockImg05,
-  sku: "PT006",
-  category: "Furnitures",
-  brand: "Woodmart",
-  price: "$4521.00",
-  unit: "Kg",
-  qty: "145",
-  createdby: "Robb",
-  img: user5
-},
-{
-  id: 7,
-  product: "Red Premium Handy",
-  productImage: expireProduct01,
-  sku: "PT007",
-  category: "Bags",
-  brand: "Versace",
-  price: "$2024.00",
-  unit: "Kg",
-  qty: "747",
-  createdby: "Steven",
-  img: user08
-},
-{
-  id: 8,
-  product: "Iphone 14 Pro",
-  productImage: expireProduct02,
-  sku: "PT008",
-  category: "Phone",
-  brand: "Iphone",
-  price: "$1698.00",
-  unit: "Pc",
-  qty: "897",
-  createdby: "Gravely",
-  img: user04
-},
-{
-  id: 9,
-  product: "Black Slim 200",
-  productImage: expireProduct03,
-  sku: "PT009",
-  category: "Chairs",
-  brand: "Bently",
-  price: "$6794.00",
-  unit: "Pc",
-  qty: "741",
-  createdby: "Kevin",
-  img: user01
-},
-{
-  id: 10,
-  product: "Woodcraft Sandal",
-  productImage: expireProduct04,
-  sku: "PT010",
-  category: "Bags",
-  brand: "Woodcraft",
-  price: "$4547.00",
-  unit: "Kg",
-  qty: "148",
-  createdby: "Grillo",
-  img: user10
-}];
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// static test data removed — product list is sourced from `/api/products` (server-side paginated)
 
 const ProductList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalRecords, _setTotalRecords] = useState(5);
+  const [totalRecords, setTotalRecords] = useState(0);
   const [rows, setRows] = useState(10);
   const [_searchQuery, setSearchQuery] = useState(undefined);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(null);
+  const [meta, setMeta] = useState({ categories: [], brands: [], products: [], createdBy: [] });
+  const [filters, setFilters] = useState({ category: '', brand: '', product: '', createdby: '' });
+  const [sort, setSort] = useState({ field: '', order: '' });
+  
+  const clearAllFilters = () => {
+    setFilters({ category: '', brand: '', product: '', createdby: '' });
+    setSort({ field: '', order: '' });
+    setCurrentPage(1);
+  };
+
+  const clearFilter = (key) => {
+    setFilters((f) => ({ ...f, [key]: '' }));
+    setCurrentPage(1);
+  };
   const handleSearch = (value) => {
     setSearchQuery(value);
   };
 
+  // Router helpers to sync state with URL
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // On mount / URL change: read query params into state
+  useEffect(() => {
+    const qs = new URLSearchParams(location.search || '');
+    const p = parseInt(qs.get('page') || '1', 10) || 1;
+    const r = parseInt(qs.get('rows') || String(rows), 10) || rows;
+    const category = qs.get('category') || '';
+    const brand = qs.get('brand') || '';
+    const productQ = qs.get('product') || '';
+    const createdbyQ = qs.get('createdby') || '';
+    const sortFieldQ = qs.get('sortField') || '';
+    const sortOrderQ = qs.get('sortOrder') || '';
+
+    setCurrentPage(p);
+    setRows(r);
+    setFilters({ category, brand, product: productQ, createdby: createdbyQ });
+    setSort({ field: sortFieldQ, order: sortOrderQ });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
+
+  // When state changes, push (replace) a new URL so filters are shareable
+  useEffect(() => {
+    const qs = new URLSearchParams();
+    if (currentPage && currentPage !== 1) qs.set('page', String(currentPage));
+    if (rows && rows !== 10) qs.set('rows', String(rows));
+    if (filters.category) qs.set('category', filters.category);
+    if (filters.brand) qs.set('brand', filters.brand);
+    if (filters.product) qs.set('product', filters.product);
+    if (filters.createdby) qs.set('createdby', filters.createdby);
+    if (sort.field) qs.set('sortField', sort.field);
+    if (sort.order) qs.set('sortOrder', sort.order);
+
+    const newSearch = qs.toString();
+    const currentSearch = (location.search || '').replace(/^\?/, '');
+    if (newSearch !== currentSearch) {
+      const url = newSearch ? `${location.pathname}?${newSearch}` : `${location.pathname}`;
+      navigate(url, { replace: true });
+    }
+  }, [currentPage, rows, filters, sort, navigate, location.pathname, location.search]);
+
   const route = all_routes;
   const columns = [
+  {
+    header: "ID",
+    field: "id",
+    key: "id",
+    sortable: true,
+    className: "id-col"
+  },
   {
     header:
     <label className="checkboxs">
@@ -221,7 +118,7 @@ const ProductList = () => {
     sortable: true,
     body: (data) =>
     <div className="d-flex align-items-center">
-          <Link to="#" className="avatar avatar-md me-2">
+          <Link to="#" className="avatar avatar-md me-2" onClick={(e) => { e.preventDefault(); openLightbox(data.images || [data.productImage], 0); }}>
             <img alt="" src={data.productImage} />
           </Link>
           <Link to="#">{data.product}</Link>
@@ -298,6 +195,129 @@ const ProductList = () => {
 
   }];
 
+  // Lightbox state
+  const [lightbox, setLightbox] = useState({ open: false, images: [], index: 0 });
+  const openLightbox = (images = [], index = 0) => setLightbox({ open: true, images, index });
+  const closeLightbox = () => setLightbox({ open: false, images: [], index: 0 });
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        setFetchError(null);
+        const qs = new URLSearchParams({ page: String(currentPage), rows: String(rows) });
+        if (filters.category) qs.set('category', filters.category);
+        if (filters.brand) qs.set('brand', filters.brand);
+        if (filters.product) qs.set('product', filters.product);
+        if (filters.createdby) qs.set('createdby', filters.createdby);
+        if (sort.field) qs.set('sortField', sort.field);
+        if (sort.order) qs.set('sortOrder', sort.order);
+        const relativeUrl = `/api/products?${qs.toString()}`;
+        let res;
+        try {
+          res = await fetch(relativeUrl);
+        } catch (err) {
+          // network error on relative fetch, try direct backend
+          console.warn('Relative fetch failed, trying direct backend', err);
+          res = await fetch(`http://localhost:3000/api/products?${qs.toString()}`);
+        }
+
+        if (!res.ok) {
+          // try fallback to backend if proxied returned 4xx/5xx
+          if (res.status >= 400) {
+            try {
+              const res2 = await fetch(`http://localhost:3000/api/products?${qs.toString()}`);
+              if (res2.ok) res = res2;
+            } catch (err) {
+              // ignore
+            }
+          }
+        }
+
+        if (!res.ok) {
+          const text = await res.text().catch(() => '');
+          const msg = `GET ${res.url} -> ${res.status} ${res.statusText} ${text ? '\nResponse: ' + text.slice(0, 1000) : ''}`;
+          console.error(msg);
+          setFetchError(msg);
+          if (mounted) setProducts([]);
+          return;
+        }
+
+        const payload = await res.json();
+        const rowsFromApi = Array.isArray(payload) ? payload : (payload.data || []);
+
+        const mapped = rowsFromApi.map((r, idx) => {
+          // map CSV headers to UI fields and parse images
+          const imgField = r['Hình ảnh'] || r['Image'] || r['images'] || '';
+          let images = [];
+          if (imgField) {
+            images = String(imgField).split(',').map(s => s.trim()).filter(Boolean);
+          }
+          const productImage = images.length ? images[0] : '';
+
+          return {
+            id: r.ID || r.id || (payload.page - 1) * payload.rows + idx + 1,
+            sku: r.SKU || r.Sku || '',
+            product: r['Tên'] || r['Name'] || r.name || '',
+            productImage,
+            images,
+            category: r['Danh mục'] || r['Danh muc'] || r['Category'] || '',
+            brand: r['Thương hiệu'] || r['Brand'] || '',
+            price: r['Giá thông thường'] || r['Price'] || '',
+            unit: r['Giá trị thuộc tính 1'] || r['Tên thuộc tính 1'] || r['attribute 1'] || '',
+            qty: r['Tồn kho'] || r['Stock'] || '',
+            createdby: '',
+            img: user30
+          };
+        });
+
+        if (mounted) {
+          setProducts(mapped);
+          setTotalRecords(payload.total || mapped.length);
+        }
+      } catch (err) {
+        console.error('Fetch products error', err);
+        setFetchError(String(err));
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    fetchProducts();
+    return () => { mounted = false; };
+  }, [currentPage, rows, filters, sort]);
+
+  // fetch metadata for dropdowns
+  useEffect(() => {
+    let mounted = true;
+    const fetchMeta = async () => {
+      try {
+        // meta is optional; failures here shouldn't show the big page error.
+        let res;
+        try {
+          res = await fetch('/api/products/meta');
+        } catch (err) {
+          console.warn('Relative meta fetch failed, trying backend directly', err);
+          try { res = await fetch('http://localhost:3000/api/products/meta'); } catch(e){ res = null; }
+        }
+
+        if (res && res.ok) {
+          const m = await res.json();
+          if (mounted) setMeta(m);
+        } else {
+          console.warn('Meta endpoint not available; continuing without meta dropdowns');
+          if (mounted) setMeta({ categories: [], brands: [], products: [], createdBy: [] });
+        }
+      } catch (err) {
+        console.warn('Fetch meta error (ignored)', err);
+        if (mounted) setMeta({ categories: [], brands: [], products: [], createdBy: [] });
+      }
+    };
+    fetchMeta();
+    return () => { mounted = false; };
+  }, []);
+
 
 
   return (
@@ -310,6 +330,30 @@ const ProductList = () => {
                 <h4>Product List</h4>
                 <h6>Manage your products</h6>
               </div>
+              {(filters.category || filters.brand || filters.product || filters.createdby || sort.field) &&
+              <div className="w-100 mt-2 d-flex align-items-center flex-wrap gap-2">
+                <div className="filter-badges d-flex align-items-center flex-wrap">
+                  {filters.product ? (
+                    <span className="badge bg-secondary me-2">Product: {filters.product} <button type="button" className="btn-close btn-close-white btn-sm ms-2" aria-label="Clear" onClick={() => clearFilter('product')}></button></span>
+                  ) : null}
+                  {filters.category ? (
+                    <span className="badge bg-secondary me-2">Category: {filters.category} <button type="button" className="btn-close btn-close-white btn-sm ms-2" aria-label="Clear" onClick={() => clearFilter('category')}></button></span>
+                  ) : null}
+                  {filters.brand ? (
+                    <span className="badge bg-secondary me-2">Brand: {filters.brand} <button type="button" className="btn-close btn-close-white btn-sm ms-2" aria-label="Clear" onClick={() => clearFilter('brand')}></button></span>
+                  ) : null}
+                  {filters.createdby ? (
+                    <span className="badge bg-secondary me-2">Created By: {filters.createdby} <button type="button" className="btn-close btn-close-white btn-sm ms-2" aria-label="Clear" onClick={() => clearFilter('createdby')}></button></span>
+                  ) : null}
+                  {sort.field ? (
+                    <span className="badge bg-info text-dark me-2">Sort: {sort.field} {sort.order} <button type="button" className="btn-close btn-close-white btn-sm ms-2" aria-label="Clear" onClick={() => setSort({ field: '', order: '' })}></button></span>
+                  ) : null}
+                </div>
+                <div className="ms-auto">
+                  <button className="btn btn-outline-danger btn-sm" onClick={clearAllFilters}>Clear All Filters</button>
+                </div>
+              </div>
+              }
             </div>
             <TableTopHead />
             <div className="page-btn">
@@ -344,30 +388,21 @@ const ProductList = () => {
                     to="#"
                     className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
                     data-bs-toggle="dropdown">
-                    
-                    Product
+                    {filters.product || 'Product'}
                   </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
+                  <ul className="dropdown-menu  dropdown-menu-end p-3" style={{ maxHeight: '280px', overflowY: 'auto' }}>
                     <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Lenovo IdeaPad 3
+                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setFilters(f => ({ ...f, product: '' })); setCurrentPage(1); }}>
+                        All Products
                       </Link>
                     </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Beats Pro{" "}
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Nike Jordan
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Apple Series 5 Watch
-                      </Link>
-                    </li>
+                    {meta.products && meta.products.map((p) => (
+                      <li key={p}>
+                        <Link to="#" className="dropdown-item rounded-1" onClick={() => { setFilters(f => ({ ...f, product: p })); setCurrentPage(1); }}>
+                          {p}
+                        </Link>
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 <div className="dropdown me-2">
@@ -375,30 +410,21 @@ const ProductList = () => {
                     to="#"
                     className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
                     data-bs-toggle="dropdown">
-                    
-                    Created By
+                    {filters.createdby || 'Created By'}
                   </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
+                  <ul className="dropdown-menu  dropdown-menu-end p-3" style={{ maxHeight: '280px', overflowY: 'auto' }}>
                     <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        James Kirwin
+                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setFilters(f => ({ ...f, createdby: '' })); setCurrentPage(1); }}>
+                        All
                       </Link>
                     </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Francis Chang
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Antonio Engle
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Leo Kelly
-                      </Link>
-                    </li>
+                    {meta.createdBy && meta.createdBy.map((c) => (
+                      <li key={c}>
+                        <Link to="#" className="dropdown-item rounded-1" onClick={() => { setFilters(f => ({ ...f, createdby: c })); setCurrentPage(1); }}>
+                          {c}
+                        </Link>
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 <div className="dropdown me-2">
@@ -406,30 +432,21 @@ const ProductList = () => {
                     to="#"
                     className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
                     data-bs-toggle="dropdown">
-                    
-                    Category
+                    {filters.category || 'Category'}
                   </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
+                  <ul className="dropdown-menu  dropdown-menu-end p-3" style={{ maxHeight: '280px', overflowY: 'auto' }}>
                     <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Computers
+                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setFilters(f => ({ ...f, category: '' })); setCurrentPage(1); }}>
+                        All Categories
                       </Link>
                     </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Electronics
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Shoe
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Electronics
-                      </Link>
-                    </li>
+                    {meta.categories && meta.categories.map((c) => (
+                      <li key={c}>
+                        <Link to="#" className="dropdown-item rounded-1" onClick={() => { setFilters(f => ({ ...f, category: c })); setCurrentPage(1); }}>
+                          {c}
+                        </Link>
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 <div className="dropdown me-2">
@@ -437,30 +454,21 @@ const ProductList = () => {
                     to="#"
                     className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
                     data-bs-toggle="dropdown">
-                    
-                    Brand
+                    {filters.brand || 'Brand'}
                   </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
+                  <ul className="dropdown-menu  dropdown-menu-end p-3" style={{ maxHeight: '280px', overflowY: 'auto' }}>
                     <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Lenovo
+                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setFilters(f => ({ ...f, brand: '' })); setCurrentPage(1); }}>
+                        All Brands
                       </Link>
                     </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Beats
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Nike
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Apple
-                      </Link>
-                    </li>
+                    {meta.brands && meta.brands.map((b) => (
+                      <li key={b}>
+                        <Link to="#" className="dropdown-item rounded-1" onClick={() => { setFilters(f => ({ ...f, brand: b })); setCurrentPage(1); }}>
+                          {b}
+                        </Link>
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 <div className="dropdown">
@@ -468,38 +476,45 @@ const ProductList = () => {
                     to="#"
                     className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
                     data-bs-toggle="dropdown">
-                    
-                    Sort By : Last 7 Days
+                    {sort.field ? `${sort.field} ${sort.order}` : 'Sort By : Last 7 Days'}
                   </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
+                  <ul className="dropdown-menu  dropdown-menu-end p-3" style={{ maxHeight: '280px', overflowY: 'auto' }}>
                     <li>
-                      <Link to="#" className="dropdown-item rounded-1">
+                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setSort({ field: 'id', order: 'desc' }); setCurrentPage(1); }}>
                         Recently Added
                       </Link>
                     </li>
                     <li>
-                      <Link to="#" className="dropdown-item rounded-1">
+                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setSort({ field: 'product', order: 'asc' }); setCurrentPage(1); }}>
                         Ascending
                       </Link>
                     </li>
                     <li>
-                      <Link to="#" className="dropdown-item rounded-1">
+                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setSort({ field: 'product', order: 'desc' }); setCurrentPage(1); }}>
                         Desending
                       </Link>
                     </li>
                     <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Last Month
+                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setSort({ field: 'id', order: 'asc' }); setCurrentPage(1); }}>
+                        Oldest
                       </Link>
                     </li>
                     <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Last 7 Days
+                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setSort({ field: '', order: '' }); setCurrentPage(1); }}>
+                        Clear Sort
                       </Link>
                     </li>
                   </ul>
                 </div>
               </div>
+              {fetchError && (
+                <div className="w-100 mt-2">
+                  <div className="alert alert-danger" role="alert">
+                    <strong>Data load error:</strong>
+                    <pre style={{ whiteSpace: 'pre-wrap', marginTop: 6 }}>{fetchError}</pre>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="card-body">
               {/* /Filter */}
@@ -507,12 +522,24 @@ const ProductList = () => {
                 {/* <Table columns={columns} dataSource={productlistdata} /> */}
                 <PrimeDataTable
                   column={columns}
-                  data={productlistdata}
+                  data={products}
                   rows={rows}
                   setRows={setRows}
                   currentPage={currentPage}
                   setCurrentPage={setCurrentPage}
-                  totalRecords={totalRecords} />
+                  totalRecords={totalRecords}
+                  loading={loading}
+                  serverSide={true}
+                  // map current sort to PrimeReact props (sortOrder numeric: 1 asc, -1 desc)
+                  sortField={sort.field || undefined}
+                  sortOrder={sort.order === 'desc' ? -1 : (sort.order === 'asc' ? 1 : undefined)}
+                  onSort={(e) => {
+                    // e.sortField and e.sortOrder (1 or -1)
+                    const sf = e.sortField;
+                    const so = e.sortOrder === -1 ? 'desc' : 'asc';
+                    setSort({ field: sf, order: so });
+                    setCurrentPage(1);
+                  }} />
                 
               </div>
             </div>
@@ -521,6 +548,14 @@ const ProductList = () => {
           <Brand />
         </div>
       </div>
+     <ImageLightbox
+       open={lightbox.open}
+       images={lightbox.images}
+       index={lightbox.index}
+       onClose={() => closeLightbox()}
+       onPrev={() => setLightbox((s) => ({ ...s, index: Math.max(0, s.index - 1) }))}
+       onNext={() => setLightbox((s) => ({ ...s, index: Math.min((s.images||[]).length - 1, s.index + 1) }))}
+     />
      <DeleteModal />
     </>);
 

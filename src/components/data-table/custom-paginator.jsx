@@ -1,5 +1,5 @@
 import { Paginator } from "primereact/paginator";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 
 
@@ -19,12 +19,25 @@ const CustomPaginator = ({
   onPageChange,
   setRows
 }) => {
+  const [pageInput, setPageInput] = useState(currentPage || 1);
+
+  useEffect(() => {
+    setPageInput(currentPage || 1);
+  }, [currentPage]);
   const handlePaginatorChange = (event) => {
     onPageChange(event.page + 1);
   };
 
   const handleSelectChange = (value) => {
     setRows(Number(value));
+  };
+
+  const jumpToPage = (raw) => {
+    let n = Number(raw);
+    if (!Number.isFinite(n) || n <= 0) n = 1;
+    if (totalPages && n > totalPages) n = totalPages;
+    setPageInput(n);
+    if (n !== currentPage) onPageChange(n);
   };
   return (
     <>
@@ -58,6 +71,20 @@ const CustomPaginator = ({
               rows={rows}
               totalRecords={totalRecords}
               onPageChange={handlePaginatorChange} />
+              <div className="paginator-jump d-inline-flex align-items-center ms-3">
+                <label className="me-2 mb-0">Page</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={totalPages || undefined}
+                  value={pageInput}
+                  onChange={(e) => setPageInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') jumpToPage(e.target.value); }}
+                  onBlur={(e) => jumpToPage(e.target.value)}
+                  className="form-control form-control-sm"
+                  style={{ width: 80 }} />
+                <button className="btn btn-sm btn-primary ms-2" onClick={() => jumpToPage(pageInput)}>Go</button>
+              </div>
             
             </div>
           </div>
