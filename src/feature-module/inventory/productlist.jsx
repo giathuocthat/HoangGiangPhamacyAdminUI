@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Brand from "../../core/modals/inventory/brand";
 import { all_routes } from "../../routes/all_routes";
@@ -121,7 +121,7 @@ const ProductList = () => {
           <Link to="#" className="avatar avatar-md me-2" onClick={(e) => { e.preventDefault(); openLightbox(data.images || [data.productImage], 0); }}>
             <img alt="" src={data.productImage} />
           </Link>
-          <Link to="#">{data.product}</Link>
+          <Link to={`${route.productdetails}/${encodeURIComponent(data.id)}`}>{data.product}</Link>
         </div>
 
   },
