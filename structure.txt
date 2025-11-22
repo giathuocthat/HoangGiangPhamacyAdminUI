@@ -1,0 +1,16 @@
+src/
+ ├── features/
+ │    ├── auth/
+ │    │    ├── components/
+ │    │    ├── hooks/
+ │    │    ├── services/
+ │    │    └── pages/
+ │    ├── products/
+ │    │    ├── components/ use service for fetching data from API
+ │    │    ├── hooks/ 
+ │    │    ├── services/ call api here
+ │    │    └── pages/ call components above
+ ├── shared/        # Component, hooks, utils dùng chung
+ ├── layouts/       # Layout chính (MainLayout, AuthLayout)
+ ├── routes/        # Định nghĩa router
+ └── index.tsx
