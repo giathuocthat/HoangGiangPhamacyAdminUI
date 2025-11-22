@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { all_routes } from "../../routes/all_routes";
 import Addunits from "../../core/modals/inventory/addunits";
