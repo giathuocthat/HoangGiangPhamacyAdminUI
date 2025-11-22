@@ -40,9 +40,10 @@ app.get('/api/products', async (req, res) => {
     let rows = await readCsv();
 
     // Filtering params
-    const { page = '1', rows: rowsPerPage = '10', category, brand, product, createdby, sortField, sortOrder } = req.query;
+    const { page = '1', rows: rowsPerPage = '10', category, brand, product, createdby, sortField, sortOrder, all } = req.query;
     const pageNum = parseInt(page, 10) || 1;
     const perPage = parseInt(rowsPerPage, 10) || 10;
+    const showAll = String(all || '').toLowerCase() === '1' || String(all || '').toLowerCase() === 'true';
 
     // helper to read a value from multiple possible headers
     const readField = (r, keys) => {
@@ -78,7 +79,7 @@ app.get('/api/products', async (req, res) => {
         product: ['Tên', 'Name', 'name'],
         category: ['Danh mục', 'Danh muc', 'Category'],
         brand: ['Thương hiệu', 'Thuong hieu', 'Brand'],
-        price: ['Giá thông thường', 'Gia', 'Price'],
+        price: ['Giá thông thường', 'Giá', 'Price'],
         qty: ['Tồn kho', 'Stock', 'Qty']
       };
       const keys = fieldMap[sortField] || [sortField];
@@ -96,6 +97,10 @@ app.get('/api/products', async (req, res) => {
     }
 
     const total = rows.length;
+    if (showAll) {
+      return res.json({ data: rows, total, page: 1, rows: total });
+    }
+
     const start = (pageNum - 1) * perPage;
     const end = start + perPage;
     const pageRows = rows.slice(start, end);
@@ -188,6 +193,20 @@ app.delete('/api/products/:id', async (req, res) => {
   } catch (err) {
     console.error('Delete CSV error', err);
     res.status(500).json({ error: 'Failed to delete product' });
+  }
+});
+
+// GET single product by id
+app.get('/api/products/:id', async (req, res) => {
+  try {
+    const id = String(req.params.id);
+    const rows = await readCsv();
+    const found = rows.find((r) => String(r.ID || r.id || '') === id);
+    if (!found) return res.status(404).json({ error: 'Not found' });
+    res.json({ data: found });
+  } catch (err) {
+    console.error('Get product by id error', err);
+    res.status(500).json({ error: 'Failed to read product' });
   }
 });
 
