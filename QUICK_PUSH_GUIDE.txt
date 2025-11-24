@@ -1,0 +1,122 @@
+═══════════════════════════════════════════════════════════════════════════════
+                    🚀 QUICK PUSH GUIDE - MINIMIZE CONFLICTS
+═══════════════════════════════════════════════════════════════════════════════
+
+📌 TL;DR - Làm ngay:
+
+1. Commit theo nhóm logic (7 commits nhỏ thay vì 1 commit lớn)
+2. Pull trước khi push
+3. Resolve conflicts nếu có
+4. Push lên
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🎯 CHIẾN LƯỢC TỐI ƯU:
+
+Thay vì:
+  git add .
+  git commit -m "Update"
+  git push
+
+Hãy làm:
+  git add <file1> <file2>
+  git commit -m "feat: Clear description"
+  
+  git add <file3> <file4>
+  git commit -m "chore: Another clear description"
+  
+  git pull origin master
+  git push origin master
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 7 COMMITS CẦN TẠO:
+
+1️⃣  Product Detail Navigation
+    git add src/feature-module/inventory/productlist.jsx
+    git add src/feature-module/inventory/productdetail.jsx
+    git commit -m "feat: Add product detail navigation from list"
+
+2️⃣  Backend API Enhancement
+    git add server/index.js
+    git commit -m "feat: Add GET /api/products/:id endpoint"
+
+3️⃣  Dependencies & Config
+    git add package.json package-lock.json eslint.config.js
+    git commit -m "chore: Update ESLint config and dependencies"
+
+4️⃣  Routing Updates
+    git add src/routes/path.jsx
+    git commit -m "chore: Update route configuration"
+
+5️⃣  UI/Style Updates
+    git add src/assets/scss/pages/_product.scss
+    git add src/feature-module/inventory/*.jsx
+    git commit -m "refactor: Update inventory module components"
+
+6️⃣  New Components
+    git add src/feature-module/inventory/productdetail2.jsx
+    git add src/feature-module/products/
+    git add src/layouts/
+    git commit -m "feat: Add new product detail and layout components"
+
+7️⃣  Cleanup
+    git add src/feature-module/uiinterface/map/leaflet.jsx
+    git add src/core/pagination/pagination.jsx
+    git add src/assets/icons/fontawesome/js/
+    git add -A
+    git commit -m "chore: Code cleanup and minor fixes"
+
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ TRƯỚC KHI PUSH:
+
+□ Tất cả commits đã tạo
+□ Chạy: git pull origin master
+□ Resolve conflicts nếu có
+□ Chạy: npm run lint (không có errors)
+□ Chạy: npm run build (build thành công)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🚀 PUSH:
+
+git push origin master
+
+═══════════════════════════════════════════════════════════════════════════════
+
+💬 THÔNG BÁO TEAM:
+
+"Vừa push 7 commits lên master:
+✅ Product detail navigation
+✅ Backend API enhancement
+✅ Dependencies update
+✅ Route configuration
+✅ UI updates
+✅ New components
+✅ Code cleanup
+
+Các bạn hãy pull về!"
+
+═══════════════════════════════════════════════════════════════════════════════
+
+⚠️  TRÁNH:
+
+❌ git add . && git commit -m "Update"
+❌ git push mà không pull trước
+❌ git push -f (force push)
+❌ Thay đổi config mà không thông báo
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🔍 KIỂM TRA:
+
+git log origin/master..HEAD --oneline    # Xem commits chưa push
+git status                                # Xem files chưa commit
+git diff                                  # Xem thay đổi chi tiết
+
+═══════════════════════════════════════════════════════════════════════════════
+
+📚 CHI TIẾT: Xem file HUONG_DAN_PUSH.md
+
+═══════════════════════════════════════════════════════════════════════════════
