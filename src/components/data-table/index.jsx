@@ -40,37 +40,24 @@ const PrimeDataTable = ({
   footer = null,
   loading = false,
   isPaginationEnabled = true,
-  serverSide = false,
-  // sorting props
-  sortField,
-  sortOrder,
-  onSort,
   selectionMode,
   selection,
   onSelectionChange
 }) => {
-  const skeletonRows = Array.from({ length: rows }, (_, i) => ({ id: `skeleton-${currentPage || 0}-${i}` }));
+  const skeletonRows = Array(rows).fill({});
   const totalPages = Math.ceil(totalRecords / rows);
 
   // Calculate paginated data
-  let paginatedData;
-  if (loading) {
-    paginatedData = skeletonRows;
-  } else if (serverSide) {
-    // When serverSide is enabled the `data` prop contains only the current page rows
-    paginatedData = data;
-  } else {
-    const startIndex = (currentPage - 1) * rows;
-    const endIndex = startIndex + rows;
-    paginatedData = data.slice(startIndex, endIndex);
-  }
+  const startIndex = (currentPage - 1) * rows;
+  const endIndex = startIndex + rows;
+  const paginatedData = loading ? skeletonRows : data.slice(startIndex, endIndex);
 
   const onPageChange = (newPage) => {
     setCurrentPage(newPage);
   };
 
   const customEmptyMessage = () =>
-  <div className="no-record-found">
+    <div className="no-record-found">
       {/* <img src={noRecord} alt="no-record"></img> */}
       <h4>No records found.</h4>
       <p>No records to show here...</p>
@@ -88,13 +75,6 @@ const PrimeDataTable = ({
       footer: footer,
       dataKey: "id"
     };
-
-    // Include sorting props for DataTable when provided
-    if (sortField) baseProps.sortField = sortField;
-    if (typeof sortOrder !== 'undefined') baseProps.sortOrder = sortOrder;
-    if (onSort) baseProps.onSort = onSort;
-    // single-column sort mode; PrimeReact expects numeric sortOrder (1 or -1)
-    baseProps.sortMode = 'single';
 
     if (selectionMode && ['multiple', 'checkbox'].includes(selectionMode)) {
       return {
@@ -119,37 +99,37 @@ const PrimeDataTable = ({
     <>
       <DataTable {...getDataTableProps()}>
         {column?.map((col, index) =>
-        <Column
-          header={col.header}
-          key={col.field || index}
-          field={col.field}
-          body={(rowData, options) => {
-            return loading ?
-            <Skeleton
-              width="100%"
-              height="2rem"
-              className="skeleton-glow" /> :
+          <Column
+            header={col.header}
+            key={col.field || index}
+            field={col.field}
+            body={(rowData, options) => {
+              return loading ?
+                <Skeleton
+                  width="100%"
+                  height="2rem"
+                  className="skeleton-glow" /> :
 
-            col.body ?
-            col.body(rowData, options) :
+                col.body ?
+                  col.body(rowData, options) :
 
-            rowData[col.field];
+                  rowData[col.field];
 
-          }}
-          sortable={sortable === false ? false : col.sortable !== false}
-          sortField={col.sortField ? col.sortField : col.field}
-          className={col.className ? col.className : ""} />
+            }}
+            sortable={sortable === false ? false : col.sortable !== false}
+            sortField={col.sortField ? col.sortField : col.field}
+            className={col.className ? col.className : ""} />
 
         )}
       </DataTable>
       {isPaginationEnabled &&
-      <CustomPaginator
-        currentPage={currentPage}
-        totalPages={totalPages}
-        totalRecords={totalRecords}
-        onPageChange={onPageChange}
-        rows={rows}
-        setRows={setRows} />
+        <CustomPaginator
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalRecords={totalRecords}
+          onPageChange={onPageChange}
+          rows={rows}
+          setRows={setRows} />
 
       }
     </>);
