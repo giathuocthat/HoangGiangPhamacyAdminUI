@@ -1,5 +1,5 @@
 // service helpers for products API (used by components in this feature)
-const DEFAULT_BACKEND = 'http://localhost:3000';
+const DEFAULT_BACKEND = 'http://localhost:7001';
 
 async function safeFetch(url, opts) {
   try {

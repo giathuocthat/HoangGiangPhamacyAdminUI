@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Brand from "../../core/modals/inventory/brand";
 import { all_routes } from "../../routes/all_routes";
-import PrimeDataTable from "../../components/data-table";
+import HgDataTable  from "../../components/hg-data-table";
 import { user30 } from "../../utils/imagepath";
 import TableTopHead from "../../components/table-top-head";
 import DeleteModal from "../../components/delete-modal";
 import SearchFromApi from "../../components/data-table/search";
 import ImageLightbox from "../../components/image-lightbox";
 
-// static test data removed — product list is sourced from `/api/products` (server-side paginated)
+// Component: product-list: Danh sách sản phẩm với phân trang, sắp xếp, tìm kiếm, lọc, và thao tác hàng loạt.
 
 const ProductList = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -195,7 +195,7 @@ const ProductList = () => {
 
   }];
 
-  // Lightbox state
+  // Lightbox state: Xem ảnh phóng to của sản phẩm ở trang Product List
   const [lightbox, setLightbox] = useState({ open: false, images: [], index: 0 });
   const openLightbox = (images = [], index = 0) => setLightbox({ open: true, images, index });
   const closeLightbox = () => setLightbox({ open: false, images: [], index: 0 });
@@ -220,14 +220,14 @@ const ProductList = () => {
         } catch (err) {
           // network error on relative fetch, try direct backend
           console.warn('Relative fetch failed, trying direct backend', err);
-          res = await fetch(`http://localhost:3000/api/products?${qs.toString()}`);
+          res = await fetch(`http://localhost:7001/api/products?${qs.toString()}`);
         }
 
         if (!res.ok) {
           // try fallback to backend if proxied returned 4xx/5xx
           if (res.status >= 400) {
             try {
-              const res2 = await fetch(`http://localhost:3000/api/products?${qs.toString()}`);
+              const res2 = await fetch(`http://localhost:7001/api/products?${qs.toString()}`);
               if (res2.ok) res = res2;
             } catch (err) {
               // ignore
@@ -299,7 +299,7 @@ const ProductList = () => {
           res = await fetch('/api/products/meta');
         } catch (err) {
           console.warn('Relative meta fetch failed, trying backend directly', err);
-          try { res = await fetch('http://localhost:3000/api/products/meta'); } catch(e){ res = null; }
+          try { res = await fetch('http://localhost:7001/api/products/meta'); } catch(e){ res = null; }
         }
 
         if (res && res.ok) {
@@ -318,7 +318,9 @@ const ProductList = () => {
     return () => { mounted = false; };
   }, []);
 
-
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [rows]);
 
   return (
     <>
@@ -327,8 +329,8 @@ const ProductList = () => {
           <div className="page-header">
             <div className="add-item d-flex">
               <div className="page-title">
-                <h4>Product List</h4>
-                <h6>Manage your products</h6>
+                <h4>Danh sách Sản phẩm</h4>
+                <h6>Filter Sản phẩm theo:</h6>
               </div>
               {(filters.category || filters.brand || filters.product || filters.createdby || sort.field) &&
               <div className="w-100 mt-2 d-flex align-items-center flex-wrap gap-2">
@@ -520,7 +522,7 @@ const ProductList = () => {
               {/* /Filter */}
               <div className="table-responsive">
                 {/* <Table columns={columns} dataSource={productlistdata} /> */}
-                <PrimeDataTable
+                <HgDataTable /* Custom lại list sản phẩm theo format ở component mới ở hg-data-table - Component ở Data Table Gốc là PrimeDataTable */
                   column={columns}
                   data={products}
                   rows={rows}

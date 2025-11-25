@@ -6,28 +6,6 @@ import { Skeleton } from "primereact/skeleton";
 // import { noRecord } from "../../utils/imagepath";
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const PrimeDataTable = ({
   column,
   data = [],
@@ -40,30 +18,17 @@ const PrimeDataTable = ({
   footer = null,
   loading = false,
   isPaginationEnabled = true,
-  serverSide = false,
-  // sorting props
-  sortField,
-  sortOrder,
-  onSort,
   selectionMode,
   selection,
   onSelectionChange
 }) => {
-  const skeletonRows = Array.from({ length: rows }, (_, i) => ({ id: `skeleton-${currentPage || 0}-${i}` }));
+  const skeletonRows = Array(rows).fill({});
   const totalPages = Math.ceil(totalRecords / rows);
 
   // Calculate paginated data
-  let paginatedData;
-  if (loading) {
-    paginatedData = skeletonRows;
-  } else if (serverSide) {
-    // When serverSide is enabled the `data` prop contains only the current page rows
-    paginatedData = data;
-  } else {
-    const startIndex = (currentPage - 1) * rows;
-    const endIndex = startIndex + rows;
-    paginatedData = data.slice(startIndex, endIndex);
-  }
+  const startIndex = (currentPage - 1) * rows;
+  const endIndex = startIndex + rows;
+  const paginatedData = loading ? skeletonRows : data.slice(startIndex, endIndex);
 
   const onPageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -88,13 +53,6 @@ const PrimeDataTable = ({
       footer: footer,
       dataKey: "id"
     };
-
-    // Include sorting props for DataTable when provided
-    if (sortField) baseProps.sortField = sortField;
-    if (typeof sortOrder !== 'undefined') baseProps.sortOrder = sortOrder;
-    if (onSort) baseProps.onSort = onSort;
-    // single-column sort mode; PrimeReact expects numeric sortOrder (1 or -1)
-    baseProps.sortMode = 'single';
 
     if (selectionMode && ['multiple', 'checkbox'].includes(selectionMode)) {
       return {

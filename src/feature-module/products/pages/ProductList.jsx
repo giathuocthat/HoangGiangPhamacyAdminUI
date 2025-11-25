@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Brand from "../../../core/modals/inventory/brand";
 import { all_routes } from "../../../routes/all_routes";
 import ProductsTable from "../components/ProductsTable";
-import { user30 } from "../../../utils/imagepath";
 import TableTopHead from "../../../components/table-top-head";
 import DeleteModal from "../../../components/delete-modal";
 import SearchFromApi from "../../../components/data-table/search";
 import ImageLightbox from "../../../components/image-lightbox";
-
-// static test data removed — product list is sourced from `/api/products` (server-side paginated)
+import ProductListHeader from "../components/ProductListHeader";
+import FiltersBar from "../components/FiltersBar";
+import { buildProductColumns } from "../components/ProductListColumns";
 
 const ProductList = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -78,119 +78,7 @@ const ProductList = () => {
   }, [currentPage, rows, filters, sort, navigate, location.pathname, location.search]);
 
   const route = all_routes;
-  const columns = [
-  {
-    header: "ID",
-    field: "id",
-    key: "id",
-    sortable: true,
-    className: "id-col"
-  },
-  {
-    header:
-    <label className="checkboxs">
-          <input type="checkbox" id="select-all" />
-          <span className="checkmarks" />
-        </label>,
-
-    body: () =>
-    <label className="checkboxs">
-          <input type="checkbox" />
-          <span className="checkmarks" />
-        </label>,
-
-    sortable: false,
-    key: "checked"
-  },
-  {
-    header: "SKU",
-    field: "sku",
-    key: "sku",
-    sortable: true
-  },
-  {
-    header: "Product",
-    field: "product",
-    key: "product",
-    sortable: true,
-    body: (data) =>
-    <div className="d-flex align-items-center">
-          <Link to="#" className="avatar avatar-md me-2" onClick={(e) => { e.preventDefault(); openLightbox(data.images || [data.productImage], 0); }}>
-            <img alt="" src={data.productImage} />
-          </Link>
-          <Link to={`${route.productdetails}/${data.id}`}>{data.product}</Link>
-        </div>
-
-  },
-  {
-    header: "Category",
-    field: "category",
-    key: "category",
-    sortable: true
-  },
-  {
-    header: "Brand",
-    field: "brand",
-    key: "brand",
-    sortable: true
-  },
-  {
-    header: "Price",
-    field: "price",
-    key: "price",
-    sortable: true
-  },
-  {
-    header: "Unit",
-    field: "unit",
-    key: "unit",
-    sortable: true
-  },
-  {
-    header: "Qty",
-    field: "qty",
-    key: "qty",
-    sortable: true
-  },
-  {
-    header: "Created By",
-    field: "createdby",
-    key: "createdby",
-    sortable: true,
-    body: (data) =>
-    <span className="userimgname">
-          <Link to="/profile" className="product-img">
-            <img alt="" src={data.img} />
-          </Link>
-          <Link to="/profile">{data.createdby}</Link>
-        </span>
-
-  },
-  {
-    header: "",
-    field: "actions",
-    key: "actions",
-    sortable: false,
-    body: (_row) =>
-    <div className="edit-delete-action d-flex align-items-center">
-          <Link
-        className="me-2 p-2 d-flex align-items-center border rounded"
-        to="#"
-        data-bs-toggle="modal"
-        data-bs-target="#edit-customer">
-        
-            <i className="feather icon-edit"></i>
-          </Link>
-          <Link
-        className="p-2 d-flex align-items-center border rounded"
-        to="#"
-        data-bs-toggle="modal" data-bs-target="#delete-modal">
-        
-            <i className="feather icon-trash-2"></i>
-          </Link>
-        </div>
-
-  }];
+  const columns = buildProductColumns({ onOpenLightbox: (images, index) => openLightbox(images, index), route });
 
   // Lightbox state
   const [lightbox, setLightbox] = useState({ open: false, images: [], index: 0 });
@@ -223,190 +111,24 @@ const ProductList = () => {
     <>
       <div className="page-wrapper">
         <div className="content">
-          <div className="page-header">
-            <div className="add-item d-flex">
-              <div className="page-title">
-                <h4>Product List</h4>
-                <h6>Manage your products</h6>
-              </div>
-              {(filters.category || filters.brand || filters.product || filters.createdby || sort.field) &&
-              <div className="w-100 mt-2 d-flex align-items-center flex-wrap gap-2">
-                <div className="filter-badges d-flex align-items-center flex-wrap">
-                  {filters.product ? (
-                    <span className="badge bg-secondary me-2">Product: {filters.product} <button type="button" className="btn-close btn-close-white btn-sm ms-2" aria-label="Clear" onClick={() => clearFilter('product')}></button></span>
-                  ) : null}
-                  {filters.category ? (
-                    <span className="badge bg-secondary me-2">Category: {filters.category} <button type="button" className="btn-close btn-close-white btn-sm ms-2" aria-label="Clear" onClick={() => clearFilter('category')}></button></span>
-                  ) : null}
-                  {filters.brand ? (
-                    <span className="badge bg-secondary me-2">Brand: {filters.brand} <button type="button" className="btn-close btn-close-white btn-sm ms-2" aria-label="Clear" onClick={() => clearFilter('brand')}></button></span>
-                  ) : null}
-                  {filters.createdby ? (
-                    <span className="badge bg-secondary me-2">Created By: {filters.createdby} <button type="button" className="btn-close btn-close-white btn-sm ms-2" aria-label="Clear" onClick={() => clearFilter('createdby')}></button></span>
-                  ) : null}
-                  {sort.field ? (
-                    <span className="badge bg-info text-dark me-2">Sort: {sort.field} {sort.order} <button type="button" className="btn-close btn-close-white btn-sm ms-2" aria-label="Clear" onClick={() => setSort({ field: '', order: '' })}></button></span>
-                  ) : null}
-                </div>
-                <div className="ms-auto">
-                  <button className="btn btn-outline-danger btn-sm" onClick={clearAllFilters}>Clear All Filters</button>
-                </div>
-              </div>
-              }
-            </div>
-            <TableTopHead />
-            <div className="page-btn">
-              <Link to={route.addproduct} className="btn btn-primary">
-                <i className="ti ti-circle-plus me-1"></i>
-                Add New Product
-              </Link>
-            </div>
-            <div className="page-btn import">
-              <Link
-                to="#"
-                className="btn btn-secondary color"
-                data-bs-toggle="modal"
-                data-bs-target="#view-notes">
-                
-                <i className="feather icon-download feather me-2" />
-                Import Product
-              </Link>
-            </div>
-          </div>
+          <ProductListHeader />
+          <TableTopHead />
           {/* /product list */}
           <div className="card table-list-card">
             <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
               <SearchFromApi
                 callback={handleSearch}
                 rows={rows}
-                setRows={setRows} />
-              
-              <div className="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown">
-                    {filters.product || 'Product'}
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3" style={{ maxHeight: '280px', overflowY: 'auto' }}>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setFilters(f => ({ ...f, product: '' })); setCurrentPage(1); }}>
-                        All Products
-                      </Link>
-                    </li>
-                    {meta.products && meta.products.map((p) => (
-                      <li key={p}>
-                        <Link to="#" className="dropdown-item rounded-1" onClick={() => { setFilters(f => ({ ...f, product: p })); setCurrentPage(1); }}>
-                          {p}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown">
-                    {filters.createdby || 'Created By'}
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3" style={{ maxHeight: '280px', overflowY: 'auto' }}>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setFilters(f => ({ ...f, createdby: '' })); setCurrentPage(1); }}>
-                        All
-                      </Link>
-                    </li>
-                    {meta.createdBy && meta.createdBy.map((c) => (
-                      <li key={c}>
-                        <Link to="#" className="dropdown-item rounded-1" onClick={() => { setFilters(f => ({ ...f, createdby: c })); setCurrentPage(1); }}>
-                          {c}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown">
-                    {filters.category || 'Category'}
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3" style={{ maxHeight: '280px', overflowY: 'auto' }}>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setFilters(f => ({ ...f, category: '' })); setCurrentPage(1); }}>
-                        All Categories
-                      </Link>
-                    </li>
-                    {meta.categories && meta.categories.map((c) => (
-                      <li key={c}>
-                        <Link to="#" className="dropdown-item rounded-1" onClick={() => { setFilters(f => ({ ...f, category: c })); setCurrentPage(1); }}>
-                          {c}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown">
-                    {filters.brand || 'Brand'}
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3" style={{ maxHeight: '280px', overflowY: 'auto' }}>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setFilters(f => ({ ...f, brand: '' })); setCurrentPage(1); }}>
-                        All Brands
-                      </Link>
-                    </li>
-                    {meta.brands && meta.brands.map((b) => (
-                      <li key={b}>
-                        <Link to="#" className="dropdown-item rounded-1" onClick={() => { setFilters(f => ({ ...f, brand: b })); setCurrentPage(1); }}>
-                          {b}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="dropdown">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown">
-                    {sort.field ? `${sort.field} ${sort.order}` : 'Sort By : Last 7 Days'}
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3" style={{ maxHeight: '280px', overflowY: 'auto' }}>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setSort({ field: 'id', order: 'desc' }); setCurrentPage(1); }}>
-                        Recently Added
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setSort({ field: 'product', order: 'asc' }); setCurrentPage(1); }}>
-                        Ascending
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setSort({ field: 'product', order: 'desc' }); setCurrentPage(1); }}>
-                        Desending
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setSort({ field: 'id', order: 'asc' }); setCurrentPage(1); }}>
-                        Oldest
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1" onClick={() => { setSort({ field: '', order: '' }); setCurrentPage(1); }}>
-                        Clear Sort
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              {/* ProductsTable shows its own load state/errors; page-level alert removed */}
+                setRows={setRows}
+              />
+              <FiltersBar
+                meta={meta}
+                filters={filters}
+                setFilters={setFilters}
+                sort={sort}
+                setSort={setSort}
+                setCurrentPage={setCurrentPage}
+              />
             </div>
             <div className="card-body">
               {/* /Filter */}
