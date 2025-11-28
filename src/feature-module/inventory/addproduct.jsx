@@ -171,6 +171,12 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (productImages.length === 0) {
+      alert("Please upload at least one product image.");
+      return;
+    }
+
     setIsLoading(true);
 
     try {

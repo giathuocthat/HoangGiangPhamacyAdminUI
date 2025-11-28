@@ -38,12 +38,22 @@ class ApiService {
         const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
         try {
+            // Merge headers - options.headers should override defaultHeaders
+            const mergedHeaders = {
+                ...this.defaultHeaders,
+                ...options.headers,
+            };
+
+            // Remove any headers that are explicitly set to undefined/null
+            Object.keys(mergedHeaders).forEach(key => {
+                if (mergedHeaders[key] === undefined || mergedHeaders[key] === null) {
+                    delete mergedHeaders[key];
+                }
+            });
+
             const response = await fetch(url, {
                 ...options,
-                headers: {
-                    ...this.defaultHeaders,
-                    ...options.headers,
-                },
+                headers: mergedHeaders,
                 signal: controller.signal,
             });
 
@@ -202,11 +212,80 @@ class ProductApiService extends ApiService {
     async searchProducts(name) {
         return this.get(API_ENDPOINTS.PRODUCT.SEARCH, { name });
     }
+
+    /**
+     * Create a new product
+     * @param {Object} productData - Product data to create
+     * @returns {Promise} Created product
+     */
+    async createProduct(productData) {
+        return this.post(API_ENDPOINTS.PRODUCT.GET_ALL, productData); // Assuming POST /product creates a product
+    }
+}
+
+/**
+ * Category API Service
+ */
+class CategoryApiService extends ApiService {
+    async getAllCategories() {
+        return this.get(API_ENDPOINTS.CATEGORY.GET_ALL);
+    }
+}
+
+/**
+ * File Upload API Service
+ */
+class FileUploadApiService extends ApiService {
+    async uploadFile(file, uploadSource = 0, relatedEntityId = null, vendorId = null, description = null) {
+        console.log('FileUploadApiService.uploadFile called with:', {
+            file: file ? { name: file.name, size: file.size, type: file.type } : null,
+            uploadSource,
+            relatedEntityId,
+            vendorId,
+            description
+        });
+
+        const formData = new FormData();
+        // Try uppercase 'File' - ASP.NET Core usually expects PascalCase
+        formData.append('File', file);
+        if (uploadSource !== null) formData.append('UploadSource', uploadSource);
+        if (relatedEntityId !== null) formData.append('RelatedEntityId', relatedEntityId);
+        if (vendorId !== null) formData.append('VendorId', vendorId);
+        if (description !== null) formData.append('Description', description);
+
+        // Log FormData contents
+        console.log('FormData entries:');
+        for (let pair of formData.entries()) {
+            console.log(pair[0], pair[1]);
+        }
+
+        const url = `${this.baseURL}${API_ENDPOINTS.FILE_UPLOAD.UPLOAD}`;
+        console.log('Upload URL:', url);
+
+        // For FormData, we must NOT set Content-Type - let browser set it with boundary
+        // Set to undefined so it gets removed in the request method
+        const headers = {
+            'Content-Type': undefined,  // This will be removed by the request method
+            'Accept': 'application/json'
+        };
+
+        return this.request(url, {
+            method: 'POST',
+            body: formData,
+            headers: headers
+        });
+    }
+
+    async deleteFile(id) {
+        return this.delete(API_ENDPOINTS.FILE_UPLOAD.DELETE(id));
+    }
 }
 
 // Export singleton instances
 export const brandApi = new BrandApiService();
 export const productApi = new ProductApiService();
+export const categoryApi = new CategoryApiService();
+export const fileUploadApi = new FileUploadApiService();
 
 // Export classes for custom instances if needed
-export { BrandApiService, ProductApiService, ApiService };
+export { BrandApiService, ProductApiService, CategoryApiService, FileUploadApiService, ApiService };
