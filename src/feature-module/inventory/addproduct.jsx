@@ -178,8 +178,8 @@ const AddProduct = () => {
         name: productName,
         slug: slug,
         registrationNumber: registrationNumber,
-        categoryId: selectedCategory ? selectedCategory.value : null,
-        brandId: selectedBrand ? selectedBrand.value : null,
+        categoryId: selectedCategory, // Value is now the ID directly
+        brandId: selectedBrand,       // Value is now the ID directly
         shortDescription: shortDescription,
         fullDescription: fullDescription,
         // Use the first image as thumbnail, or empty string if no images
@@ -271,7 +271,10 @@ const AddProduct = () => {
                       className="w-100"
                       options={categories}
                       value={selectedCategory}
-                      onChange={setSelectedCategory}
+                      onChange={(e) => {
+                        console.log("Category selected:", e.value);
+                        setSelectedCategory(e.value);
+                      }}
                       placeholder="Choose Category"
                     />
                   </div>
@@ -283,7 +286,10 @@ const AddProduct = () => {
                       className="w-100"
                       options={brands}
                       value={selectedBrand}
-                      onChange={setSelectedBrand}
+                      onChange={(e) => {
+                        console.log("Brand selected:", e.value);
+                        setSelectedBrand(e.value);
+                      }}
                       placeholder="Choose Brand"
                     />
                   </div>
