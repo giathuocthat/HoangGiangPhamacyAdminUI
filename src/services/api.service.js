@@ -281,11 +281,46 @@ class FileUploadApiService extends ApiService {
     }
 }
 
+/**
+ * Product Option API Service
+ * Handles all Product Option-related API calls
+ */
+class ProductOptionApiService extends ApiService {
+    /**
+     * Get all product options with their values
+     * @returns {Promise} List of product options
+     */
+    async getAllOptions() {
+        return this.get(API_ENDPOINTS.PRODUCT_OPTION.GET_ALL);
+    }
+
+    /**
+     * Get product option by ID
+     * @param {number} id - Product Option ID
+     * @returns {Promise} Product option details
+     */
+    async getOptionById(id) {
+        return this.get(API_ENDPOINTS.PRODUCT_OPTION.GET_BY_ID(id));
+    }
+
+    /**
+     * Get option values by option ID
+     * @param {number} optionId - Product Option ID
+     * @returns {Promise} List of option values
+     */
+    async getOptionValues(optionId) {
+        return this.get(API_ENDPOINTS.PRODUCT_OPTION.GET_VALUES(optionId));
+    }
+}
+
+
 // Export singleton instances
 export const brandApi = new BrandApiService();
 export const productApi = new ProductApiService();
 export const categoryApi = new CategoryApiService();
 export const fileUploadApi = new FileUploadApiService();
+export const productOptionApi = new ProductOptionApiService();
 
 // Export classes for custom instances if needed
-export { BrandApiService, ProductApiService, CategoryApiService, FileUploadApiService, ApiService };
+export { BrandApiService, ProductApiService, CategoryApiService, FileUploadApiService, ProductOptionApiService, ApiService };
+

@@ -35,4 +35,22 @@ export const API_ENDPOINTS = {
         GET_BY_CATEGORY: (categoryId) => `/product/category/${categoryId}`,
         SEARCH: '/product/search',
     },
+
+    // Category endpoints
+    CATEGORY: {
+        GET_ALL: '/category',
+    },
+
+    // File Upload endpoints
+    FILE_UPLOAD: {
+        UPLOAD: '/fileupload/upload',
+        DELETE: (id) => `/fileupload/${id}`,
+    },
+
+    // Product Option endpoints
+    PRODUCT_OPTION: {
+        GET_ALL: '/productoption',
+        GET_BY_ID: (id) => `/productoption/${id}`,
+        GET_VALUES: (id) => `/productoption/${id}/values`,
+    },
 };

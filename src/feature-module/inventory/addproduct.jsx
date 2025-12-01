@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { all_routes } from "../../routes/all_routes";
 import { Editor } from "primereact/editor";
-import { productApi, categoryApi, brandApi, fileUploadApi } from "../../services/api.service";
+import { Chip } from "primereact/chip";
+import { productApi, categoryApi, brandApi, fileUploadApi, productOptionApi } from "../../services/api.service";
 import CommonSelect from "../../components/select/common-select";
 
 const AddProduct = () => {
@@ -12,6 +13,7 @@ const AddProduct = () => {
   // State for dropdowns
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [productOptions, setProductOptions] = useState([]);
 
   // Form State
   const [productName, setProductName] = useState("");
@@ -21,7 +23,6 @@ const AddProduct = () => {
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [shortDescription, setShortDescription] = useState("");
   const [fullDescription, setFullDescription] = useState("");
-  // Replaced thumbnailUrl with productImages array
   const [productImages, setProductImages] = useState([]);
 
   // Medical Details
@@ -40,6 +41,7 @@ const AddProduct = () => {
       weight: 0,
       dimensions: "",
       imageUrl: "",
+      variantOptionValueIds: [],
     }
   ]);
 
@@ -50,13 +52,15 @@ const AddProduct = () => {
   const fetchInitialData = async () => {
     setIsLoading(true);
     try {
-      const [categoriesData, brandsData] = await Promise.all([
+      const [categoriesData, brandsData, optionsData] = await Promise.all([
         categoryApi.getAllCategories(),
-        brandApi.getBrands(1, 100)
+        brandApi.getBrands(1, 100),
+        productOptionApi.getAllOptions()
       ]);
 
       console.log("Categories data:", categoriesData);
       console.log("Brands data:", brandsData);
+      console.log("Product options data:", optionsData);
 
       if (Array.isArray(categoriesData)) {
         setCategories(categoriesData.map(c => ({ label: c.name, value: c.id })));
@@ -68,6 +72,13 @@ const AddProduct = () => {
         setBrands(brandsData.data.map(b => ({ label: b.name, value: b.id })));
       } else if (Array.isArray(brandsData)) {
         setBrands(brandsData.map(b => ({ label: b.name, value: b.id })));
+      }
+
+      // Process product options
+      if (Array.isArray(optionsData)) {
+        setProductOptions(optionsData);
+      } else if (optionsData?.data) {
+        setProductOptions(optionsData.data);
       }
 
     } catch (error) {
@@ -95,20 +106,9 @@ const AddProduct = () => {
       return;
     }
 
-    console.log("Uploading file:", {
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      isProductImage,
-      variantIndex
-    });
-
     setIsUploading(true);
     try {
       const response = await fileUploadApi.uploadFile(file, 1);
-      console.log("Upload response:", response);
-
-      // API returns { data: { fileUrl: "..." } }
       const uploadedUrl = response.data?.fileUrl || response.fileUrl;
 
       if (!uploadedUrl) {
@@ -116,21 +116,14 @@ const AddProduct = () => {
       }
 
       if (isProductImage) {
-        // Append new image to the list
         setProductImages(prev => [...prev, uploadedUrl]);
       } else if (variantIndex !== null) {
         const newVariants = [...variants];
         newVariants[variantIndex].imageUrl = uploadedUrl;
         setVariants(newVariants);
       }
-      console.log("Image uploaded successfully, URL:", uploadedUrl);
     } catch (error) {
       console.error("Upload error:", error);
-      console.error("Error details:", {
-        message: error.message,
-        response: error.response,
-        stack: error.stack
-      });
       alert("Failed to upload image: " + error.message);
     } finally {
       setIsUploading(false);
@@ -147,6 +140,90 @@ const AddProduct = () => {
     setVariants(newVariants);
   };
 
+  // Get option ID from option value ID
+  const getOptionIdFromValueId = (optionValueId) => {
+    for (const option of productOptions) {
+      if (option.productOptionValues?.some(v => v.id === optionValueId)) {
+        return option.id;
+      }
+    }
+    return null;
+  };
+
+  // Add or replace variant option (only one value per attribute)
+  const setVariantOption = (variantIndex, optionValueId) => {
+    const newVariants = [...variants];
+    const variant = newVariants[variantIndex];
+
+    // Find which option this value belongs to
+    const optionId = getOptionIdFromValueId(optionValueId);
+    if (!optionId) return;
+
+    // Find the option object
+    const option = productOptions.find(o => o.id === optionId);
+    if (!option) return;
+
+    // Get all value IDs for this option
+    const optionValueIds = option.productOptionValues?.map(v => v.id) || [];
+
+    // Remove any existing value from this option
+    variant.variantOptionValueIds = variant.variantOptionValueIds.filter(
+      id => !optionValueIds.includes(id)
+    );
+
+    // Add the new value
+    variant.variantOptionValueIds.push(optionValueId);
+    setVariants(newVariants);
+  };
+
+  const removeVariantOption = (variantIndex, optionValueId) => {
+    const newVariants = [...variants];
+    const variant = newVariants[variantIndex];
+    variant.variantOptionValueIds = variant.variantOptionValueIds.filter(
+      id => id !== optionValueId
+    );
+    setVariants(newVariants);
+  };
+
+  const getOptionValueInfo = (optionValueId) => {
+    for (const option of productOptions) {
+      const value = option.productOptionValues?.find(v => v.id === optionValueId);
+      if (value) {
+        return {
+          optionName: option.name,
+          valueName: value.value,
+          label: `${option.name}: ${value.value}`
+        };
+      }
+    }
+    return null;
+  };
+
+  // Get options grouped by attribute for dropdown
+  const getAvailableOptionsByAttribute = (variantIndex) => {
+    const variant = variants[variantIndex];
+    const groupedOptions = [];
+
+    productOptions.forEach(option => {
+      // Check if this option already has a value selected
+      const hasSelectedValue = option.productOptionValues?.some(v =>
+        variant.variantOptionValueIds.includes(v.id)
+      );
+
+      // If no value selected for this option, show all values
+      if (!hasSelectedValue && option.productOptionValues) {
+        option.productOptionValues.forEach(value => {
+          groupedOptions.push({
+            label: `${option.name}: ${value.value}`,
+            value: value.id
+          });
+        });
+      }
+    });
+
+    return groupedOptions;
+  };
+
   const addVariant = () => {
     setVariants([
       ...variants,
@@ -158,6 +235,7 @@ const AddProduct = () => {
         weight: 0,
         dimensions: "",
         imageUrl: "",
+        variantOptionValueIds: [],
       }
     ]);
   };
@@ -184,14 +262,11 @@ const AddProduct = () => {
         name: productName,
         slug: slug,
         registrationNumber: registrationNumber,
-        categoryId: selectedCategory, // Value is now the ID directly
-        brandId: selectedBrand,       // Value is now the ID directly
+        categoryId: selectedCategory,
+        brandId: selectedBrand,
         shortDescription: shortDescription,
         fullDescription: fullDescription,
-        // Use the first image as thumbnail, or empty string if no images
         thumbnailUrl: productImages.length > 0 ? productImages[0] : "",
-        // If backend supports multiple images, we should add a field for it here, e.g.:
-        // images: productImages, 
         ingredients: ingredients,
         usageInstructions: usageInstructions,
         contraindications: contraindications,
@@ -202,7 +277,8 @@ const AddProduct = () => {
           stockQuantity: parseInt(v.stockQuantity),
           weight: parseFloat(v.weight),
           dimensions: v.dimensions,
-          imageUrl: v.imageUrl
+          imageUrl: v.imageUrl,
+          variantOptionValueIds: v.variantOptionValueIds || []
         }))
       };
 
@@ -277,10 +353,7 @@ const AddProduct = () => {
                       className="w-100"
                       options={categories}
                       value={selectedCategory}
-                      onChange={(e) => {
-                        console.log("Category selected:", e.value);
-                        setSelectedCategory(e.value);
-                      }}
+                      onChange={(e) => setSelectedCategory(e.value)}
                       placeholder="Choose Category"
                     />
                   </div>
@@ -292,10 +365,7 @@ const AddProduct = () => {
                       className="w-100"
                       options={brands}
                       value={selectedBrand}
-                      onChange={(e) => {
-                        console.log("Brand selected:", e.value);
-                        setSelectedBrand(e.value);
-                      }}
+                      onChange={(e) => setSelectedBrand(e.value)}
                       placeholder="Choose Brand"
                     />
                   </div>
@@ -387,7 +457,6 @@ const AddProduct = () => {
                 data-bs-target="#SpacingThree"
                 aria-expanded="true"
                 aria-controls="SpacingThree">
-
                 <div className="d-flex align-items-center justify-content-between flex-fill">
                   <h5 className="d-flex align-items-center">
                     <i className="feather icon-image text-primary me-2" />
@@ -400,7 +469,6 @@ const AddProduct = () => {
               id="SpacingThree"
               className="accordion-collapse collapse show"
               aria-labelledby="headingSpacingThree">
-
               <div className="accordion-body border-top">
                 <div className="text-editor add-list add">
                   <div className="col-lg-12">
@@ -418,7 +486,6 @@ const AddProduct = () => {
                         </div>
                       </div>
 
-                      {/* Render uploaded images */}
                       {productImages.map((imgUrl, index) => (
                         <div className="phone-img" key={index}>
                           <img src={imgUrl} alt={`product-${index}`} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
@@ -427,7 +494,6 @@ const AddProduct = () => {
                           </Link>
                         </div>
                       ))}
-
                     </div>
                   </div>
                 </div>
@@ -450,7 +516,10 @@ const AddProduct = () => {
                     id="single"
                     value="single"
                     checked={productType === "single"}
-                    onChange={() => setProductType("single")}
+                    onChange={() => {
+                      setProductType("single");
+                      setVariants([variants[0]]);
+                    }}
                   />
                   <label className="form-check-label" htmlFor="single">Single Product</label>
                 </div>
@@ -550,6 +619,53 @@ const AddProduct = () => {
                         />
                       </div>
                     </div>
+
+                    {/* Variant Options - Chip Based UI */}
+                    {productOptions.length > 0 && (
+                      <div className="col-lg-12">
+                        <div className="mb-3">
+                          <label className="form-label fw-bold">Variant Options</label>
+
+                          {/* Selected Options as PrimeReact Chips */}
+                          <div className="mb-2">
+                            {variant.variantOptionValueIds.length > 0 ? (
+                              variant.variantOptionValueIds.map(optionValueId => {
+                                const info = getOptionValueInfo(optionValueId);
+                                return info ? (
+                                  <Chip
+                                    key={optionValueId}
+                                    label={info.label}
+                                    removable
+                                    onRemove={() => removeVariantOption(index, optionValueId)}
+                                    className="me-2 mb-2"
+                                  />
+                                ) : null;
+                              })
+                            ) : (
+                              <span className="text-muted">No options selected</span>
+                            )}
+                          </div>
+
+                          {/* Dropdown to Add/Change Option - Only show options not yet selected */}
+                          {getAvailableOptionsByAttribute(index).length > 0 && (
+                            <div className="d-flex align-items-center">
+                              <CommonSelect
+                                className="flex-grow-1"
+                                options={getAvailableOptionsByAttribute(index)}
+                                value={null}
+                                onChange={(e) => {
+                                  if (e.value) {
+                                    setVariantOption(index, e.value);
+                                  }
+                                }}
+                                placeholder="Add option..."
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     <div className="col-lg-12">
                       <div className="mb-3">
                         <label className="form-label">Variant Image</label>
