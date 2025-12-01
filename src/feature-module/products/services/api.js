@@ -1,5 +1,6 @@
 // service helpers for products API (used by components in this feature)
-const DEFAULT_BACKEND = 'http://localhost:7001';
+import axios from 'axios';
+import {API_CONFIG} from '../../../config/api.config';
 
 async function safeFetch(url, opts) {
   try {
@@ -8,6 +9,12 @@ async function safeFetch(url, opts) {
     // network error
     throw err;
   }
+}
+
+export async function getProductList(params) {
+  return axios.get(`${this.baseURL}/products`).then ( (response) => {
+    return response.data;
+  })
 }
 
 export async function fetchProducts({ page = 1, rows = 10, filters = {}, sort = {} } = {}) {
@@ -29,13 +36,13 @@ export async function fetchProducts({ page = 1, rows = 10, filters = {}, sort = 
     res = await safeFetch(relative);
   } catch (err) {
     // try backend
-    res = await safeFetch(`${DEFAULT_BACKEND}/api/products?${qs.toString()}`);
+    res = await safeFetch(`${API_CONFIG}/api/products?${qs.toString()}`);
   }
 
   if (!res.ok) {
     // try direct backend if proxied returned error
     if (res.status >= 400) {
-      const direct = await safeFetch(`${DEFAULT_BACKEND}/api/products?${qs.toString()}`);
+      const direct = await safeFetch(`${API_CONFIG}/api/products?${qs.toString()}`);
       if (direct.ok) res = direct;
     }
   }
@@ -59,7 +66,7 @@ export async function fetchMeta() {
   } catch (err) {
     // try backend
     try {
-      const res2 = await safeFetch(`${DEFAULT_BACKEND}/api/products/meta`);
+      const res2 = await safeFetch(`${API_CONFIG}/api/products/meta`);
       if (res2.ok) return await res2.json();
     } catch (e) {
       // ignore
@@ -77,7 +84,7 @@ export async function fetchProductById(id) {
   try {
     res = await safeFetch(relative);
   } catch (err) {
-    res = await safeFetch(`${DEFAULT_BACKEND}/api/products/${encodeURIComponent(id)}`);
+    res = await safeFetch(`${API_CONFIG}/api/products/${encodeURIComponent(id)}`);
   }
 
   if (!res.ok) {
@@ -95,5 +102,6 @@ export async function fetchProductById(id) {
 export default {
   fetchProducts,
   fetchMeta,
-  fetchProductById
+  fetchProductById,
+  getProductList
 };

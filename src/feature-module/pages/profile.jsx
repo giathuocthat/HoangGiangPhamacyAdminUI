@@ -19,7 +19,7 @@ const Profile = () => {
             <h6>User Profile</h6>
           </div>
         </div>
-        {/* /product list */}
+        {/* /products list */}
         <div className="card">
           <div className="card-header">
             <h4>Profile</h4>
@@ -141,7 +141,7 @@ const Profile = () => {
             </div>
           </div>
         </div>
-        {/* /product list */}
+        {/* /products list */}
       </div>
       <CommonFooter />
     </div>);

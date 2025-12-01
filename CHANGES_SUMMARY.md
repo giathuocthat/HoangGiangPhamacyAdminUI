@@ -37,7 +37,7 @@ Thêm tính năng **xem chi tiết sản phẩm** khi click vào sản phẩm tr
 
 **Lợi ích:**
 - ✅ Click vào tên sản phẩm → Xem chi tiết
-- ✅ URL: `/product-details/123`
+- ✅ URL: `/products-details/123`
 - ✅ Fix import path ImageLightbox
 
 ---
@@ -97,8 +97,8 @@ Response: { data: { ID: 1, Tên: "...", ... } }
 ```
 
 **Hỗ trợ:**
-- ✅ Path param: `/product-details/123`
-- ✅ Query string: `/product-details?id=123`
+- ✅ Path param: `/products-details/123`
+- ✅ Query string: `/products-details?id=123`
 
 ---
 
@@ -162,9 +162,9 @@ Response: { data: { ID: 1, Tên: "...", ... } }
 ```
 User clicks product name
         ↓
-productlist.jsx: Link to /product-details/:id
+productlist.jsx: Link to /products-details/:id
         ↓
-path.jsx: Route matches /product-details/:id
+path.jsx: Route matches /products-details/:id
         ↓
 productdetail.jsx: Renders component
         ↓
@@ -180,7 +180,7 @@ productdetail.jsx: Displays product info
 ## ✅ Testing Checklist
 
 - [ ] Click product name → Navigate to detail page
-- [ ] URL shows `/product-details/123`
+- [ ] URL shows `/products-details/123`
 - [ ] Product detail page loads correctly
 - [ ] Images display properly
 - [ ] All product info shows

@@ -19,7 +19,7 @@ const Trailbalance = () => {
             </div>
            <TableTopHead />
           </div>
-          {/* /product list */}
+          {/* /products list */}
           <div className="card table-list-card bg-transparent border-0">
             <div className="card-header border-0 bg-white rounded-1 p-4 px-3 mb-4">
               <div className="row row-gap-2 align-items-end">
@@ -166,7 +166,7 @@ const Trailbalance = () => {
               </div>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
         </div>
         <CommonFooter />
       </div>

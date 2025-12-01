@@ -173,7 +173,7 @@ const Stockhistory = () => {
                 </form>
               </div>
             </div>
-            {/* /product list */}
+            {/* /products list */}
             <div className="card table-list-card no-search">
               <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
                 <div>
@@ -207,7 +207,7 @@ const Stockhistory = () => {
                 </div>
               </div>
             </div>
-            {/* /product list */}
+            {/* /products list */}
           </div>
         </div>
         <CommonFooter />

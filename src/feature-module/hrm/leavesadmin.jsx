@@ -155,7 +155,7 @@ const LeavesAdmin = () => {
             </div>
           </div>
 
-          {/* /product list */}
+          {/* /products list */}
           <div className="card table-list-card">
             <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
               <SearchFromApi
@@ -215,7 +215,7 @@ const LeavesAdmin = () => {
           </div>
         </div>
         <CommonFooter />
-        {/* /product list */}
+        {/* /products list */}
       </div>
       <>
         {/* Add Leave */}

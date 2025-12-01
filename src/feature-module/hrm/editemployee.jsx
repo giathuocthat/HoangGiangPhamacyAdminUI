@@ -121,7 +121,7 @@ const EditEmployee = () => {
               </Link>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
           <form>
             <div className="accordion-card-one accordion" id="accordionExample">
               <div className="accordion-item">
@@ -718,7 +718,7 @@ const EditEmployee = () => {
                 </div>
               </div>
             </div>
-            {/* /product list */}
+            {/* /products list */}
             <div className="text-end mb-3">
               <button type="button" className="btn btn-secondary me-2">
                 Cancel

@@ -10,7 +10,8 @@
     "build": "vite build",
     "lint": "eslint src server --ext .js,.jsx",
     "preview": "vite preview",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "migrate:data": "node server/generate_sql.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
@@ -24,6 +25,7 @@
     "axios": "^1.13.2",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "mssql": "^12.1.1",
     "papaparse": "^5.4.1",
     "react": "^19.2.0",
     "react-bootstrap": "^2.10.10",

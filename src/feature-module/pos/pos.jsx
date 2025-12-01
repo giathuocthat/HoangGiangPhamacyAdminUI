@@ -182,7 +182,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-01.png"
+                                    src="src/assets/img/Product/pos-product-01.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -207,7 +207,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-02.png"
+                                    src="src/assets/img/Product/pos-product-02.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -232,7 +232,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-03.png"
+                                    src="src/assets/img/Product/pos-product-03.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -257,7 +257,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-04.png"
+                                    src="src/assets/img/Product/pos-product-04.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -282,7 +282,7 @@ const Pos = () => {
                                                             <div className="product-info card active mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-05.png"
+                                    src="src/assets/img/Product/pos-product-05.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -307,7 +307,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-06.png"
+                                    src="src/assets/img/Product/pos-product-06.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -332,7 +332,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-07.png"
+                                    src="src/assets/img/Product/pos-product-07.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -359,7 +359,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-08.png"
+                                    src="src/assets/img/Product/pos-product-08.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -384,7 +384,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-09.png"
+                                    src="src/assets/img/Product/pos-product-09.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -409,7 +409,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-10.png"
+                                    src="src/assets/img/Product/pos-product-10.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -434,7 +434,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-11.png"
+                                    src="src/assets/img/Product/pos-product-11.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -461,7 +461,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-13.png"
+                                    src="src/assets/img/Product/pos-product-13.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -490,7 +490,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-05.png"
+                                    src="src/assets/img/Product/pos-product-05.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -515,7 +515,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-08.png"
+                                    src="src/assets/img/Product/pos-product-08.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -544,7 +544,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-04.png"
+                                    src="src/assets/img/Product/pos-product-04.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -569,7 +569,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-06.png"
+                                    src="src/assets/img/Product/pos-product-06.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -594,7 +594,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-13.png"
+                                    src="src/assets/img/Product/pos-product-13.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -623,7 +623,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-01.png"
+                                    src="src/assets/img/Product/pos-product-01.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -648,7 +648,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-14.png"
+                                    src="src/assets/img/Product/pos-product-14.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -677,7 +677,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-03.png"
+                                    src="src/assets/img/Product/pos-product-03.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -702,7 +702,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-09.png"
+                                    src="src/assets/img/Product/pos-product-09.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -727,7 +727,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-11.png"
+                                    src="src/assets/img/Product/pos-product-11.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -758,7 +758,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-02.png"
+                                    src="src/assets/img/Product/pos-product-02.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -783,7 +783,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-07.png"
+                                    src="src/assets/img/Product/pos-product-07.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -810,7 +810,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-10.png"
+                                    src="src/assets/img/Product/pos-product-10.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -835,7 +835,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-13.png"
+                                    src="src/assets/img/Product/pos-product-13.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -860,7 +860,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-14.png"
+                                    src="src/assets/img/Product/pos-product-14.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -889,7 +889,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-01.png"
+                                    src="src/assets/img/Product/pos-product-01.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -914,7 +914,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-02.png"
+                                    src="src/assets/img/Product/pos-product-02.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -939,7 +939,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-03.png"
+                                    src="src/assets/img/Product/pos-product-03.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -964,7 +964,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-04.png"
+                                    src="src/assets/img/Product/pos-product-04.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -989,7 +989,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-05.png"
+                                    src="src/assets/img/Product/pos-product-05.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -1014,7 +1014,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-06.png"
+                                    src="src/assets/img/Product/pos-product-06.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -1039,7 +1039,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-07.png"
+                                    src="src/assets/img/Product/pos-product-07.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -1066,7 +1066,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-08.png"
+                                    src="src/assets/img/Product/pos-product-08.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -1091,7 +1091,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-09.png"
+                                    src="src/assets/img/Product/pos-product-09.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -1116,7 +1116,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-10.png"
+                                    src="src/assets/img/Product/pos-product-10.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -1141,7 +1141,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-11.png"
+                                    src="src/assets/img/Product/pos-product-11.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -1168,7 +1168,7 @@ const Pos = () => {
                                                             <div className="product-info card mb-0" onClick={() => setShowAlert1(!showAlert1)} tabIndex={0}>
                                                                 <Link to="#" className="pro-img">
                                                                     <img
-                                    src="src/assets/img/products/pos-product-13.png"
+                                    src="src/assets/img/Product/pos-product-13.png"
                                     alt="Products" />
                                   
                                                                     <span>
@@ -1197,7 +1197,7 @@ const Pos = () => {
                                 </div>
                             </div>
                         </div>
-                        {/* /Products */}
+                        {/* /Product */}
                         {/* Order Details */}
                         <div className="col-md-12 col-lg-5 col-xl-4 ps-0 theiaStickySidebar d-lg-flex">
                             <aside className="product-order-list bg-secondary-transparent flex-fill">

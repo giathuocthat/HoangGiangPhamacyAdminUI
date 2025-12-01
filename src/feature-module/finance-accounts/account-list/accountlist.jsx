@@ -217,7 +217,7 @@ const Accountlist = () => {
                   </Link>
                 </div>
               </div>
-              {/* /product list */}
+              {/* /products list */}
               <div className="card table-list-card">
                 <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
                   <SearchFromApi
@@ -299,7 +299,7 @@ const Accountlist = () => {
                   </div>
                 </div>
               </div>
-              {/* /product list */}
+              {/* /products list */}
             </div>
             <div
               className="tab-pane fade"
@@ -330,7 +330,7 @@ const Accountlist = () => {
                   </Link>
                 </div>
               </div>
-              {/* /product list */}
+              {/* /products list */}
               <div className="card table-list-card">
                 <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
                   <SearchFromApi
@@ -412,7 +412,7 @@ const Accountlist = () => {
                   </div>
                 </div>
               </div>
-              {/* /product list */}
+              {/* /products list */}
             </div>
           </div>
         </div>

@@ -105,7 +105,7 @@ Gửi message cho team:
    - Add eslint-plugin-react and jsx-a11y
 
 ✅ Commit 4: Route configuration
-   - Add /product-details/:id route
+   - Add /products-details/:id route
    - Support both path param and query string
 
 ✅ Commit 5: UI updates

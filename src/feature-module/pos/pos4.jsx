@@ -1117,7 +1117,7 @@ const Pos4 = () => {
                 </div>
               </div>
             </div>
-            {/* /Products */}
+            {/* /Product */}
             {/* Order Details */}
             <div className="col-md-12 col-lg-5 col-xl-4 ps-0 theiaStickySidebar">
               <aside className="product-order-list">

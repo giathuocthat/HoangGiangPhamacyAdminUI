@@ -289,7 +289,7 @@ const Salestax = () => {
                 </div>
               </div>
             </div>
-            {/* /product list */}
+            {/* /products list */}
           </div>
         </div>
         <div className="footer d-sm-flex align-items-center justify-content-between border-top bg-white p-3">

@@ -115,7 +115,7 @@ const LeaveTypes = () => {
             </div>
           </div>
 
-          {/* /product list */}
+          {/* /products list */}
           <div className="card table-list-card">
             <div className="card-body">
               <div className="table-responsive">
@@ -131,7 +131,7 @@ const LeaveTypes = () => {
               </div>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
         </div>
         <CommonFooter />
       </div>

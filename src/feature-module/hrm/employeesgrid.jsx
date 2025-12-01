@@ -119,7 +119,7 @@ const EmployeesGrid = () => {
               </div>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
           <div className="card">
             <div className="card-body">
               <div className="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
@@ -264,7 +264,7 @@ const EmployeesGrid = () => {
               </div>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
           <div className="employee-grid-widget">
             <div className="row">
               <div className="col-xxl-3 col-xl-4 col-lg-6 col-md-6">

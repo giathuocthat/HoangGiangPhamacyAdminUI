@@ -103,7 +103,7 @@ export const SidebarData = [
   submenuItems: [
   {
     label: "Products",
-    link: "/product-list",
+    link: "/products-list",
     icon: 'box',
     showSubRoute: false,
     submenu: false
@@ -597,8 +597,8 @@ export const SidebarData = [
     showSubRoute: false,
     submenu: true,
     submenuItems: [
-    { label: "Product Report", link: "/product-report" },
-    { label: "Product Expiry Report", link: "/product-expiry-report" },
+    { label: "Product Report", link: "/products-report" },
+    { label: "Product Expiry Report", link: "/products-expiry-report" },
     { label: "Product Quantity Alert", link: route.productquantityreport }]
 
   },

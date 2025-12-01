@@ -402,7 +402,7 @@ const IncomeList = lazy(
 const IncomeCategory = lazy(
   () => import("../feature-module/finance-accounts/income/incomeCategory")
 );
-const Products = lazy(() => import("../feature-module/ecommerce/products"));
+const Products = lazy(() => import("../feature-module/ecommerce/Product"));
 const Productsdetails = lazy(
   () => import("../feature-module/ecommerce/productsdetails")
 );
@@ -444,13 +444,13 @@ const CustomerDueReport = lazy(
   () => import("../feature-module/Reports/customerduereport")
 );
 const Productreport = lazy(
-  () => import("../feature-module/Reports/products-report/productreport")
+  () => import("../feature-module/Reports/Product-report/productreport")
 );
 const ProductExpiredreport = lazy(
-  () => import("../feature-module/Reports/products-report/productexpiredreport")
+  () => import("../feature-module/Reports/Product-report/productexpiredreport")
 );
 const ProductQualityreport = lazy(
-  () => import("../feature-module/Reports/products-report/productqualityreport")
+  () => import("../feature-module/Reports/Product-report/productqualityreport")
 );
 const Salestax = lazy(() => import("../feature-module/Reports/salestax"));
 const Annualreport = lazy(() => import("../feature-module/Reports/annualreport"));

@@ -185,7 +185,7 @@ const InventoryReport = () => {
             </div>
           </div>
 
-          {/* /product list */}
+          {/* /products list */}
           <div className="card table-list-card">
             <div className="card-body">
               <div className="table-responsive">
@@ -201,7 +201,7 @@ const InventoryReport = () => {
               </div>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
         </div>
       </div>
       <CommonFooter />

@@ -39,7 +39,7 @@ Hãy làm:
 
 2️⃣  Backend API Enhancement
     git add server/index.js
-    git commit -m "feat: Add GET /api/products/:id endpoint"
+    git commit -m "feat: Add GET /api/Product/:id endpoint"
 
 3️⃣  Dependencies & Config
     git add package.json package-lock.json eslint.config.js
@@ -56,7 +56,7 @@ Hãy làm:
 
 6️⃣  New Components
     git add src/feature-module/inventory/productdetail2.jsx
-    git add src/feature-module/products/
+    git add src/feature-module/Product/
     git add src/layouts/
     git commit -m "feat: Add new product detail and layout components"
 

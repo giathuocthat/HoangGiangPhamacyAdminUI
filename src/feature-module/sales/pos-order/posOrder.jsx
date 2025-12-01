@@ -184,7 +184,7 @@ const PosOrder = () => {
               </Link>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
           <div className="card table-list-card manage-stock">
             <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
               <SearchFromApi
@@ -323,7 +323,7 @@ const PosOrder = () => {
               </div>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
         </div>
         <CommonFooter />
       </div>

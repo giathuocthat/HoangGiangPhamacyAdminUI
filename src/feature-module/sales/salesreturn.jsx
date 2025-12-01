@@ -34,7 +34,7 @@ const SalesReturn = () => {
               </Link>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
           <div className="card employee-table">
             <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
               <div className="search-set"></div>
@@ -340,7 +340,7 @@ const SalesReturn = () => {
                             className="avatar avatar-md me-2">
                             
                             <img
-                              src="src/assets/img/products/product-02.jpg"
+                              src="src/assets/img/products/products-02.jpg"
                               alt="product" />
                             
                           </a>
@@ -923,7 +923,7 @@ const SalesReturn = () => {
               </div>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
         </div>
         <div className="footer d-sm-flex align-items-center justify-content-between border-top bg-white p-3">
           <p className="mb-0">2014-2025 © DreamsPOS. All Right Reserved</p>

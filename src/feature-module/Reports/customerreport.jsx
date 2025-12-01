@@ -207,7 +207,7 @@ const CustomerReport = () => {
               </form>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
           <div className="card table-list-card no-search">
             <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
               <div>
@@ -240,7 +240,7 @@ const CustomerReport = () => {
               </div>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
         </div>
       </div>
       <div className="footer d-sm-flex align-items-center justify-content-between border-top bg-white p-3">

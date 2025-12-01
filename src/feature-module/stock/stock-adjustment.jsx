@@ -246,7 +246,7 @@ const StockAdjustment = () => {
               </div>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
         </div>
         <CommonFooter />
       </div>

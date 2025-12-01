@@ -142,7 +142,7 @@ const Orders = () => {
             </div>
             <TableTopHead />
           </div>
-          {/* /product list */}
+          {/* /products list */}
           <div className="card table-list-card">
             <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
               <SearchFromApi
@@ -327,7 +327,7 @@ const Orders = () => {
               </div>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
         </div>
         <CommonFooter />
       </div>

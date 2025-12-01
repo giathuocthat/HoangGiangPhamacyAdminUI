@@ -8,6 +8,8 @@ import TableTopHead from "../../components/table-top-head";
 import DeleteModal from "../../components/delete-modal";
 import SearchFromApi from "../../components/data-table/search";
 import ImageLightbox from "../../components/image-lightbox";
+import { API_CONFIG } from "../../config/api.config";
+import { getProductList, fetchProducts } from "../products/services/productService";
 
 // Component: product-list: Danh sách sản phẩm với phân trang, sắp xếp, tìm kiếm, lọc, và thao tác hàng loạt.
 
@@ -220,14 +222,14 @@ const ProductList = () => {
         } catch (err) {
           // network error on relative fetch, try direct backend
           console.warn('Relative fetch failed, trying direct backend', err);
-          res = await fetch(`http://localhost:7001/api/products?${qs.toString()}`);
+          res = await fetch(`${API_CONFIG}/api/products?${qs.toString()}`);
         }
 
         if (!res.ok) {
           // try fallback to backend if proxied returned 4xx/5xx
           if (res.status >= 400) {
             try {
-              const res2 = await fetch(`http://localhost:7001/api/products?${qs.toString()}`);
+              const res2 = await fetch(`${API_CONFIG}/api/products?${qs.toString()}`);
               if (res2.ok) res = res2;
             } catch (err) {
               // ignore
@@ -283,12 +285,77 @@ const ProductList = () => {
         if (mounted) setLoading(false);
       }
     };
-
+    
     fetchProducts();
     return () => { mounted = false; };
   }, [currentPage, rows, filters, sort]);
 
-  // fetch metadata for dropdowns
+  // useEffect(() => {
+  //   let mounted = true;
+  //   const loadProducts = async () => { // Đổi tên hàm cho rõ ràng
+  //     setLoading(true);
+  //     try {
+  //       setFetchError(null);
+        
+  //       // 1. Chuẩn bị các tham số cho service call
+  //       const params = {
+  //         page: currentPage,
+  //         rows: rows,
+  //         filters: filters,
+  //         sort: sort,
+  //       };
+
+  //       // 2. Gọi service function
+  //       const payload = await fetchProducts(params);
+        
+  //       const rowsFromApi = Array.isArray(payload) ? payload : (payload.data || []);
+
+  //       // 3. Mapping data (giữ nguyên logic mapping hiện tại)
+  //       const mapped = rowsFromApi.map((r, idx) => {
+  //         // map CSV headers to UI fields and parse images
+  //         const imgField = r['Hình ảnh'] || r['Image'] || r['images'] || '';
+  //         let images = [];
+  //         if (imgField) {
+  //           images = String(imgField).split(',').map(s => s.trim()).filter(Boolean);
+  //         }
+  //         const productImage = images.length ? images[0] : '';
+
+  //         return {
+  //           id: r.ID || r.id || (payload.page - 1) * payload.rows + idx + 1,
+  //           sku: r.SKU || r.Sku || '',
+  //           product: r['Tên'] || r['Name'] || r.name || '',
+  //           productImage,
+  //           images,
+  //           category: r['Danh mục'] || r['Danh muc'] || r['Category'] || '',
+  //           brand: r['Thương hiệu'] || r['Brand'] || '',
+  //           price: r['Giá thông thường'] || r['Price'] || '',
+  //           unit: r['Giá trị thuộc tính 1'] || r['Tên thuộc tính 1'] || r['attribute 1'] || '',
+  //           qty: r['Tồn kho'] || r['Stock'] || '',
+  //           createdby: '',
+  //           img: user30
+  //         };
+  //       });
+
+  //       // 4. Cập nhật state
+  //       if (mounted) {
+  //         setProducts(mapped);
+  //         // Kiểm tra xem có total records từ API không, nếu không thì dùng số lượng bản ghi
+  //         setTotalRecords(payload.total || mapped.length); 
+  //       }
+  //     } catch (err) {
+  //       console.error('Fetch products error', err);
+  //       setFetchError(String(err));
+  //       if (mounted) setProducts([]); // Đặt sản phẩm về rỗng khi có lỗi
+  //     } finally {
+  //       if (mounted) setLoading(false);
+  //     }
+  //   };
+    
+  //   loadProducts();
+  //   return () => { mounted = false; };
+  // }, [currentPage, rows, filters, sort]); // Dependencies không thay đổi
+
+  // fetch metadata for dropdowns (Information like categories, brands, etc.)
   useEffect(() => {
     let mounted = true;
     const fetchMeta = async () => {
@@ -299,7 +366,7 @@ const ProductList = () => {
           res = await fetch('/api/products/meta');
         } catch (err) {
           console.warn('Relative meta fetch failed, trying backend directly', err);
-          try { res = await fetch('http://localhost:7001/api/products/meta'); } catch(e){ res = null; }
+          try { res = await fetch(`${API_CONFIG}/api/products/meta`); } catch(e){ res = null; }
         }
 
         if (res && res.ok) {
@@ -376,7 +443,7 @@ const ProductList = () => {
               </Link>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
           <div className="card table-list-card">
             <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
               <SearchFromApi
@@ -385,7 +452,7 @@ const ProductList = () => {
                 setRows={setRows} />
               
               <div className="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
-                <div className="dropdown me-2">
+                {/* <div className="dropdown me-2">
                   <Link
                     to="#"
                     className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
@@ -428,7 +495,7 @@ const ProductList = () => {
                       </li>
                     ))}
                   </ul>
-                </div>
+                </div> */}
                 <div className="dropdown me-2">
                   <Link
                     to="#"
@@ -546,7 +613,7 @@ const ProductList = () => {
               </div>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
           <Brand />
         </div>
       </div>

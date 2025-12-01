@@ -48,8 +48,8 @@ afterAll(() => {
 const { app } = require('./index');
 
 describe('Products API (CSV-backed)', () => {
-  test('GET /api/products returns all products with total', async () => {
-    const res = await request(app).get('/api/products').expect(200);
+  test('GET /api/Product returns all products with total', async () => {
+    const res = await request(app).get('/api/Product').expect(200);
     expect(res.body).toHaveProperty('data');
     expect(res.body).toHaveProperty('total', 2);
     expect(res.body.data).toEqual([
@@ -58,37 +58,37 @@ describe('Products API (CSV-backed)', () => {
     ]);
   });
 
-  test('POST /api/products creates product with incremental id', async () => {
+  test('POST /api/Product creates product with incremental id', async () => {
     const res = await request(app)
-      .post('/api/products')
+      .post('/api/Product')
       .send({ name: 'Item C', price: '30' })
       .expect(201);
     expect(res.body.data).toMatchObject({ id: '3', name: 'Item C', price: '30' });
 
-    const res2 = await request(app).get('/api/products').expect(200);
+    const res2 = await request(app).get('/api/Product').expect(200);
     expect(res2.body.total).toBe(3);
   });
 
-  test('PUT /api/products/:id updates a product and preserves id', async () => {
+  test('PUT /api/Product/:id updates a product and preserves id', async () => {
     const res = await request(app)
-      .put('/api/products/2')
+      .put('/api/Product/2')
       .send({ price: '25' })
       .expect(200);
     expect(res.body.data).toMatchObject({ id: '2', name: 'Item B', price: '25' });
   });
 
-  test('PUT /api/products/:id returns 404 when not found', async () => {
+  test('PUT /api/Product/:id returns 404 when not found', async () => {
     const res = await request(app)
-      .put('/api/products/999')
+      .put('/api/Product/999')
       .send({ price: '25' })
       .expect(404);
     expect(res.body).toEqual({ error: 'Not found' });
   });
 
-  test('DELETE /api/products/:id deletes product and returns success', async () => {
-    await request(app).delete('/api/products/1').expect(200);
+  test('DELETE /api/Product/:id deletes product and returns success', async () => {
+    await request(app).delete('/api/Product/1').expect(200);
 
-    const res2 = await request(app).get('/api/products').expect(200);
+    const res2 = await request(app).get('/api/Product').expect(200);
     expect(res2.body.total).toBe(2); // after prior POST we had 3, deleting id 1 leaves 2
     expect(res2.body.data.find((p) => p.id === '1')).toBeUndefined();
   });
@@ -98,7 +98,7 @@ describe('Products API (CSV-backed)', () => {
     // Seed with a row having non-numeric id
     virtualContent = `id,name,price\nA,Alpha,5\n2,Item B,20`;
     const res = await request(app)
-      .post('/api/products')
+      .post('/api/Product')
       .send({ name: 'Next', price: '15' })
       .expect(201);
     expect(res.body.data.id).toBe('3');
@@ -108,7 +108,7 @@ describe('Products API (CSV-backed)', () => {
     // Reset to known state
     virtualContent = initialCsv;
     const res = await request(app)
-      .put('/api/products/1')
+      .put('/api/Product/1')
       .send({ price: '11' })
       .expect(200);
     expect(res.body.data).toEqual({ id: '1', name: 'Item A', price: '11' });
@@ -116,7 +116,7 @@ describe('Products API (CSV-backed)', () => {
 
   test('DELETE returns 404 when id not found', async () => {
     virtualContent = initialCsv;
-    const res = await request(app).delete('/api/products/999').expect(404);
+    const res = await request(app).delete('/api/Product/999').expect(404);
     expect(res.body).toEqual({ error: 'Not found' });
   });
 
@@ -127,7 +127,7 @@ describe('Products API (CSV-backed)', () => {
       if (file === tmpCsvPath) return cb(err);
       return originalReadFile(file, enc, cb);
     };
-    const res = await request(app).get('/api/products').expect(500);
+    const res = await request(app).get('/api/Product').expect(500);
     expect(res.body).toEqual({ error: 'Failed to read products' });
     expect(console.error).toHaveBeenCalled();
 
@@ -146,7 +146,7 @@ describe('Products API (CSV-backed)', () => {
       return originalWriteFile(file, content, enc, cb);
     };
     const res = await request(app)
-      .post('/api/products')
+      .post('/api/Product')
       .send({ name: 'Broken', price: '0' })
       .expect(500);
     expect(res.body).toEqual({ error: 'Failed to create product' });

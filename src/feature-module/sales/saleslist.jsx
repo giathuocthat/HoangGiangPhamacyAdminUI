@@ -271,7 +271,7 @@ const SalesList = () => {
               </Link>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
           <div className="card table-list-card">
             <div className="card-body">
               <div className="table-top">
@@ -406,7 +406,7 @@ const SalesList = () => {
               </div>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
         </div>
       </div>
       <>

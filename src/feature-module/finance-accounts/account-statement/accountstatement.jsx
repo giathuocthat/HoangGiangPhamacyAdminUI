@@ -65,7 +65,7 @@ const Accountstatement = () => {
             </div>
            <TableTopHead />
           </div>
-          {/* /product list */}
+          {/* /products list */}
           <div className="card">
             <div className="card-body">
               <div className="row row-gap-2 align-items-end">
@@ -143,7 +143,7 @@ const Accountstatement = () => {
               
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
         </div>
         <CommonFooter />
       </div>

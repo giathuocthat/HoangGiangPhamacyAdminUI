@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { fetchProductById } from '../products/services/api';
+import { fetchProductById } from '../Product/services/api';
 import ImageLightbox from '../../components/image-lightbox';
 import styles from './ProductDetail.module.css';
 // Component: product-detail: Chi tiết sản phẩm với gallery ảnh, mô tả có phân đoạn và điều hướng.
@@ -86,7 +86,7 @@ const ProductDetail = () => {
     if (window.history.length > 1) {
       window.history.back();
     } else {
-      navigate('/products');
+      navigate('/Product');
     }
   }, [navigate]);
 

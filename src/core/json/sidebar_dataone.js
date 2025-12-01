@@ -321,7 +321,7 @@ export const SidebarData1 = [
     tittle: "Products",
     hasSubRoute: false,
     showSubRoute: true,
-    route: "/product-list",
+    route: "/products-list",
     subRoutes: []
   },
   {
@@ -1793,21 +1793,21 @@ export const SidebarData1 = [
       tittle: "Product Report",
       hasSubRoute: false,
       showSubRoute: false,
-      route: "/product-report",
+      route: "/products-report",
       subRoutes: []
     },
     {
       tittle: "Product Expiry Report",
       hasSubRoute: false,
       showSubRoute: false,
-      route: "/product-expiry-report",
+      route: "/products-expiry-report",
       subRoutes: []
     },
     {
       tittle: "Product Quantity Alert",
       hasSubRoute: false,
       showSubRoute: false,
-      route: "/product-quantity-alert",
+      route: "/products-quantity-alert",
       subRoutes: []
     }]
 

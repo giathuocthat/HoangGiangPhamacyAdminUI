@@ -10,7 +10,7 @@ git add src/feature-module/inventory/productlist.jsx
 git add src/feature-module/inventory/productdetail.jsx
 git commit -m "feat: Add product detail navigation from list
 
-- Update product name link to navigate to /product-details/:id
+- Update product name link to navigate to /products-details/:id
 - Fix import path for ImageLightbox component
 - Product list now shows clickable product names"
 
@@ -42,7 +42,7 @@ git commit -m "chore: Update ESLint config and dependencies
 git add src/routes/path.jsx
 git commit -m "chore: Update route configuration
 
-- Add route for /product-details/:id
+- Add route for /products-details/:id
 - Support both path param and query string for product ID"
 
 # ============================================================================
@@ -121,7 +121,7 @@ git log --oneline -10
 git add src/feature-module/inventory/productlist.jsx src/feature-module/inventory/productdetail.jsx
 git commit -m "feat: Add product detail navigation from list
 
-- Update product name link to navigate to /product-details/:id
+- Update product name link to navigate to /products-details/:id
 - Fix import path for ImageLightbox component
 - Product list now shows clickable product names"
 ```
@@ -151,7 +151,7 @@ git commit -m "chore: Update ESLint config and dependencies
 git add src/routes/path.jsx
 git commit -m "chore: Update route configuration
 
-- Add route for /product-details/:id
+- Add route for /products-details/:id
 - Support both path param and query string for product ID"
 ```
 

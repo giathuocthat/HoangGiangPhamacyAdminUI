@@ -119,7 +119,7 @@ const AddEmployee = () => {
               </Link>
             </div>
           </div>
-          {/* /product list */}
+          {/* /products list */}
           <form>
             <div className="accordions-items-seperate" id="accordionExample">
               <div className="accordion-item border mb-4">
@@ -646,7 +646,7 @@ const AddEmployee = () => {
                 </div>
               </div>
             </div>
-            {/* /product list */}
+            {/* /products list */}
             <div className="text-end mb-3">
               <button type="button" className="btn btn-secondary me-2">
                 Cancel

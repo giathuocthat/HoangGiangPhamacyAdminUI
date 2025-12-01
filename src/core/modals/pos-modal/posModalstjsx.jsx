@@ -360,7 +360,7 @@ const PosModals = () => {
           </div>
         </div>
       </div>
-      {/* /Products */}
+      {/* /Product */}
       <div
         className="modal fade"
         id="create"
