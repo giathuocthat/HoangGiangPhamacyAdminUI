@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { all_routes } from "../../routes/all_routes";
 import { Editor } from "primereact/editor";
@@ -48,6 +48,9 @@ const AddProduct = () => {
   // Loading State
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+
+  // Editor ref
+  const editorRef = useRef(null);
 
   const fetchInitialData = async () => {
     setIsLoading(true);
@@ -247,6 +250,103 @@ const AddProduct = () => {
     }
   };
 
+  // Convert base64 image to file
+  const base64ToFile = (base64String, filename) => {
+    const arr = base64String.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  };
+
+  // Upload base64 image and replace with URL
+  const uploadBase64Image = async (base64String) => {
+    try {
+      const file = base64ToFile(base64String, `image-${Date.now()}.png`);
+      const response = await fileUploadApi.uploadFile(file, 1);
+      const url = response.data?.fileUrl || response.fileUrl;
+      return url;
+    } catch (error) {
+      console.error('Upload base64 error:', error);
+      return null;
+    }
+  };
+
+  // Setup custom image handler when editor is ready
+  const setupImageHandler = () => {
+    console.log('Setting up editor handlers...');
+
+    if (editorRef.current) {
+      const quill = editorRef.current.getQuill();
+      console.log('Quill instance:', quill);
+
+      if (quill) {
+        // Override toolbar image button handler
+        const toolbar = quill.getModule('toolbar');
+        console.log('Toolbar module:', toolbar);
+
+        if (toolbar) {
+          console.log('Adding custom image handler...');
+          toolbar.addHandler('image', function () {
+            console.log('Image handler triggered!');
+            const input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/*');
+            input.click();
+
+            input.onchange = async () => {
+              const file = input.files[0];
+              console.log('File selected:', file);
+              if (file) {
+                setIsUploading(true);
+                try {
+                  console.log('Uploading file...');
+                  const response = await fileUploadApi.uploadFile(file, 1);
+                  console.log('Upload response:', response);
+                  const url = response.data?.fileUrl || response.fileUrl;
+
+                  if (!url) {
+                    throw new Error("No file URL in response");
+                  }
+
+                  console.log('Inserting image URL:', url);
+                  const range = quill.getSelection(true);
+                  quill.insertEmbed(range.index, 'image', url);
+                  quill.setSelection(range.index + 1);
+                } catch (error) {
+                  console.error('Upload error:', error);
+                  alert('Failed to upload image: ' + error.message);
+                } finally {
+                  setIsUploading(false);
+                }
+              }
+            };
+          });
+          console.log('Image handler added successfully');
+        } else {
+          console.error('Toolbar module not found!');
+        }
+      } else {
+        console.error('Quill instance not found!');
+      }
+    } else {
+      console.error('editorRef.current is null!');
+    }
+  };
+
+  useEffect(() => {
+    // Delay to ensure Editor is fully mounted
+    const timer = setTimeout(() => {
+      setupImageHandler();
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -396,6 +496,7 @@ const AddProduct = () => {
                   <div className="mb-3">
                     <label className="form-label">Full Description</label>
                     <Editor
+                      ref={editorRef}
                       value={fullDescription}
                       onTextChange={(e) => setFullDescription(e.htmlValue)}
                       style={{ height: "200px" }}
