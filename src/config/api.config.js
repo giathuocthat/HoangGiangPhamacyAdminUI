@@ -39,17 +39,17 @@ export const API_ENDPOINTS = {
 
     // Category endpoints
     CATEGORY: {
-        GET_ALL: '/category',
-        CREATE: '/category',
+        GET_ALL: `/category`,
+        CREATE: `/category`,
         GET_BY_ID: (id) => `/category/${id}`,
         UPDATE: (id) => `/category/${id}`,
         DELETE: (id) => `/category/${id}`,
-        GET_ROOT: '/category/root',
-        GET_CHILDREN: (parentId) => `/category/${parentId}/children`,
-        GET_ALL_CHILDREN: '/category/allchildren',
-        GET_HIERARCHY: '/category/hierarchy',
-        GET_FLAT_LIST: '/category/flat',
-        SEARCH: '/category/search',
+        GET_ROOT: `/category/root`,
+        GET_CHILDREN: (parentId) => `/Category/${parentId}/children`,
+        GET_ALL_CHILDREN: `/category/allchildren`,
+        GET_HIERARCHY: `/Category/hierarchy`,
+        GET_FLAT_LIST: `/category/flat`,
+        SEARCH: `/category/search`,
     },
 
     // File Upload endpoints
@@ -67,12 +67,6 @@ export const API_ENDPOINTS = {
         SEARCH: '/product/search',
         GET_PAGED: '/product/getPagedProducts',
         ADD_TO_CART: '/product/cart',
-    },
-
-    // ProductOption endpoints
-    // Category endpoints
-    CATEGORY: {
-        GET_ALL: '/category',
     },
 
     // File Upload endpoints

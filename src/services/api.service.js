@@ -379,6 +379,7 @@ class CategoryApiService extends ApiService {
 
     /**
      * Get category hierarchy
+     * 
      * @returns {Promise} Hierarchical category tree
      */
     async getCategoryHierarchy() {
@@ -492,55 +493,6 @@ class ProductApiService extends ApiService {
 
     async addToCart(cartData) {
         return this.post(API_ENDPOINTS.PRODUCT.ADD_TO_CART, cartData);
-    }
-}
-
-/**
- * File Upload API Service
- */
-class FileUploadApiService extends ApiService {
-    async uploadFile(file, uploadSource = 0, relatedEntityId = null, vendorId = null, description = null) {
-        console.log('FileUploadApiService.uploadFile called with:', {
-            file: file ? { name: file.name, size: file.size, type: file.type } : null,
-            uploadSource,
-            relatedEntityId,
-            vendorId,
-            description
-        });
-
-        const formData = new FormData();
-        // Try uppercase 'File' - ASP.NET Core usually expects PascalCase
-        formData.append('File', file);
-        if (uploadSource !== null) formData.append('UploadSource', uploadSource);
-        if (relatedEntityId !== null) formData.append('RelatedEntityId', relatedEntityId);
-        if (vendorId !== null) formData.append('VendorId', vendorId);
-        if (description !== null) formData.append('Description', description);
-
-        // Log FormData contents
-        console.log('FormData entries:');
-        for (let pair of formData.entries()) {
-            console.log(pair[0], pair[1]);
-        }
-
-        const url = `${this.baseURL}${API_ENDPOINTS.FILE_UPLOAD.UPLOAD}`;
-        console.log('Upload URL:', url);
-
-        // For FormData, we must NOT set Content-Type - let browser set it with boundary
-        // Set to undefined so it gets removed in the request method
-        const headers = {
-            'Content-Type': undefined,  // This will be removed by the request method
-            'Accept': 'application/json'
-        };
-
-        return this.request(url, {
-            method: 'POST',
-            body: formData,
-            headers: headers
-        });
-    }
-
-    async deleteFile(id) {
-        return this.delete(API_ENDPOINTS.FILE_UPLOAD.DELETE(id));
     }
 }
 
@@ -922,17 +874,44 @@ class UserApiService extends ApiService {
 class FileUploadApiService extends ApiService {
     /**
      * Upload single file
-     * @param {FormData} formData - Form data containing file
-     * @returns {Promise} Upload response
      */
-    async uploadSingle(formData) {
-        const url = `${this.baseURL}${API_ENDPOINTS.FILE_UPLOAD.UPLOAD_SINGLE}`;
+    async uploadFile(file, uploadSource = 0, relatedEntityId = null, vendorId = null, description = null) {
+        console.log('FileUploadApiService.uploadFile called with:', {
+            file: file ? { name: file.name, size: file.size, type: file.type } : null,
+            uploadSource,
+            relatedEntityId,
+            vendorId,
+            description
+        });
+
+        const formData = new FormData();
+        // Try uppercase 'File' - ASP.NET Core usually expects PascalCase
+        formData.append('File', file);
+        if (uploadSource !== null) formData.append('UploadSource', uploadSource);
+        if (relatedEntityId !== null) formData.append('RelatedEntityId', relatedEntityId);
+        if (vendorId !== null) formData.append('VendorId', vendorId);
+        if (description !== null) formData.append('Description', description);
+
+        // Log FormData contents
+        console.log('FormData entries:');
+        for (let pair of formData.entries()) {
+            console.log(pair[0], pair[1]);
+        }
+
+        const url = `${this.baseURL}${API_ENDPOINTS.FILE_UPLOAD.UPLOAD}`;
+        console.log('Upload URL:', url);
+
+        // For FormData, we must NOT set Content-Type - let browser set it with boundary
+        // Set to undefined so it gets removed in the request method
+        const headers = {
+            'Content-Type': undefined,  // This will be removed by the request method
+            'Accept': 'application/json'
+        };
+
         return this.request(url, {
             method: 'POST',
             body: formData,
-            headers: {
-                // Don't set Content-Type for FormData, browser will set it with boundary
-            }
+            headers: headers
         });
     }
 
