@@ -67,6 +67,18 @@ export const API_ENDPOINTS = {
     },
 
     // ProductOption endpoints
+    // Category endpoints
+    CATEGORY: {
+        GET_ALL: '/category',
+    },
+
+    // File Upload endpoints
+    FILE_UPLOAD: {
+        UPLOAD: '/fileupload/upload',
+        DELETE: (id) => `/fileupload/${id}`,
+    },
+
+    // Product Option endpoints
     PRODUCT_OPTION: {
         GET_ALL: '/productoption',
         GET_BY_ID: (id) => `/productoption/${id}`,
