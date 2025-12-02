@@ -370,6 +370,14 @@ class CategoryApiService extends ApiService {
     }
 
     /**
+     * Get all children categories (all categories with their children)
+     * @returns {Promise} All categories with children structure
+     */
+    async getAllChildrenCategories() {
+        return this.get(API_ENDPOINTS.CATEGORY.GET_ALL_CHILDREN);
+    }
+
+    /**
      * Get category hierarchy
      * @returns {Promise} Hierarchical category tree
      */
@@ -477,16 +485,13 @@ class ProductApiService extends ApiService {
     async createProduct(productData) {
         return this.post(API_ENDPOINTS.PRODUCT.GET_ALL, productData); // Assuming POST /product creates a product
     }
-}
 
-/**
- * ProductOption API Service
- * Handles all ProductOption-related API calls
- * Category API Service
- */
-class CategoryApiService extends ApiService {
-    async getAllCategories() {
-        return this.get(API_ENDPOINTS.CATEGORY.GET_ALL);
+    async getPagedProducts(options = {}) {
+        return this.get(API_ENDPOINTS.PRODUCT.GET_PAGED, options);
+    }
+
+    async addToCart(cartData) {
+        return this.post(API_ENDPOINTS.PRODUCT.ADD_TO_CART, cartData);
     }
 }
 
@@ -966,13 +971,225 @@ class FileUploadApiService extends ApiService {
     }
 }
 
+/**
+ * Customer API Service
+ * Handles all Customer-related API calls (Admin)
+ */
+class CustomerApiService extends ApiService {
+    /**
+     * Get all customers with pagination
+     * @param {number} pageNumber - Page number (default: 1)
+     * @param {number} pageSize - Page size (default: 10, max: 100)
+     * @returns {Promise} List of customers with pagination info
+     */
+    async getCustomers(pageNumber = 1, pageSize = 10) {
+        return this.get(API_ENDPOINTS.CUSTOMER.GET_ALL, { pageNumber, pageSize });
+    }
+
+    /**
+     * Create customer (admin only)
+     * @param {Object} customerData - Customer data
+     * @returns {Promise} Created customer
+     */
+    async createCustomer(customerData) {
+        return this.post(API_ENDPOINTS.CUSTOMER.CREATE, customerData);
+    }
+
+    /**
+     * Get customer by ID
+     * @param {number} id - Customer ID
+     * @returns {Promise} Customer details
+     */
+    async getCustomerById(id) {
+        return this.get(API_ENDPOINTS.CUSTOMER.GET_BY_ID(id));
+    }
+
+    /**
+     * Update customer (admin only)
+     * @param {number} id - Customer ID
+     * @param {Object} customerData - Updated customer data
+     * @returns {Promise} Update confirmation
+     */
+    async updateCustomer(id, customerData) {
+        return this.put(API_ENDPOINTS.CUSTOMER.UPDATE(id), customerData);
+    }
+}
+
+/**
+ * Customer Auth API Service
+ * Handles customer authentication and profile management
+ */
+class CustomerAuthApiService extends ApiService {
+    /**
+     * Register new customer
+     * @param {Object} registerData - Registration data (email, password, fullName, etc.)
+     * @returns {Promise} Registration response with access token
+     */
+    async register(registerData) {
+        return this.post(API_ENDPOINTS.CUSTOMER_AUTH.REGISTER, registerData);
+    }
+
+    /**
+     * Customer login
+     * @param {Object} loginData - Login credentials (email, password)
+     * @returns {Promise} Login response with access token and customer info
+     */
+    async login(loginData) {
+        return this.post(API_ENDPOINTS.CUSTOMER_AUTH.LOGIN, loginData);
+    }
+
+    /**
+     * Customer logout
+     * @returns {Promise} Logout confirmation
+     */
+    async logout() {
+        return this.post(API_ENDPOINTS.CUSTOMER_AUTH.LOGOUT, {});
+    }
+
+    /**
+     * Get current customer profile (requires authentication)
+     * @returns {Promise} Customer profile
+     */
+    async getProfile() {
+        return this.get(API_ENDPOINTS.CUSTOMER_AUTH.GET_PROFILE);
+    }
+
+    /**
+     * Update customer profile (requires authentication)
+     * @param {Object} profileData - Profile data to update
+     * @returns {Promise} Update confirmation
+     */
+    async updateProfile(profileData) {
+        return this.put(API_ENDPOINTS.CUSTOMER_AUTH.UPDATE_PROFILE, profileData);
+    }
+}
+
+/**
+ * Customer Business API Service
+ * Handles customer business information management
+ */
+class CustomerBusinessApiService extends ApiService {
+    /**
+     * Get customer business information (requires authentication)
+     * @returns {Promise} Business information
+     */
+    async getBusinessInfo() {
+        return this.get(API_ENDPOINTS.CUSTOMER_BUSINESS.GET_BUSINESS_INFO);
+    }
+
+    /**
+     * Update customer business information (requires authentication)
+     * @param {Object} businessData - Business data to update
+     * @returns {Promise} Update confirmation
+     */
+    async updateBusinessInfo(businessData) {
+        return this.put(API_ENDPOINTS.CUSTOMER_BUSINESS.UPDATE_BUSINESS_INFO, businessData);
+    }
+}
+
+/**
+ * Shopping Cart API Service
+ * Handles all shopping cart operations
+ */
+class ShoppingCartApiService extends ApiService {
+    /**
+     * Get cart (for authenticated or guest users)
+     * @param {string} sessionId - Optional session ID for guest users
+     * @returns {Promise} Cart data with items
+     */
+    async getCart(sessionId = null) {
+        const params = sessionId ? { sessionId } : {};
+        return this.get(API_ENDPOINTS.SHOPPING_CART.GET_CART, params);
+    }
+
+    /**
+     * Merge local cart with server cart (usually after login)
+     * @param {string} sessionId - Optional session ID
+     * @param {Object} localCart - Local cart data to merge
+     * @returns {Promise} Merged cart data
+     */
+    async mergeCart(sessionId = null, localCart = null) {
+        const params = sessionId ? { sessionId } : {};
+        const url = this.buildUrl(API_ENDPOINTS.SHOPPING_CART.MERGE_CART, params);
+        return this.request(url, {
+            method: 'POST',
+            body: JSON.stringify(localCart || {}),
+        });
+    }
+
+    /**
+     * Get cart summary (item count, total price)
+     * @param {string} sessionId - Optional session ID
+     * @returns {Promise} Cart summary
+     */
+    async getCartSummary(sessionId = null) {
+        const params = sessionId ? { sessionId } : {};
+        return this.get(API_ENDPOINTS.SHOPPING_CART.GET_SUMMARY, params);
+    }
+
+    /**
+     * Add item to cart
+     * @param {Object} itemData - Item data (productVariantId, quantity, etc.)
+     * @returns {Promise} Updated cart
+     */
+    async addToCart(itemData) {
+        return this.post(API_ENDPOINTS.SHOPPING_CART.ADD_TO_CART, itemData);
+    }
+
+    /**
+     * Update cart item quantity
+     * @param {number} id - Cart item ID
+     * @param {Object} itemData - Updated item data (cartItemId, quantity)
+     * @param {string} sessionId - Optional session ID
+     * @returns {Promise} Updated cart
+     */
+    async updateCartItem(id, itemData, sessionId = null) {
+        const params = sessionId ? { sessionId } : {};
+        const url = this.buildUrl(API_ENDPOINTS.SHOPPING_CART.UPDATE_ITEM(id), params);
+        return this.request(url, {
+            method: 'PUT',
+            body: JSON.stringify(itemData),
+        });
+    }
+
+    /**
+     * Remove item from cart
+     * @param {number} id - Cart item ID
+     * @param {string} sessionId - Optional session ID
+     * @returns {Promise} Updated cart
+     */
+    async removeCartItem(id, sessionId = null) {
+        const params = sessionId ? { sessionId } : {};
+        const url = this.buildUrl(API_ENDPOINTS.SHOPPING_CART.REMOVE_ITEM(id), params);
+        return this.request(url, { method: 'DELETE' });
+    }
+
+    /**
+     * Clear entire cart
+     * @param {string} sessionId - Optional session ID
+     * @returns {Promise} Confirmation message
+     */
+    async clearCart(sessionId = null) {
+        const params = sessionId ? { sessionId } : {};
+        const url = this.buildUrl(API_ENDPOINTS.SHOPPING_CART.CLEAR_CART, params);
+        return this.request(url, { method: 'DELETE' });
+    }
+}
+
+/**
+ * Custom API Services Exports
+ * Export singleton instances and classes for custom instances
+ *
+ * Each service class extends the base ApiService and
+ * Handles all FileUpload-related API calls
+ */
+
 
 // Export singleton instances
 export const brandApi = new BrandApiService();
 export const businessTypeApi = new BusinessTypeApiService();
 export const categoryApi = new CategoryApiService();
 export const productApi = new ProductApiService();
-
 export const productOptionApi = new ProductOptionApiService();
 export const provinceApi = new ProvinceApiService();
 export const countryApi = new CountryApiService();
@@ -984,6 +1201,10 @@ export const stockAlertApi = new StockAlertApiService();
 export const tokenApi = new TokenApiService();
 export const userApi = new UserApiService();
 export const fileUploadApi = new FileUploadApiService();
+export const customerApi = new CustomerApiService();
+export const customerAuthApi = new CustomerAuthApiService();
+export const customerBusinessApi = new CustomerBusinessApiService();
+export const shoppingCartApi = new ShoppingCartApiService();
 
 // Export classes for custom instances if needed
 export { 
@@ -1002,5 +1223,9 @@ export {
     TokenApiService,
     UserApiService,
     FileUploadApiService,
-    ApiService 
+    ApiService,
+    CustomerApiService,
+    CustomerAuthApiService,
+    CustomerBusinessApiService,
+    ShoppingCartApiService
 };

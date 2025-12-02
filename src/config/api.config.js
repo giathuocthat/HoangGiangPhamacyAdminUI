@@ -46,6 +46,7 @@ export const API_ENDPOINTS = {
         DELETE: (id) => `/category/${id}`,
         GET_ROOT: '/category/root',
         GET_CHILDREN: (parentId) => `/category/${parentId}/children`,
+        GET_ALL_CHILDREN: '/category/allchildren',
         GET_HIERARCHY: '/category/hierarchy',
         GET_FLAT_LIST: '/category/flat',
         SEARCH: '/category/search',
@@ -64,6 +65,8 @@ export const API_ENDPOINTS = {
         GET_BY_ID: (id) => `/product/${id}`,
         GET_BY_CATEGORY: (categoryId) => `/product/category/${categoryId}`,
         SEARCH: '/product/search',
+        GET_PAGED: '/product/getPagedProducts',
+        ADD_TO_CART: '/product/cart',
     },
 
     // ProductOption endpoints
@@ -159,5 +162,39 @@ export const API_ENDPOINTS = {
         UPLOAD_MULTIPLE: '/fileupload/upload-multiple',
         DELETE: (id) => `/fileupload/${id}`,
         DELETE_PERMANENT: (id) => `/fileupload/${id}/permanent`,
+    },
+
+    // Customer endpoints
+    CUSTOMER: {
+        GET_ALL: '/customer',
+        CREATE: '/customer',
+        GET_BY_ID: (id) => `/customer/${id}`,
+        UPDATE: (id) => `/customer/${id}`,
+    },
+
+    // Customer Auth endpoints
+    CUSTOMER_AUTH: {
+        REGISTER: '/customer/auth/register',
+        LOGIN: '/customer/auth/login',
+        LOGOUT: '/customer/auth/logout',
+        GET_PROFILE: '/customer/auth/profile',
+        UPDATE_PROFILE: '/customer/auth/profile',
+    },
+
+    // Customer Business endpoints
+    CUSTOMER_BUSINESS: {
+        GET_BUSINESS_INFO: '/customer/business-info',
+        UPDATE_BUSINESS_INFO: '/customer/business-info',
+    },
+
+    // Shopping Cart endpoints
+    SHOPPING_CART: {
+        GET_CART: '/ShoppingCart',
+        MERGE_CART: '/ShoppingCart',
+        GET_SUMMARY: '/ShoppingCart/summary',
+        ADD_TO_CART: '/ShoppingCart/add',
+        UPDATE_ITEM: (id) => `/ShoppingCart/items/${id}`,
+        REMOVE_ITEM: (id) => `/ShoppingCart/items/${id}`,
+        CLEAR_CART: '/ShoppingCart/clear',
     },
 };
