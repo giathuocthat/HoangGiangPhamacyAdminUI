@@ -462,6 +462,13 @@ export const SidebarData1 = [
         showSubRoute: false,
         route: "/pos-orders",
         subRoutes: []
+      },
+      {
+        tittle: "Create Order",
+        hasSubRoute: false,
+        showSubRoute: false,
+        route: "/create-order",
+        subRoutes: []
       }]
 
     },

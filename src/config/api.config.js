@@ -53,4 +53,36 @@ export const API_ENDPOINTS = {
         GET_BY_ID: (id) => `/productoption/${id}`,
         GET_VALUES: (id) => `/productoption/${id}/values`,
     },
+
+    // Customer endpoints
+    CUSTOMER: {
+        SEARCH: '/customer/search',
+        CREATE: '/customer',
+        GET_BY_ID: (id) => `/customer/${id}`,
+        GET_ALL: '/customer',
+    },
+
+    // Business Type endpoints
+    BUSINESS_TYPE: {
+        GET_ALL: '/businesstype',
+    },
+
+    // Province endpoints
+    PROVINCE: {
+        GET_ALL: '/province',
+    },
+
+    // Ward endpoints
+    WARD: {
+        GET_BY_PROVINCE: (provinceId) => `/ward/GetByProvinceId/${provinceId}`,
+    },
+
+    // Order endpoints
+    ORDER: {
+        GET_LIST: '/order/list',
+        GET_BY_ID: (id) => `/order/${id}`,
+        CREATE_CUSTOMER_ORDER: '/order/customer/place-order',
+        CREATE_ADMIN_ORDER: '/order/admin/create-order',
+        UPDATE_STATUS: (id) => `/order/${id}/status`,
+    },
 };

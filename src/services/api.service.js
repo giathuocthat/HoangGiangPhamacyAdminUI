@@ -221,6 +221,16 @@ class ProductApiService extends ApiService {
     async createProduct(productData) {
         return this.post(API_ENDPOINTS.PRODUCT.GET_ALL, productData); // Assuming POST /product creates a product
     }
+
+    /**
+     * Update an existing product
+     * @param {number} id - Product ID
+     * @param {Object} productData - Product data to update
+     * @returns {Promise} Updated product
+     */
+    async updateProduct(id, productData) {
+        return this.put(API_ENDPOINTS.PRODUCT.GET_BY_ID(id), productData);
+    }
 }
 
 /**
@@ -313,6 +323,150 @@ class ProductOptionApiService extends ApiService {
     }
 }
 
+/**
+ * Customer API Service
+ * Handles all Customer-related API calls
+ */
+class CustomerApiService extends ApiService {
+    /**
+     * Search customers by phone number
+     * @param {string} phoneNumber - Phone number to search
+     * @returns {Promise} List of matching customers
+     */
+    async searchByPhone(phoneNumber) {
+        return this.get(API_ENDPOINTS.CUSTOMER.SEARCH, { phoneNumber });
+    }
+
+    /**
+     * Create a new customer
+     * @param {Object} customerData - Customer data
+     * @returns {Promise} Created customer
+     */
+    async createCustomer(customerData) {
+        return this.post(API_ENDPOINTS.CUSTOMER.CREATE, customerData);
+    }
+
+    /**
+     * Get customer by ID
+     * @param {number} id - Customer ID
+     * @returns {Promise} Customer details
+     */
+    async getCustomerById(id) {
+        return this.get(API_ENDPOINTS.CUSTOMER.GET_BY_ID(id));
+    }
+
+    /**
+     * Get all customers with pagination
+     * @param {number} pageNumber - Page number
+     * @param {number} pageSize - Page size
+     * @returns {Promise} Paginated customer data
+     */
+    async getCustomers(pageNumber = 1, pageSize = 10) {
+        return this.get(API_ENDPOINTS.CUSTOMER.GET_ALL, { pageNumber, pageSize });
+    }
+}
+
+/**
+ * Business Type API Service
+ */
+class BusinessTypeApiService extends ApiService {
+    /**
+     * Get all business types
+     * @param {number} pageNumber - Page number
+     * @param {number} pageSize - Page size
+     * @returns {Promise} Business types
+     */
+    async getAll(pageNumber = 1, pageSize = 100) {
+        return this.get(API_ENDPOINTS.BUSINESS_TYPE.GET_ALL, { pageNumber, pageSize });
+    }
+}
+
+/**
+ * Province API Service
+ */
+class ProvinceApiService extends ApiService {
+    /**
+     * Get all provinces
+     * @param {number} pageNumber - Page number
+     * @param {number} pageSize - Page size
+     * @returns {Promise} Provinces
+     */
+    async getAll(pageNumber = 1, pageSize = 100) {
+        return this.get(API_ENDPOINTS.PROVINCE.GET_ALL, { pageNumber, pageSize });
+    }
+}
+
+/**
+ * Ward API Service
+ */
+class WardApiService extends ApiService {
+    /**
+     * Get wards by province ID
+     * @param {number} provinceId - Province ID
+     * @returns {Promise} Wards
+     */
+    async getByProvince(provinceId) {
+        return this.get(API_ENDPOINTS.WARD.GET_BY_PROVINCE(provinceId));
+    }
+}
+
+/**
+ * Order API Service
+ */
+class OrderApiService extends ApiService {
+    /**
+     * Get orders with pagination and search
+     * @param {number} pageNumber - Page number
+     * @param {number} pageSize - Page size
+     * @param {string} searchText - Search text (phone, email, order number)
+     * @returns {Promise} Paginated orders
+     */
+    async getOrders(pageNumber = 1, pageSize = 10, searchText = null) {
+        const params = { pageNumber, pageSize };
+        if (searchText) {
+            params.searchText = searchText;
+        }
+        return this.get(API_ENDPOINTS.ORDER.GET_LIST, params);
+    }
+
+    /**
+     * Get order by ID
+     * @param {number} id - Order ID
+     * @returns {Promise} Order details
+     */
+    async getOrderById(id) {
+        return this.get(API_ENDPOINTS.ORDER.GET_BY_ID(id));
+    }
+
+    /**
+     * Create order from customer (ecommerce)
+     * @param {Object} orderData - Order data
+     * @returns {Promise} Created order
+     */
+    async createCustomerOrder(orderData) {
+        return this.post(API_ENDPOINTS.ORDER.CREATE_CUSTOMER_ORDER, orderData);
+    }
+
+    /**
+     * Create order from admin
+     * @param {Object} orderData - Order data
+     * @returns {Promise} Created order
+     */
+    async createAdminOrder(orderData) {
+        return this.post(API_ENDPOINTS.ORDER.CREATE_ADMIN_ORDER, orderData);
+    }
+
+    /**
+     * Update order status
+     * @param {number} id - Order ID
+     * @param {string} newStatus - New status
+     * @returns {Promise} Updated order
+     */
+    async updateOrderStatus(id, newStatus) {
+        return this.put(API_ENDPOINTS.ORDER.UPDATE_STATUS(id), { newStatus });
+    }
+}
+
 
 // Export singleton instances
 export const brandApi = new BrandApiService();
@@ -320,7 +474,24 @@ export const productApi = new ProductApiService();
 export const categoryApi = new CategoryApiService();
 export const fileUploadApi = new FileUploadApiService();
 export const productOptionApi = new ProductOptionApiService();
+export const customerApi = new CustomerApiService();
+export const businessTypeApi = new BusinessTypeApiService();
+export const provinceApi = new ProvinceApiService();
+export const wardApi = new WardApiService();
+export const orderApi = new OrderApiService();
 
 // Export classes for custom instances if needed
-export { BrandApiService, ProductApiService, CategoryApiService, FileUploadApiService, ProductOptionApiService, ApiService };
+export {
+    BrandApiService,
+    ProductApiService,
+    CategoryApiService,
+    FileUploadApiService,
+    ProductOptionApiService,
+    CustomerApiService,
+    BusinessTypeApiService,
+    ProvinceApiService,
+    WardApiService,
+    OrderApiService,
+    ApiService
+};
 

@@ -65,17 +65,31 @@ const AddProduct = () => {
       console.log("Brands data:", brandsData);
       console.log("Product options data:", optionsData);
 
+      // Parse categories - handle both array and pagination wrapper
+      let categoryList = [];
       if (Array.isArray(categoriesData)) {
-        setCategories(categoriesData.map(c => ({ label: c.name, value: c.id })));
+        categoryList = categoriesData;
+      } else if (categoriesData?.data?.data) {
+        // Has pagination wrapper: { data: { data: [...], pagination: {...} } }
+        categoryList = categoriesData.data.data;
       } else if (categoriesData?.data) {
-        setCategories(categoriesData.data.map(c => ({ label: c.name, value: c.id })));
+        // Simple wrapper: { data: [...] }
+        categoryList = Array.isArray(categoriesData.data) ? categoriesData.data : [];
       }
+      setCategories(categoryList.map(c => ({ label: c.name, value: c.id })));
 
-      if (brandsData?.data && Array.isArray(brandsData.data)) {
-        setBrands(brandsData.data.map(b => ({ label: b.name, value: b.id })));
-      } else if (Array.isArray(brandsData)) {
-        setBrands(brandsData.map(b => ({ label: b.name, value: b.id })));
+      // Parse brands - handle both array and pagination wrapper
+      let brandList = [];
+      if (Array.isArray(brandsData)) {
+        brandList = brandsData;
+      } else if (brandsData?.data?.data) {
+        // Has pagination wrapper
+        brandList = brandsData.data.data;
+      } else if (brandsData?.data) {
+        // Simple wrapper
+        brandList = Array.isArray(brandsData.data) ? brandsData.data : [];
       }
+      setBrands(brandList.map(b => ({ label: b.name, value: b.id })));
 
       // Process product options
       if (Array.isArray(optionsData)) {
