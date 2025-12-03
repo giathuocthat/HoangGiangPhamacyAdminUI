@@ -1052,7 +1052,7 @@ const Customers = () => {
           <div className="modal-dialog modal-dialog-centered modal-lg">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Customer Details</h5>
+                <h5 className="modal-title">Thông tin chi tiết Khách hàng</h5>
                 <button 
                   type="button" 
                   className="btn-close" 

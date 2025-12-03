@@ -1,3 +1,4 @@
+// Test làm theo kiểu Mock Server với CSV file
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs/promises';
@@ -33,6 +34,34 @@ async function writeCsv(rows) {
   await fs.mkdir(path.dirname(csvPath), { recursive: true });
   await fs.writeFile(csvPath, csv, 'utf8');
 }
+
+// Hàm helper để đọc giá trị từ nhiều tiêu đề có thể có trong CSV
+const readField = (r, keys) => {
+    for (const k of keys) {
+        if (r[k] !== undefined && r[k] !== null) return String(r[k]);
+    }
+    return '';
+};
+
+// Hàm tạo slug
+const toSlug = (str) => {
+  if (!str) return "";
+  return String(str)
+  // NLP: Chuẩn hóa tiếng Việt thành slug
+    .toLowerCase()
+    // 1. Xử lý 'đ' và 'Đ' bằng cách thay thế chúng bằng 'd'
+    .replace(/đ/g, 'd')
+    // 2. Chuẩn hóa chuỗi (tách các ký tự có dấu ra)
+    .normalize("NFD")
+    // 3. Loại bỏ dấu (các ký tự hợp thành dấu)
+    .replace(/[\u0300-\u036f]/g, "")
+    // 4. Loại bỏ các ký tự không phải chữ cái, số, khoảng trắng hoặc gạch ngang
+    .replace(/[^a-z0-9\s-]/g, "")
+    // 5. Thay thế khoảng trắng bằng gạch ngang
+    .replace(/\s+/g, "-")
+    // 6. Cắt khoảng trắng dư thừa ở đầu và cuối
+    .trim(); 
+};
 
 // GET all products
 app.get('/api/products', async (req, res) => {
@@ -208,6 +237,118 @@ app.get('/api/products/:id', async (req, res) => {
     console.error('Get product by id error', err);
     res.status(500).json({ error: 'Failed to read product' });
   }
+});
+
+app.get('/api/categories', async (req, res) => {
+    try {
+        let productRows = await readCsv(); 
+        
+        const allCategoryPaths = [];
+        productRows.forEach(r => {
+            const fieldContent = readField(r, ['Danh mục', 'Danh muc', 'Category', 'category']);
+            if (fieldContent) {
+                // [FIX]: Tách chuỗi bằng dấu phẩy (,) trước, để xử lý từng đường dẫn riêng biệt
+                const individualPaths = fieldContent.split(',').map(p => p.trim()).filter(p => p.length > 0);
+                allCategoryPaths.push(...individualPaths);
+            }
+        });
+
+        const uniqueCategoryPaths = [...new Set(allCategoryPaths)];
+        
+        // Sắp xếp để đảm bảo cha được xây dựng trước con
+        uniqueCategoryPaths.sort((a, b) => a.split('>').length - b.split('>').length);
+        
+        const tree = {}; 
+        let nodeKeyCounter = 0; 
+
+        uniqueCategoryPaths.forEach(path => {
+            // path.split('>') bây giờ chỉ xử lý đường dẫn phân cấp sạch (ví dụ: "A > B")
+            const parts = path.split('>').map(p => p.trim()).filter(p => p.length > 0);
+            
+            let currentLevel = tree;
+            let currentPathKey = '';
+
+            parts.forEach((partName, index) => {
+                const nameKey = partName;
+
+                if (!currentLevel[nameKey]) {
+                    const categorySlug = toSlug(partName);
+                    currentPathKey += (currentPathKey ? '-' : '') + categorySlug;
+
+                    // Tạo node mới
+                    currentLevel[nameKey] = {
+                        key: currentPathKey,
+                        data: { 
+                            id: ++nodeKeyCounter,
+                            category: partName, 
+                            categoryslug: categorySlug,
+                            createdon: "25 May 2023",
+                            status: "Active"
+                        },
+                    };
+                } else {
+                    currentPathKey = currentLevel[nameKey].key;
+                }
+                
+                // TẠO THUỘC TÍNH children (là đối tượng tạm) NẾU NÓ LÀ NODE CHA TRUNG GIAN
+                const isIntermediateNode = index < parts.length - 1;
+
+                if (isIntermediateNode) {
+                    // Đảm bảo node trung gian luôn có children là một đối tượng để tiếp tục xây dựng
+                    if (!currentLevel[nameKey].children) {
+                        currentLevel[nameKey].children = {}; 
+                    }
+                    // Di chuyển xuống cấp con
+                    currentLevel = currentLevel[nameKey].children;
+                } else {
+                    // Nếu là node lá, giữ nguyên cấp độ hiện tại (không di chuyển xuống)
+                    currentLevel = currentLevel[nameKey]; 
+                }
+            });
+        });
+
+        // --- HÀM ĐỆ QUY CHUYỂN CẤU TRÚC OBJECT SANG ARRAY CHUẨN TRUETABLE ---
+        const mapTreeToArray = (treeObject) => {
+            // Lấy tất cả các node con của cấp hiện tại
+            const nodes = Object.values(treeObject); 
+            
+            if (!treeObject || nodes.length === 0) {
+                return []; 
+            }
+            
+            return nodes.map(node => {
+                
+                let childrenArray = [];
+                // Kiểm tra xem có cần đệ quy không (kiểm tra children object tạm thời)
+                const hasIntermediateChildren = node.children && Object.keys(node.children).length > 0;
+
+                if (hasIntermediateChildren) {
+                    childrenArray = mapTreeToArray(node.children);
+                }
+                
+                if (childrenArray.length > 0) {
+                    // Node Cha: Trả về node với children là MẢNG
+                    const { children: _, ...nodeWithoutObjectChildren } = node;
+                    return { 
+                        ...nodeWithoutObjectChildren, 
+                        children: childrenArray 
+                    };
+                }
+                
+                // Node Lá: Loại bỏ thuộc tính 'children' hoàn toàn
+                const { children: _, ...nodeWithoutChildren } = node;
+                return nodeWithoutChildren;
+            });
+        };
+
+        const treeData = mapTreeToArray(tree);
+
+        res.json({ data: treeData, total: treeData.length, page: 1, rows: treeData.length });
+
+    } catch (err) {
+        console.error('Categories CSV Tree error', err);
+        res.status(500).json({ error: 'Failed to read categories tree' });
+    }
 });
 
 const server = app.listen(PORT, () => {
