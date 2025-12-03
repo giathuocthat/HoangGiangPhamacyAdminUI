@@ -260,8 +260,8 @@ class BusinessTypeApiService extends ApiService {
      * Get all business types
      * @returns {Promise} List of business types
      */
-    async getBusinessTypes() {
-        return this.get(API_ENDPOINTS.BUSINESS_TYPE.GET_ALL);
+    async getBusinessTypes(params = {}) {
+        return this.get(API_ENDPOINTS.BUSINESS_TYPE.GET_ALL, params);
     }
 
     /**
@@ -311,7 +311,7 @@ class CategoryApiService extends ApiService {
      * Get all categories
      * @returns {Promise} List of categories
      */
-    async getCategories() {
+    async getAllCategories() {
         return this.get(API_ENDPOINTS.CATEGORY.GET_ALL);
     }
 
@@ -556,8 +556,8 @@ class ProvinceApiService extends ApiService {
      * Get all provinces
      * @returns {Promise} List of provinces
      */
-    async getProvinces() {
-        return this.get(API_ENDPOINTS.PROVINCE.GET_ALL);
+    async getProvinces(params = {}) {
+        return this.get(API_ENDPOINTS.PROVINCE.GET_ALL, params);
     }
 
     /**
@@ -602,8 +602,8 @@ class WardApiService extends ApiService {
      * Get all wards
      * @returns {Promise} List of wards
      */
-    async getWards() {
-        return this.get(API_ENDPOINTS.WARD.GET_ALL);
+    async getWards(params = {}) {
+        return this.get(API_ENDPOINTS.WARD.GET_ALL, params);
     }
 
     /**
@@ -614,6 +614,15 @@ class WardApiService extends ApiService {
     async getWardById(id) {
         return this.get(API_ENDPOINTS.WARD.GET_BY_ID(id));
     }
+
+    /**
+     * Get Ward By Province Id
+     * @param {*} provinceId - province Id tương ứng với Ward
+     * @returns 
+     */
+    async getWardsByProvinceId(provinceId) {
+    return this.get(API_ENDPOINTS.WARD.GET_BY_PROVINCE(provinceId));
+}
 }
 
 /**
@@ -961,8 +970,11 @@ class CustomerApiService extends ApiService {
      * @param {number} pageSize - Page size (default: 10, max: 100)
      * @returns {Promise} List of customers with pagination info
      */
-    async getCustomers(pageNumber = 1, pageSize = 10) {
-        return this.get(API_ENDPOINTS.CUSTOMER.GET_ALL, { pageNumber, pageSize });
+    async getCustomers(pageNumber = 1, pageSize = 10, searchQuery = "") {
+        const params = {pageNumber, pageSize, searchQuery: searchQuery || undefined // Chỉ gửi nếu có giá trị
+        };
+        // Dựa trên CustomerController.cs, API trả về object chứa Data và Pagination
+        return this.get(API_ENDPOINTS.CUSTOMER.GET_ALL, params); 
     }
 
     /**

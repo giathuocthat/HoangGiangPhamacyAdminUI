@@ -100,6 +100,7 @@ export const API_ENDPOINTS = {
     WARD: {
         GET_ALL: '/ward',
         GET_BY_ID: (id) => `/ward/${id}`,
+        GET_BY_PROVINCE: (provinceId) => `/ward/GetByProvinceId/${provinceId}`,
     },
 
     // Warehouse endpoints
