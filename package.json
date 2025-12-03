@@ -6,7 +6,7 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
-    "api": "node server/index.js",
+    "api": "node server/callAPI.js",
     "build": "vite build",
     "lint": "eslint src server --ext .js,.jsx",
     "preview": "vite preview",
@@ -32,7 +32,8 @@
     "react-feather": "^2.0.10",
     "react-select": "^5.10.2",
     "react-simple-wysiwyg": "^3.4.1",
-    "react-star-ratings": "^2.3.0"
+    "react-star-ratings": "^2.3.0",
+    "react-toastify": "^11.0.5"
   },
   "devDependencies": {
     "@babel/cli": "^7.28.3",

@@ -112,6 +112,12 @@ const AddProduct = () => {
   const handleGenerateSlug = () => {
     const generatedSlug = productName
       .toLowerCase()
+      .replace(/đ/g, 'd')
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/-+/g, "-")
+      .replace(/\s+/g, "-")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)+/g, "");
     setSlug(generatedSlug);
@@ -831,3 +837,449 @@ const AddProduct = () => {
 };
 
 export default AddProduct;
+
+// import { useState, useEffect, useRef } from "react";
+// import { Link, useNavigate } from "react-router-dom";
+// import { all_routes } from "../../routes/all_routes";
+// import { toast } from "react-toastify";
+// import { Editor } from "primereact/editor";
+// import CommonSelect from "../../components/select/common-select";
+// import {
+//   productApi,
+//   brandApi,
+//   categoryApi,
+//   fileUploadApi,
+// } from "../../services/api.service"; 
+
+// // --- URL PLACEHOLDER AN TOÀN ---
+// const PLACEHOLDER_IMAGE_URL = "https://via.placeholder.com/150/E5E5E5/000000?text=No+Image";
+
+// // --- HÀM HELPER: TẠO SLUG ---
+// const toSlug = (str) => {
+//     if (!str) return "";
+//     return String(str)
+//       .toLowerCase()
+//       .replace(/đ/g, 'd')
+//       .normalize("NFD")
+//       .replace(/[\u0300-\u036f]/g, "")
+//       .replace(/[^a-z0-9\s-]/g, "")
+//       .replace(/-+/g, "-")
+//       .replace(/\s+/g, "-")
+//       .trim();
+// };
+
+// // --- HÀM HELPER: LÀM PHẲNG DANH MỤC ---
+// const flattenCategories = (nodes, prefix = '') => {
+//     let result = [];
+//     nodes.forEach(node => {
+//         const name = prefix ? `${prefix} > ${node.name || node.categoryName}` : (node.name || node.categoryName);
+//         result.push({ value: node.id, label: name });
+//         if (node.children?.length > 0) {
+//             result = result.concat(flattenCategories(node.children, name));
+//         }
+//     });
+//     return result;
+// };
+
+
+// const AddProduct = () => {
+//   const navigate = useNavigate();
+//   const route = all_routes;
+//   const fileInputRef = useRef(null);
+
+//   // --- STATE QUẢN LÝ DỮ LIỆU ---
+//   const [formData, setFormData] = useState({
+//     name: "",
+//     slug: "",
+//     shortDescription: "",
+//     fullDescription: "",
+//     categoryId: null,
+//     brandId: null,
+//     thumbnailUrl: "", 
+//     ingredients: "",
+//     usageInstructions: "",
+//     contraindications: "",
+//     storageInstructions: "",
+//     registrationNumber: "",
+//     isPrescriptionDrug: false,
+//     isActive: true,
+//     isFeatured: false,
+//     sku: "",
+//     price: "",
+//     stockQuantity: "",
+//   });
+
+//   const [brandsList, setBrandsList] = useState([]);
+//   const [categoriesList, setCategoriesList] = useState([]);
+  
+//   const [loading, setLoading] = useState(false);
+//   const [uploadingImage, setUploadingImage] = useState(false);
+
+//   // FIX HIỂN THỊ DROPDOWN
+//   const getSelectedOption = (list, val) => {
+//     if (val === null || val === undefined) return null;
+//     return list.find(i => String(i.value) === String(val)) || null;
+//   };
+
+
+//   // --- 1. LOAD DỮ LIỆU DROPDOWN (Tải song song) ---
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       setLoading(true);
+//       try {
+//         const [brandRes, categoryRes] = await Promise.all([
+//             brandApi.getBrands(1, 100).catch(() => ({ data: [] })), 
+//             categoryApi.getCategories().catch(() => ({ data: [] }))
+//         ]);
+
+//         // Xử lý Brands
+//         let brandsData = Array.isArray(brandRes) ? brandRes : (brandRes.data || []);
+//         setBrandsList(brandsData.map(b => ({ value: b.id, label: b.name })));
+
+//         // Xử lý Categories
+//         let rawCategories = Array.isArray(categoryRes) ? categoryRes : (categoryRes.data || []);
+//         const hasChildren = rawCategories.some(c => c.children?.length > 0);
+//         const formattedCategories = hasChildren 
+//             ? flattenCategories(rawCategories) 
+//             : rawCategories.map(c => ({ value: c.id, label: c.name || c.categoryName }));
+        
+//         setCategoriesList(formattedCategories);
+
+//       } catch (error) {
+//         console.error("Error loading data:", error);
+//         toast.error("Lỗi khi tải danh sách Brand/Category.");
+//       } finally {
+//         setLoading(false); 
+//       }
+//     };
+//     fetchData();
+//   }, []);
+
+
+//   // --- 2. XỬ LÝ FORM INPUT ---
+//   const handleInputChange = (e) => {
+//     const { name, value } = e.target;
+    
+//     setFormData(prev => {
+//         const newData = { ...prev, [name]: value };
+        
+//         if (name === "name") {
+//             newData.slug = toSlug(value);
+//         }
+        
+//         return newData;
+//     });
+//   };
+
+//   const handleCheckboxChange = (e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.checked }));
+  
+//   const handleSelectChange = (fieldName, option) => {
+//     setFormData(prev => ({ ...prev, [fieldName]: option ? option.value : null }));
+//   };
+
+//   const handleDescriptionChange = (html) => setFormData(prev => ({ ...prev, fullDescription: html }));
+
+//   // --- 3. XỬ LÝ UPLOAD ẢNH (Dùng URL thật nếu có) ---
+//   const handleImageUpload = async (event) => {
+//     const file = event.target.files[0];
+//     if (!file) return;
+
+//     setUploadingImage(true);
+//     const formDataUpload = new FormData();
+//     formDataUpload.append("File", file); 
+
+//     try {
+//       const response = await fileUploadApi.uploadSingle(formDataUpload);
+//       const imageUrl = response.filePath || response.url || response; 
+
+//       if (imageUrl && typeof imageUrl === 'string') {
+//         setFormData(prev => ({ ...prev, thumbnailUrl: imageUrl }));
+//         toast.success("Upload ảnh thành công!");
+//       } else {
+//         toast.error("Upload thất bại: Không nhận được URL ảnh.");
+//       }
+//     } catch (error) {
+//       console.error("Upload failed:", error);
+//       const errorMessage = error.message || "Lỗi không xác định";
+//       toast.error("Upload thất bại: " + errorMessage);
+//     } finally {
+//       setUploadingImage(false);
+//       if (fileInputRef.current) fileInputRef.current.value = "";
+//     }
+//   };
+
+//   const handleRemoveImage = () => setFormData(prev => ({ ...prev, thumbnailUrl: "" }));
+
+
+//   // --- HÀM CHUNG GỌI API CREATE PRODUCT ---
+//   const callCreateProductApi = async (payload) => {
+//       setLoading(true);
+      
+//       console.log("Payload sent to createProduct API:", payload);
+
+//       try {
+//         await productApi.createProduct(payload);
+//         toast.success("Thêm sản phẩm thành công!");
+//         // Sau khi thêm thành công, chuyển hướng về productlist
+//         navigate(route.productlist); 
+//       } catch (error) {
+//         console.error("Create failed:", error);
+//         const errorMessage = error.message || "Lỗi không xác định";
+//         toast.error("Thêm sản phẩm thất bại: " + errorMessage);
+//       } finally {
+//         setLoading(false);
+//       }
+//   }
+
+//   // --- 4. SUBMIT FORM (CREATE PRODUCT) DỮ LIỆU THỰC TỪ NGƯỜI DÙNG ---
+//   const handleSubmit = async (e) => {
+//     e.preventDefault(); 
+    
+//     // VALIDATION: Kiểm tra các trường bắt buộc
+//     if (!formData.name || !formData.categoryId || !formData.brandId || !formData.sku || !formData.price) {
+//       toast.warn("Vui lòng điền đầy đủ các trường bắt buộc (*): Tên, Category, Brand, SKU, Price.");
+//       return;
+//     }
+    
+//     // CHUẨN BỊ IMAGE URL AN TOÀN (Dùng ảnh upload hoặc placeholder)
+//     const finalImageUrl = formData.thumbnailUrl || PLACEHOLDER_IMAGE_URL;
+
+//     const payload = {
+//       ...formData,
+      
+//       // FIX LỖI 400: Đảm bảo các trường string phức tạp luôn là chuỗi
+//       shortDescription: String(formData.shortDescription || ""),
+//       fullDescription: String(formData.fullDescription || ""),
+
+//       // Đảm bảo kiểu dữ liệu là số
+//       price: parseFloat(formData.price),
+//       stockQuantity: parseInt(formData.stockQuantity) || 0,
+      
+//       // SỬ DỤNG URL AN TOÀN
+//       thumbnailUrl: finalImageUrl,
+      
+//       // Cấu trúc ProductsImages (LUÔN GỬI 1 PHẦN TỬ ĐỂ TRÁNH LỖI 500 NULL REFERENCE)
+//       images: [{
+//           imageUrl: finalImageUrl,
+//           altText: formData.name,
+//           displayOrder: 1
+//       }],
+      
+//       // Cấu trúc ProductVariants (LUÔN GỬI 1 PHẦN TỬ ĐỂ TRÁNH LỖI 500 NULL REFERENCE)
+//       productVariants: [{
+//           sku: formData.sku,
+//           price: parseFloat(formData.price),
+//           stockQuantity: parseInt(formData.stockQuantity) || 0,
+//           originalPrice: parseFloat(formData.price), // Có thể là giá cũ nếu có, tạm bằng price
+//           imageUrl: finalImageUrl, 
+//           isActive: true
+//       }]
+//     };
+    
+//     await callCreateProductApi(payload);
+//   };
+  
+//   // --- 5. SUBMIT SẢN PHẨM MẪU (DỮ LIỆU CỐ ĐỊNH AN TOÀN) ---
+//   const handleSampleSubmit = async () => {
+    
+//     if (loading || uploadingImage) return; 
+    
+//     // Lấy ID đầu tiên có sẵn trong danh sách để đảm bảo tồn tại trong DB
+//     const MOCK_CATEGORY_ID = categoriesList.length > 0 ? categoriesList[0].value : 1; 
+//     const MOCK_BRAND_ID = brandsList.length > 0 ? brandsList[0].value : 1;    
+//     const timestamp = Date.now();
+
+//     // Check nếu không có ID nào hợp lệ
+//     if (!MOCK_CATEGORY_ID || !MOCK_BRAND_ID) {
+//         toast.error("Không tìm thấy Category hoặc Brand ID hợp lệ để tạo sản phẩm mẫu.");
+//         return;
+//     }
+    
+//     const payload = {
+//         categoryId: MOCK_CATEGORY_ID, 
+//         brandId: MOCK_BRAND_ID,       
+        
+//         name: `Sample Product ${timestamp}`,
+//         slug: `sample-product-${timestamp}`, 
+//         thumbnailUrl: PLACEHOLDER_IMAGE_URL,
+        
+//         shortDescription: "Mô tả ngắn của sản phẩm mẫu, dùng để test API.",
+//         fullDescription: "<p>Mô tả chi tiết sản phẩm dùng để test API, kiểm tra dữ liệu đầy đủ.</p>",
+//         ingredients: "Thành phần mẫu",
+//         usageInstructions: "Hướng dẫn mẫu",
+//         contraindications: "Chống chỉ định mẫu",
+//         storageInstructions: "Bảo quản mẫu",
+//         registrationNumber: "REG-TEST-999",
+        
+//         isPrescriptionDrug: true,
+//         isActive: true,
+//         isFeatured: true,
+        
+//         images: [{
+//             imageUrl: PLACEHOLDER_IMAGE_URL,
+//             altText: "Image Alt Text",
+//             displayOrder: 1
+//         }],
+        
+//         productVariants: [{
+//             sku: `SKU-TEST-${timestamp}`,
+//             barcode: `BAR-${timestamp}`,
+//             price: 150000.00,
+//             originalPrice: 150000.00,
+//             stockQuantity: 100,
+//             weight: 0.5,
+//             dimensions: "10x10x10cm",
+//             imageUrl: PLACEHOLDER_IMAGE_URL,
+//             isActive: true
+//         }]
+//     };
+    
+//     await callCreateProductApi(payload);
+//   };
+
+
+//   // --- PHẦN RENDER (JSX) ---
+//   return (
+//     <div className="page-wrapper">
+//       <div className="content">
+//         <div className="page-header">
+//           <div className="add-item d-flex">
+//             <div className="page-title">
+//               <h4>Create Product</h4>
+//             </div>
+//           </div>
+//           <ul className="table-top-head">
+//             <li><Link to={route.productlist} className="btn btn-secondary"><i className="feather icon-arrow-left me-2" />Back</Link></li>
+//           </ul>
+//         </div>
+
+//         <form onSubmit={handleSubmit} className="add-product-form">
+//           <div className="card">
+//             <div className="card-header"><h5 className="card-title">Product Information</h5></div>
+//             <div className="card-body">
+//                 <div className="row">
+//                     <div className="col-sm-6 mb-3">
+//                         <label className="form-label">Name <span className="text-danger">*</span></label>
+//                         <input type="text" className="form-control" name="name" value={formData.name} onChange={handleInputChange} required />
+//                     </div>
+//                     <div className="col-sm-6 mb-3">
+//                         <label className="form-label">Slug <span className="text-muted">(Auto-generated)</span></label>
+//                         <input type="text" className="form-control bg-light" name="slug" value={formData.slug} readOnly />
+//                     </div>
+                    
+//                     <div className="col-sm-6 mb-3">
+//                         <label className="form-label">Category <span className="text-danger">*</span></label>
+//                         <CommonSelect
+//                             className="w-100"
+//                             options={categoriesList}
+//                             value={getSelectedOption(categoriesList, formData.categoryId)} 
+//                             onChange={(opt) => handleSelectChange("categoryId", opt)}
+//                             placeholder={loading ? "Loading..." : "Choose Category"}
+//                             isDisabled={loading}
+//                         />
+//                     </div>
+//                     <div className="col-sm-6 mb-3">
+//                         <label className="form-label">Brand <span className="text-danger">*</span></label>
+//                         <CommonSelect
+//                             className="w-100"
+//                             options={brandsList}
+//                             value={getSelectedOption(brandsList, formData.brandId)} 
+//                             onChange={(opt) => handleSelectChange("brandId", opt)}
+//                             placeholder={loading ? "Loading..." : "Choose Brand"}
+//                             isDisabled={loading}
+//                         />
+//                     </div>
+                    
+//                     <div className="col-12 mb-3">
+//                         <label className="form-label">Short Description</label>
+//                         <textarea className="form-control" rows={3} name="shortDescription" value={formData.shortDescription} onChange={handleInputChange} />
+//                     </div>
+//                     <div className="col-12 mb-3">
+//                         <label className="form-label">Full Description</label>
+//                         <Editor value={formData.fullDescription} onTextChange={(e) => handleDescriptionChange(e.htmlValue)} style={{ height: "150px" }} />
+//                     </div>
+//                 </div>
+//             </div>
+//           </div>
+
+//           <div className="card mt-3">
+//              <div className="card-header"><h5 className="card-title">Pharma & Pricing</h5></div>
+//              <div className="card-body">
+//                 <div className="row">
+//                     <div className="col-sm-6 mb-3">
+//                         <label className="form-label">Registration Number</label>
+//                         <input type="text" className="form-control" name="registrationNumber" value={formData.registrationNumber} onChange={handleInputChange} />
+//                     </div>
+//                     <div className="col-sm-6 mb-3 d-flex align-items-center pt-4">
+//                         <div className="form-check form-switch">
+//                             <input className="form-check-input" type="checkbox" role="switch" id="isPrescriptionDrug" name="isPrescriptionDrug" checked={formData.isPrescriptionDrug} onChange={handleCheckboxChange} />
+//                             <label className="form-check-label ms-2" htmlFor="isPrescriptionDrug">Thuốc kê đơn?</label>
+//                         </div>
+//                     </div>
+//                     <div className="col-sm-4 mb-3">
+//                         <label className="form-label">SKU <span className="text-danger">*</span></label>
+//                         <input type="text" className="form-control" name="sku" value={formData.sku} onChange={handleInputChange} required />
+//                     </div>
+//                     <div className="col-sm-4 mb-3">
+//                         <label className="form-label">Price <span className="text-danger">*</span></label>
+//                         <input type="number" className="form-control" name="price" value={formData.price} onChange={handleInputChange} required min="0" />
+//                     </div>
+//                     <div className="col-sm-4 mb-3">
+//                         <label className="form-label">Stock Quantity</label>
+//                         <input type="number" className="form-control" name="stockQuantity" value={formData.stockQuantity} onChange={handleInputChange} min="0" />
+//                     </div>
+//                 </div>
+//              </div>
+//           </div>
+
+//           <div className="card mt-3">
+//             <div className="card-header"><h5 className="card-title">Images (Optional for Testing)</h5></div>
+//             <div className="card-body">
+//                 <div className="image-upload-container text-center border p-4 rounded bg-light">
+//                     <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="d-none" id="img-upload" />
+//                     {!formData.thumbnailUrl ? (
+//                         <label htmlFor="img-upload" className="cursor-pointer">
+//                             {uploadingImage ? <div className="spinner-border text-primary"></div> : 
+//                             <div className="d-flex flex-col align-items-center justify-content-center">
+//                                 <i className="feather icon-image fs-1 mb-2 text-primary" />
+//                                 <h5 className="text-primary">Click to upload image</h5>
+//                                 <small className="text-muted">(Nếu bỏ qua, sẽ dùng ảnh placeholder)</small>
+//                             </div>}
+//                         </label>
+//                     ) : (
+//                         <div className="position-relative d-inline-block">
+//                             <img src={formData.thumbnailUrl} alt="Thumbnail" style={{ maxHeight: '200px', maxWidth: '100%' }} className="img-thumbnail" />
+//                             <button type="button" className="btn btn-danger btn-sm position-absolute top-0 end-0 rounded-circle" onClick={handleRemoveImage} style={{ transform: 'translate(50%, -50%)' }}><i className="feather icon-x" /></button>
+//                         </div>
+//                     )}
+//                 </div>
+//             </div>
+//           </div>
+
+//           <div className="col-lg-12 mt-4 mb-4">
+//               <div className="d-flex align-items-center justify-content-end">
+//                 <button type="button" className="btn btn-secondary me-2" onClick={() => navigate(route.productlist)} disabled={loading || uploadingImage}>Cancel</button>
+                
+//                 {/* NÚT THÊM SẢN PHẨM MẪU */}
+//                 <button 
+//                   type="button" 
+//                   className="btn btn-info me-2 text-white" 
+//                   onClick={handleSampleSubmit} 
+//                   disabled={loading || uploadingImage}
+//                 >
+//                   {loading && <span className="spinner-border spinner-border-sm me-2"/>} Add Sample Product
+//                 </button>
+                
+//                 {/* NÚT SUBMIT FORM DỮ LIỆU THỰC */}
+//                 <button type="submit" className="btn btn-primary" disabled={loading || uploadingImage}>
+//                   {loading && <span className="spinner-border spinner-border-sm me-2"/>} Add Product
+//                 </button>
+//               </div>
+//             </div>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AddProduct;
