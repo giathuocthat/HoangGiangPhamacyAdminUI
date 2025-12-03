@@ -14,12 +14,12 @@
 }
 /* Cấp 2, 3, ... (tùy chọn) */
 .p-treetable .p-treetable-tbody tr[aria-level="2"] > td {
-    font-weight: bold; 
-    background-color: #f8f9fa !important; 
+    font-weight: normal; 
+
 }
 
 /* ======================================================= */
-/* 2. FIX SỰ KIỆN CLICK (QUAN TRỌNG NHẤT) */
+/* 2. FIX SỰ KIỆN CLICK */
 /* ======================================================= */
 /* Đảm bảo nút mở rộng (toggler button) luôn có thể click được */
 .p-treetable .p-treetable-toggler {
@@ -28,7 +28,7 @@
 }
 
 /* ======================================================= */
-/* 3. THAY ICON MŨI TÊN (THEO YÊU CẦU CŨ) */
+/* 3. THAY ICON MŨI TÊN */
 /* ======================================================= */
 /* Thêm icon MŨI TÊN SANG PHẢI cho trạng thái ĐÓNG (icon chevron-right) */
 .p-treetable .p-treetable-tbody > tr[aria-expanded="false"] .p-treetable-toggler-icon::before {

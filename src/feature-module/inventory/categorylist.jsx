@@ -92,7 +92,6 @@ const CategoryList = () => {
       try {
         // Load toàn bộ hierarchy như ban đầu
         const response = await categoryApi.getCategoryHierarchy();
-
         if (mounted) {
           const rawData = Array.isArray(response) ? response : (response.data || []);
           
@@ -156,7 +155,7 @@ const CategoryList = () => {
 
             console.log('📊 Found Node:', node);
             console.log(`🔄 Calling API for category ID: ${node.data.id}`);
-            console.log(`📡 API URL: /api/Category/${node.data.id}/children`);
+            console.log(`📡 API URL: /api/category/${node.data.id}/children`);
             
             // Call API để lấy children mới nhất
             const response = await categoryApi.getChildrenCategories(node.data.id);
@@ -220,7 +219,7 @@ const CategoryList = () => {
       setShowViewModal(true);
       
       console.log(`👁️ Fetching category detail for ID: ${categoryId}`);
-      console.log(`📡 API URL: /api/Category/${categoryId}`);
+      console.log(`📡 API URL: /api/category/${categoryId}`);
       
       // Call API để lấy thông tin chi tiết category
       const response = await categoryApi.getCategoryById(categoryId);
@@ -271,45 +270,17 @@ const CategoryList = () => {
 
   // ==================== DATA TABLE COLUMNS CONFIG ====================
   const columns = [
-    {
-      header: "ID",
-      field: "id",
-      key: "id",
-      sortable: true
-    },
-    {
-      header: "Category",
-      field: "category",
-      key: "category",
-      sortable: true,
-    },
-    {
-      header: "Category Slug",
-      field: "categoryslug",
-      key: "categoryslug",
-      sortable: true
-    },
-    {
-      header: "Created Date",
-      field: "createdDate",
-      key: "createdDate",
-      sortable: true
-    },
-    {
-      header: "Status",
-      field: "status",
-      key: "status",
-      sortable: true,
+    { header: "ID", field: "id", key: "id", sortable: true},
+    { header: "Danh mục", field: "category", key: "category", sortable: true,},
+    { header: "Danh mục - Slug", field: "categoryslug",key: "categoryslug",sortable: true},
+    { header: "Ngày tạo", field: "createdDate", key: "createdDate", sortable: true},
+    {header: "Status", field: "status", key: "status", sortable: true,
       body: (nodeData) =>
         <span className={`badge ${nodeData.status === 'Inactive' ? 'bg-danger' : 'bg-success'} fw-medium fs-10`}>
           {nodeData.status}
         </span>
     },
-    {
-      header: "Actions",
-      field: "actions",
-      key: "actions",
-      sortable: false,
+    { header: "Actions", field: "actions",key: "actions", sortable: false,
       body: (nodeData) =>
         <div className="edit-delete-action d-flex align-items-center">
           <Link 
