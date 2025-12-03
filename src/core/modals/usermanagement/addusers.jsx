@@ -1,21 +1,127 @@
 import CommonSelect from "../../../components/select/common-select";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { userApi } from "../../../services/user.service";
 
 const AddUsers = () => {
   const status = [
-  { value: "Choose", label: "Choose" },
-  { value: "Manager", label: "Manager" },
-  { value: "Admin", label: "Admin" }];
+    { value: "Choose", label: "Choose" },
+    { value: "Manager", label: "Manager" },
+    { value: "Admin", label: "Admin" }];
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setConfirmPassword] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState(null);
+
+  // Form state
+  const [formData, setFormData] = useState({
+    userName: "",
+    email: "",
+    passWord: "",
+    confirmPassword: "",
+    fullName: "",
+    phone: "",
+    description: ""
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
   const handleTogglePassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
-  const [showConfirmPassword, setConfirmPassword] = useState(false);
+
   const handleToggleConfirmPassword = () => {
     setConfirmPassword((prevShowPassword) => !prevShowPassword);
+  };
+
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Handle form submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    // Validation
+    if (!formData.userName || !formData.email || !formData.passWord || !formData.fullName || !formData.phone) {
+      setError("Vui lòng điền đầy đủ các trường bắt buộc");
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError("Email không hợp lệ");
+      return;
+    }
+
+    // Password confirmation
+    if (formData.passWord !== formData.confirmPassword) {
+      setError("Mật khẩu xác nhận không khớp");
+      return;
+    }
+
+    // Password strength validation (at least 6 characters)
+    if (formData.passWord.length < 6) {
+      setError("Mật khẩu phải có ít nhất 6 ký tự");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Prepare data for API (exclude confirmPassword)
+      const userData = {
+        userName: formData.userName,
+        email: formData.email,
+        passWord: formData.passWord,
+        fullName: formData.fullName,
+        phone: formData.phone
+      };
+
+      // Call API to create user
+      const response = await userApi.createUser(userData);
+
+      console.log("User created successfully:", response);
+      setSuccess("Tạo người dùng thành công!");
+
+      // Reset form
+      setFormData({
+        userName: "",
+        email: "",
+        passWord: "",
+        confirmPassword: "",
+        fullName: "",
+        phone: "",
+        description: ""
+      });
+      setSelectedStatus(null);
+
+      // Close modal after 1.5 seconds
+      setTimeout(() => {
+        const modalElement = document.getElementById('add-units');
+        const modal = window.bootstrap.Modal.getInstance(modalElement);
+        if (modal) {
+          modal.hide();
+        }
+        setSuccess("");
+      }, 1500);
+
+    } catch (err) {
+      console.error("Create user error:", err);
+      setError(err.message || "Tạo người dùng thất bại. Vui lòng thử lại.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -35,12 +141,24 @@ const AddUsers = () => {
                     className="close"
                     data-bs-dismiss="modal"
                     aria-label="Close">
-                    
+
                     <span aria-hidden="true">×</span>
                   </button>
                 </div>
                 <div className="modal-body custom-modal-body">
-                  <form>
+                  <form onSubmit={handleSubmit}>
+                    {/* Success/Error Messages */}
+                    {error && (
+                      <div className="alert alert-danger" role="alert">
+                        {error}
+                      </div>
+                    )}
+                    {success && (
+                      <div className="alert alert-success" role="alert">
+                        {success}
+                      </div>
+                    )}
+
                     <div className="row">
                       <div className="col-lg-12">
                         <div className="new-employee-field">
@@ -65,20 +183,58 @@ const AddUsers = () => {
                       </div>
                       <div className="col-lg-6">
                         <div className="input-blocks">
-                          <label>User Name</label>
-                          <input type="text" className="form-control" />
+                          <label>User Name <span className="text-danger">*</span></label>
+                          <input
+                            type="text"
+                            name="userName"
+                            className="form-control"
+                            value={formData.userName}
+                            onChange={handleInputChange}
+                            disabled={isLoading}
+                            placeholder="Enter username"
+                          />
                         </div>
                       </div>
                       <div className="col-lg-6">
                         <div className="input-blocks">
-                          <label>Phone</label>
-                          <input type="text" className="form-control" />
+                          <label>Full Name <span className="text-danger">*</span></label>
+                          <input
+                            type="text"
+                            name="fullName"
+                            className="form-control"
+                            value={formData.fullName}
+                            onChange={handleInputChange}
+                            disabled={isLoading}
+                            placeholder="Enter full name"
+                          />
                         </div>
                       </div>
                       <div className="col-lg-6">
                         <div className="input-blocks">
-                          <label>Email</label>
-                          <input type="email" className="form-control" />
+                          <label>Phone <span className="text-danger">*</span></label>
+                          <input
+                            type="text"
+                            name="phone"
+                            className="form-control"
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                            disabled={isLoading}
+                            placeholder="Enter phone number"
+                          />
+                        </div>
+                      </div>
+                      <div className="col-lg-6">
+                        <div className="input-blocks">
+                          <label>Email <span className="text-danger">*</span></label>
+                          <input
+                            type="email"
+                            name="email"
+                            className="form-control"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            disabled={isLoading}
+                            placeholder="Enter email"
+                          />
                         </div>
                       </div>
                       <div className="col-lg-6">
@@ -92,38 +248,46 @@ const AddUsers = () => {
                             onChange={(e) => setSelectedStatus(e.value)}
                             placeholder="Choose"
                             filter={false} />
-                          
+
                         </div>
                       </div>
                       <div className="col-lg-6">
                         <div className="input-blocks">
-                          <label>Password</label>
+                          <label>Password <span className="text-danger">*</span></label>
                           <div className="pass-group">
                             <input
                               type={showPassword ? "text" : "password"}
+                              name="passWord"
                               className="pass-input"
+                              value={formData.passWord}
+                              onChange={handleInputChange}
+                              disabled={isLoading}
                               placeholder="Enter your password" />
-                            
+
                             <span
                               className={`ti toggle-password text-gray-9 ${showPassword ? "ti-eye" : "ti-eye-off"}`}
                               onClick={handleTogglePassword} />
-                            
+
                           </div>
                         </div>
                       </div>
                       <div className="col-lg-6">
                         <div className="input-blocks">
-                          <label>Confirm Passworrd</label>
+                          <label>Confirm Password <span className="text-danger">*</span></label>
                           <div className="pass-group">
                             <input
                               type={showConfirmPassword ? "text" : "password"}
+                              name="confirmPassword"
                               className="pass-input"
-                              placeholder="Enter your password" />
-                            
+                              value={formData.confirmPassword}
+                              onChange={handleInputChange}
+                              disabled={isLoading}
+                              placeholder="Confirm your password" />
+
                             <span
                               className={`ti   toggle-password  ${showConfirmPassword ? "ti-eye" : "ti-eye-off"}`}
                               onClick={handleToggleConfirmPassword} />
-                            
+
                           </div>
                         </div>
                       </div>
@@ -131,9 +295,13 @@ const AddUsers = () => {
                         <div className="mb-0 input-blocks">
                           <label className="form-label">Descriptions</label>
                           <textarea
+                            name="description"
                             className="form-control mb-1"
-                            defaultValue={"Type Message"} />
-                          
+                            value={formData.description}
+                            onChange={handleInputChange}
+                            disabled={isLoading}
+                            placeholder="Type Message" />
+
                           <p>Maximum 600 Characters</p>
                         </div>
                       </div>
@@ -142,13 +310,17 @@ const AddUsers = () => {
                       <button
                         type="button"
                         className="btn btn-cancel me-2"
-                        data-bs-dismiss="modal">
-                        
+                        data-bs-dismiss="modal"
+                        disabled={isLoading}>
+
                         Cancel
                       </button>
-                      <Link to="#" className="btn btn-submit">
-                        Submit
-                      </Link>
+                      <button
+                        type="submit"
+                        className="btn btn-submit"
+                        disabled={isLoading}>
+                        {isLoading ? "Đang tạo..." : "Submit"}
+                      </button>
                     </div>
                   </form>
                 </div>

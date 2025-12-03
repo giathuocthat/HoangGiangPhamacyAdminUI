@@ -35,4 +35,32 @@ export const API_ENDPOINTS = {
         GET_BY_CATEGORY: (categoryId) => `/product/category/${categoryId}`,
         SEARCH: '/product/search',
     },
+
+    // Category endpoints
+    CATEGORY: {
+        GET_ALL: '/category',
+    },
+
+    // File Upload endpoints
+    FILE_UPLOAD: {
+        UPLOAD: '/fileupload',
+        DELETE: (id) => `/fileupload/${id}`,
+    },
+
+    // Authentication endpoints
+    AUTH: {
+        TOKEN: '/Token',
+        LOGIN: '/Token',
+        LOGOUT: '/auth/logout',
+        VERIFY: '/auth/verify',
+    },
+
+    // User Management endpoints
+    USER: {
+        GET_ALL: '/user',
+        GET_BY_ID: (id) => `/user/${id}`,
+        CREATE: '/user',
+        UPDATE: (id) => `/user/${id}`,
+        DELETE: (id) => `/user/${id}`,
+    },
 };
