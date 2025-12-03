@@ -887,7 +887,7 @@ class FileUploadApiService extends ApiService {
             console.log(pair[0], pair[1]);
         }
 
-        const url = `${this.baseURL}${API_ENDPOINTS.FILE_UPLOAD.UPLOAD}`;
+        const url = `${this.baseURL}${API_ENDPOINTS.FILE_UPLOAD.UPLOAD_SINGLE}`;
         console.log('Upload URL:', url);
 
         // For FormData, we must NOT set Content-Type - let browser set it with boundary
