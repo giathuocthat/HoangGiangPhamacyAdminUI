@@ -1,175 +1,190 @@
 import { Link } from "react-router-dom";
-import { onlineOrderData } from "../../../core/json/onlineOrderData";
+import { useState, useEffect } from "react";
+import { orderApi } from "../../../services/api.service";
 import OnlineorderModal from "./onlineorderModal";
+import OrderDetailModal from "./OrderDetailModal";
 import CommonFooter from "../../../components/footer/commonFooter";
 import TableTopHead from "../../../components/table-top-head";
 import DeleteModal from "../../../components/delete-modal";
-import SearchFromApi from "../../../components/data-table/search";
-import { useState } from "react";
-import Table from "../../../core/pagination/datatable.jsx";
+import OrderDatatable from "../../../components/custom/order-datatable";
 
 const OnlineOrder = () => {
-  const dataSource = onlineOrderData;
-  const [rows, setRows] = useState(10);
-  const [_searchQuery, setSearchQuery] = useState(undefined);
-  const handleSearch = (value) => {
-    setSearchQuery(value);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState(null);
+
+  // Fetch orders when page, pageSize, or searchQuery changes
+  useEffect(() => {
+    fetchOrders();
+  }, [currentPage, pageSize, searchQuery]);
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const response = await orderApi.getOrders(
+        currentPage,
+        pageSize,
+        searchQuery || null
+      );
+
+      console.log('Orders response:', response);
+
+      // Handle response structure
+      const data = response.data?.data || response.data || [];
+      const pagination = response.data?.pagination || {};
+
+      setOrders(data);
+      setTotalRecords(pagination.totalCount || data.length);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      setOrders([]);
+      setTotalRecords(0);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleSearch = (searchValue) => {
+    setSearchQuery(searchValue);
+    setCurrentPage(1); // Reset to first page on search
+  };
+
+  const handleStatusUpdated = (updatedOrder) => {
+    // Update the order in the list
+    setOrders(prevOrders =>
+      prevOrders.map(order =>
+        order.id === updatedOrder.id
+          ? { ...order, orderStatus: updatedOrder.orderStatus }
+          : order
+      )
+    );
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+  };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(amount);
+  };
+
+  const getStatusBadgeClass = (status) => {
+    const statusMap = {
+      'Pending': 'badge-cyan',
+      'Processing': 'badge-warning',
+      'Completed': 'badge-success',
+      'Cancelled': 'badge-danger'
+    };
+    return statusMap[status] || 'badge-secondary';
+  };
+
+  const getPaymentStatusBadgeClass = (status) => {
+    const statusMap = {
+      'Unpaid': 'badge-soft-danger',
+      'Paid': 'badge-soft-success',
+      'Partial': 'badge-soft-warning',
+      'Refunded': 'badge-soft-info'
+    };
+    return statusMap[status] || 'badge-soft-secondary';
+  };
+
   const columns = [
-  {
-    title: "Customer Name",
-    dataIndex: "customer",
-    render: (text, render) =>
-    <div className="d-flex align-items-center">
-          <Link to="#" className="avatar avatar-md me-2">
-            <img
-          src={`${render.image}`}
-          alt="product" />
-        
-          </Link>
-          <Link to="#">{text}</Link>
-        </div>,
-
-    sorter: (a, b) => a.customer.length - b.customer.length
-  },
-  {
-    title: "Reference",
-    dataIndex: "reference",
-    sorter: (a, b) => a.reference.length - b.reference.length
-  },
-  {
-    title: "Date",
-    dataIndex: "date",
-    sorter: (a, b) => a.date.length - b.date.length
-  },
-
-  {
-    title: "Status",
-    dataIndex: "status",
-    render: (render) =>
-    <span
-      className={`badge ${render === "Pending" ? "badge-cyan" : render === "Completed" ? "badge-success" : ""} `}>
-      
-          {render}
-        </span>,
-
-    sorter: (a, b) => a.status.length - b.status.length
-  },
-  {
-    title: "Grand Total",
-    dataIndex: "total",
-
-    sorter: (a, b) => a.total.length - b.total.length
-  },
-  {
-    title: "Paid",
-    dataIndex: "paid",
-    sorter: (a, b) => a.paid.length - b.paid.length
-  },
-  {
-    title: "Due",
-    dataIndex: "due",
-    sorter: (a, b) => a.due.length - b.due.length
-  },
-  {
-    title: "Payment Status",
-    dataIndex: "paymentstatus",
-    render: (render) =>
-    <span
-      className={`badge badge-xs shadow-none ${render === "Unpaid" ? "badge-soft-danger" : render === "Paid" ? "badge-soft-success" : "badge-soft-warning"} `}>
-      
+    {
+      title: "Order Number",
+      dataIndex: "orderNumber",
+      sorter: (a, b) => a.orderNumber.localeCompare(b.orderNumber),
+      render: (text) => (
+        <Link to={`#`} className="fw-semibold text-primary">
+          {text}
+        </Link>
+      )
+    },
+    {
+      title: "Customer Name",
+      dataIndex: "customerName",
+      sorter: (a, b) => a.customerName.localeCompare(b.customerName),
+      render: (text) => (
+        <div className="d-flex align-items-center">
+          <div className="avatar avatar-md me-2 bg-light-info rounded-circle d-flex align-items-center justify-content-center">
+            <span className="fw-semibold text-info">
+              {text?.charAt(0)?.toUpperCase() || 'G'}
+            </span>
+          </div>
+          <span>{text || 'Guest'}</span>
+        </div>
+      )
+    },
+    {
+      title: "Phone",
+      dataIndex: "customerPhone",
+      sorter: (a, b) => a.customerPhone.localeCompare(b.customerPhone)
+    },
+    {
+      title: "Date",
+      dataIndex: "createdDate",
+      sorter: (a, b) => new Date(a.createdDate) - new Date(b.createdDate),
+      render: (text) => formatDate(text)
+    },
+    {
+      title: "Order Status",
+      dataIndex: "orderStatus",
+      render: (text) => (
+        <span className={`badge ${getStatusBadgeClass(text)}`}>
+          {text}
+        </span>
+      ),
+      sorter: (a, b) => a.orderStatus.localeCompare(b.orderStatus)
+    },
+    {
+      title: "Payment Status",
+      dataIndex: "paymentStatus",
+      render: (text) => (
+        <span className={`badge badge-xs shadow-none ${getPaymentStatusBadgeClass(text)}`}>
           <i className="ti ti-point-filled me-1"></i>
-          {render}
-        </span>,
-
-    sorter: (a, b) => a.paymentstatus.length - b.paymentstatus.length
-  },
-  {
-    title: "Biller",
-    dataIndex: "biller",
-    sorter: (a, b) => a.biller.length - b.biller.length
-  },
-
-  {
-    title: "",
-    dataIndex: "action",
-    render: () =>
-    <div className="text-center">
+          {text}
+        </span>
+      ),
+      sorter: (a, b) => a.paymentStatus.localeCompare(b.paymentStatus)
+    },
+    {
+      title: "Total Amount",
+      dataIndex: "totalAmount",
+      render: (text) => (
+        <span className="fw-semibold">{formatCurrency(text)}</span>
+      ),
+      sorter: (a, b) => a.totalAmount - b.totalAmount
+    },
+    {
+      title: "Actions",
+      dataIndex: "action",
+      render: (_, record) => (
+        <div className="text-center">
           <Link
-        className="action-set"
-        to="#"
-        data-bs-toggle="dropdown"
-        aria-expanded="true">
-        
-            <i className="fa fa-ellipsis-v" aria-hidden="true" />
+            to="#"
+            className="btn btn-sm btn-outline-primary me-2"
+            data-bs-toggle="modal"
+            data-bs-target="#order-detail-modal"
+            onClick={() => setSelectedOrder(record)}
+          >
+            <i className="feather icon-edit me-1"></i>
+            Edit
           </Link>
-          <ul className="dropdown-menu">
-            <li>
-              <Link
-            to="#"
-            className="dropdown-item"
-            data-bs-toggle="modal"
-            data-bs-target="#sales-details-new">
-            
-                <i className="me-2 feather icon-eye info-img" />
-                Sale Detail
-              </Link>
-            </li>
-            <li>
-              <Link
-            to="#"
-            className="dropdown-item"
-            data-bs-toggle="modal"
-            data-bs-target="#edit-sales-new">
-            
-                <i className="me-2 feather icon-edit info-img" />
-                Edit Sale
-              </Link>
-            </li>
-            <li>
-              <Link
-            to="#"
-            className="dropdown-item"
-            data-bs-toggle="modal"
-            data-bs-target="#showpayment">
-            
-                <i className="me-2 feather icon-dollar-sign info-img" />
-                Show Payments
-              </Link>
-            </li>
-            <li>
-              <Link
-            to="#"
-            className="dropdown-item"
-            data-bs-toggle="modal"
-            data-bs-target="#createpayment">
-            
-                <i className="me-2 feather icon-plus-circle info-img" />
-                Create Payment
-              </Link>
-            </li>
-            <li>
-              <Link to="#" className="dropdown-item">
-                <i className="me-2 feather icon-download info-img" />
-                Download pdf
-              </Link>
-            </li>
-            <li>
-              <Link
-            to="#"
-            className="dropdown-item mb-0"
-            data-bs-toggle="modal"
-            data-bs-target="#delete-modal">
-            
-                <i className="me-2 feather icon-trash-2 info-img" />
-                Delete Sale
-              </Link>
-            </li>
-          </ul>
-        </div>,
-
-    sorter: (a, b) => a.createdby.length - b.createdby.length
-  }];
+        </div>
+      )
+    }
+  ];
 
 
   return (
@@ -179,161 +194,118 @@ const OnlineOrder = () => {
           <div className="page-header">
             <div className="add-item d-flex">
               <div className="page-title">
-                <h4>Sales</h4>
-                <h6>Manage Your Sales</h6>
+                <h4>Online Orders</h4>
+                <h6>Manage Your Online Orders</h6>
               </div>
             </div>
             <TableTopHead />
             <div className="page-btn">
               <Link
-                to="#"
+                to="/create-order"
                 className="btn btn-primary"
-                data-bs-toggle="modal"
-                data-bs-target="#add-sales-new">
-                
-                <i className="ti ti-circle-plus me-1"></i> Add Sales
+              >
+                <i className="ti ti-circle-plus me-1"></i> Create Order
               </Link>
             </div>
           </div>
-          {/* /product list */}
+
+          {/* Order List */}
           <div className="card table-list-card manage-stock">
-            <div className="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
-              <SearchFromApi
-                callback={handleSearch}
-                rows={rows}
-                setRows={setRows} />
-              
-              <div className="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown">
-                    
-                    Customer
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Carl Evans
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Minerva Rameriz
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Robert Lamon
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Patricia Lewis
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown">
-                    
-                    Staus
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Completed
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Pending
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-                <div className="dropdown me-2">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown">
-                    
-                    Payment Status
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Paid
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Unpaid
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Overdue
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-                <div className="dropdown">
-                  <Link
-                    to="#"
-                    className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
-                    data-bs-toggle="dropdown">
-                    
-                    Sort By : Last 7 Days
-                  </Link>
-                  <ul className="dropdown-menu  dropdown-menu-end p-3">
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Recently Added
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Ascending
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Desending
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Last Month
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="#" className="dropdown-item rounded-1">
-                        Last 7 Days
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
+            <div className="card-header d-flex align-items-center justify-content-end flex-wrap row-gap-3">
+              <div className="d-flex align-items-center gap-2">
+                <select
+                  className="form-select form-select-sm"
+                  style={{ width: 'auto' }}
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                >
+                  <option value="10">10 / page</option>
+                  <option value="25">25 / page</option>
+                  <option value="50">50 / page</option>
+                  <option value="100">100 / page</option>
+                </select>
+
+                <button
+                  className="btn btn-sm btn-outline-primary"
+                  onClick={fetchOrders}
+                  disabled={loading}
+                >
+                  <i className="ti ti-refresh me-1"></i>
+                  Refresh
+                </button>
               </div>
             </div>
+
             <div className="card-body">
-              <div className="custom-datatable-filter table-responsive">
-                <Table columns={columns} dataSource={dataSource} />
-              </div>
+              {loading ? (
+                <div className="text-center py-5">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  <p className="mt-2 text-muted">Loading orders...</p>
+                </div>
+              ) : orders.length === 0 ? (
+                <div className="custom-datatable-filter table-responsive">
+                  <OrderDatatable
+                    columns={columns}
+                    dataSource={[]}
+                    showSearch={true}
+                    onSearch={handleSearch}
+                    searchValue={searchQuery}
+                    searchPlaceholder="Search by order number, phone, or email..."
+                    pagination={false}
+                  />
+                  <div className="text-center py-5">
+                    <i className="ti ti-package" style={{ fontSize: '4rem', color: '#ccc' }}></i>
+                    <p className="text-muted mt-3">
+                      {searchQuery ? 'No orders found matching your search.' : 'No orders available.'}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="custom-datatable-filter table-responsive">
+                  <OrderDatatable
+                    columns={columns}
+                    dataSource={orders}
+                    showSearch={true}
+                    onSearch={handleSearch}
+                    searchValue={searchQuery}
+                    searchPlaceholder="Search by order number, phone, or email..."
+                    pagination={{
+                      current: currentPage,
+                      pageSize: pageSize,
+                      total: totalRecords,
+                      onChange: (page) => setCurrentPage(page)
+                    }}
+                  />
+                </div>
+              )}
             </div>
+
+            {/* Pagination Info */}
+            {!loading && orders.length > 0 && (
+              <div className="card-footer">
+                <div className="d-flex justify-content-between align-items-center">
+                  <p className="mb-0 text-muted">
+                    Showing {((currentPage - 1) * pageSize) + 1} to{' '}
+                    {Math.min(currentPage * pageSize, totalRecords)} of {totalRecords} orders
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
-          {/* /product list */}
         </div>
         <CommonFooter />
       </div>
-      <OnlineorderModal />
-      <DeleteModal />
-    </div>);
 
+      <OnlineorderModal />
+      <OrderDetailModal order={selectedOrder} onStatusUpdated={handleStatusUpdated} />
+      <DeleteModal />
+    </div>
+  );
 };
 
 export default OnlineOrder;

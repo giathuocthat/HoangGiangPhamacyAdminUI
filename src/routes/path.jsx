@@ -342,6 +342,9 @@ const Pos5 = lazy(() => import("../feature-module/pos/pos5"));
 const PosOrder = lazy(
   () => import("../feature-module/sales/pos-order/posOrder")
 );
+const CreateOrder = lazy(
+  () => import("../feature-module/sales/create-order/CreateOrder")
+);
 const Invoice = lazy(() => import("../feature-module/sales/invoicereport"));
 const Invoicedetails = lazy(
   () => import("../feature-module/sales/invoicedetails")
@@ -1299,6 +1302,13 @@ export const authRoutes = [
   path: routes.posorder,
   name: "pos-orders",
   element: <PosOrder />,
+  route: Route
+},
+{
+  id: 121.5,
+  path: routes.createorder,
+  name: "create-order",
+  element: <CreateOrder />,
   route: Route
 },
 {

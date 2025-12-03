@@ -1,0 +1,58 @@
+/* ======================================================= */
+/* 1. FIX KHOẢNG TRỐNG VÀ PHÂN BIỆT CẤP ĐỘ */
+/* ======================================================= */
+/* Giảm padding cho cột đầu tiên (Cột Category) */
+.p-treetable .p-treetable-tbody > tr > td:first-child {
+    padding-left: 0.5rem !important; 
+}
+
+/* Làm nổi bật hàng cấp độ 1 (Category Cha) */
+.p-treetable .p-treetable-tbody tr[aria-level="1"] > td {
+    font-weight: bold; 
+    background-color: #f8f9fa !important; 
+    border-top: 2px solid #ccc !important; 
+}
+/* Cấp 2, 3, ... (tùy chọn) */
+.p-treetable .p-treetable-tbody tr[aria-level="2"] > td {
+    font-weight: normal; 
+
+}
+
+/* ======================================================= */
+/* 2. FIX SỰ KIỆN CLICK */
+/* ======================================================= */
+/* Đảm bảo nút mở rộng (toggler button) luôn có thể click được */
+.p-treetable .p-treetable-toggler {
+    pointer-events: auto !important; 
+    opacity: 1 !important; 
+}
+
+/* ======================================================= */
+/* 3. THAY ICON MŨI TÊN */
+/* ======================================================= */
+/* Thêm icon MŨI TÊN SANG PHẢI cho trạng thái ĐÓNG (icon chevron-right) */
+.p-treetable .p-treetable-tbody > tr[aria-expanded="false"] .p-treetable-toggler-icon::before {
+    visibility: visible;
+    content: '\e904'; /* MÃ UNICODE cho icon mũi tên sang phải */
+    font-family: 'tabler-icons' !important; 
+    font-size: 1rem;
+    line-height: 1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.2s;
+}
+
+/* Thêm icon MŨI TÊN XUỐNG cho trạng thái MỞ (icon chevron-down) */
+.p-treetable .p-treetable-tbody > tr[aria-expanded="true"] .p-treetable-toggler-icon::before {
+    visibility: visible;
+    content: '\e90b'; /* MÃ UNICODE cho icon mũi tên xuống */
+    font-family: 'tabler-icons' !important; 
+    font-size: 1rem;
+    line-height: 1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

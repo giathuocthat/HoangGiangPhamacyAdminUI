@@ -18,9 +18,10 @@ const CommonSelect = ({
   onChange,
   className = "",
   disabled = false,
-  filter = true
+  filter = true,
+  optionLabel = "label",
+  optionValue = "value"
 }) => {
-  console.log("values", value);
   return (
     <Dropdown
       value={value}
@@ -29,10 +30,12 @@ const CommonSelect = ({
       placeholder={placeholder}
       className={className}
       disabled={disabled}
-      appendTo={"self"}
-      filter={filter} />);
-
-
+      filter={filter}
+      showClear={false}
+      optionLabel={optionLabel}
+      optionValue={optionValue}
+    />
+  );
 };
 
 export default CommonSelect;
