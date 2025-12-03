@@ -6,7 +6,7 @@
 // API Base URL - can be overridden by environment variables
 export const API_CONFIG = {
     // Base URL for the ThuocGiaThatAdmin.Server API
-    BASE_URL: import.meta.env.VITE_API_BASE_URL || 'https://localhost:5001/api',
+    BASE_URL: 'https://localhost:5001/api',
 
     // Timeout for API requests (in milliseconds)
     TIMEOUT: 30000,
