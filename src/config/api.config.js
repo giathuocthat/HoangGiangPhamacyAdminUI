@@ -6,8 +6,8 @@
 // API Base URL - can be overridden by environment variables
 export const API_CONFIG = {
     // Base URL for the ThuocGiaThatAdmin.Server API
-    BASE_URL: import.meta.env.VITE_API_BASE_URL || 'https://localhost:5001/api',
-
+    BASE_URL: import.meta.env.VITE_API_BASE_URL || 'https://192.168.1.150/api',
+    //BASE_URL: 'https://localhost:5001/api',
     // Timeout for API requests (in milliseconds)
     TIMEOUT: 30000,
 
@@ -45,17 +45,11 @@ export const API_ENDPOINTS = {
         UPDATE: (id) => `/category/${id}`,
         DELETE: (id) => `/category/${id}`,
         GET_ROOT: `/category/root`,
-        GET_CHILDREN: (parentId) => `/Category/${parentId}/children`,
+        GET_CHILDREN: (parentId) => `/category/${parentId}/children`,
         GET_ALL_CHILDREN: `/category/allchildren`,
-        GET_HIERARCHY: `/Category/hierarchy`,
+        GET_HIERARCHY: `/category/hierarchy`,
         GET_FLAT_LIST: `/category/flat`,
         SEARCH: `/category/search`,
-    },
-
-    // File Upload endpoints
-    FILE_UPLOAD: {
-        UPLOAD: '/fileupload/upload',
-        DELETE: (id) => `/fileupload/${id}`,
     },
 
     // Product endpoints
@@ -67,12 +61,6 @@ export const API_ENDPOINTS = {
         SEARCH: '/product/search',
         GET_PAGED: '/product/getPagedProducts',
         ADD_TO_CART: '/product/cart',
-    },
-
-    // File Upload endpoints
-    FILE_UPLOAD: {
-        UPLOAD: '/fileupload/upload',
-        DELETE: (id) => `/fileupload/${id}`,
     },
 
     // Product Option endpoints
@@ -120,14 +108,6 @@ export const API_ENDPOINTS = {
         GET_LOW_STOCK: '/inventory/low-stock',
     },
 
-    // Order endpoints
-    ORDER: {
-        CUSTOMER_PLACE_ORDER: '/order/customer/place-order',
-        ADMIN_CREATE_ORDER: '/order/admin/create-order',
-        GET_BY_ID: (id) => `/order/${id}`,
-        GET_ALL: '/order',
-    },
-
     // StockAlert endpoints
     STOCK_ALERT: {
         GET_UNREAD: '/stockalert/unread',
@@ -165,6 +145,7 @@ export const API_ENDPOINTS = {
         CREATE: '/customer',
         GET_BY_ID: (id) => `/customer/${id}`,
         UPDATE: (id) => `/customer/${id}`,
+        SEARCH: '/customer/search',
     },
 
     // Customer Auth endpoints
@@ -193,47 +174,14 @@ export const API_ENDPOINTS = {
         CLEAR_CART: '/ShoppingCart/clear',
     },
 
-    // Customer endpoints
-    CUSTOMER: {
-        SEARCH: '/customer/search',
-        CREATE: '/customer',
-        GET_BY_ID: (id) => `/customer/${id}`,
-        GET_ALL: '/customer',
-    },
-
-    // Business Type endpoints
-    BUSINESS_TYPE: {
-        GET_ALL: '/businesstype',
-    },
-
-    // Province endpoints
-    PROVINCE: {
-        GET_ALL: '/province',
-    },
-
-    // Ward endpoints
-    WARD: {
-        GET_BY_PROVINCE: (provinceId) => `/ward/GetByProvinceId/${provinceId}`,
-    },
-
     // Order endpoints
     ORDER: {
+        GET_ALL: '/order',
         GET_LIST: '/order/list',
         GET_BY_ID: (id) => `/order/${id}`,
-        CREATE_CUSTOMER_ORDER: '/order/customer/place-order',
-        CREATE_ADMIN_ORDER: '/order/admin/create-order',
+        CUSTOMER_PLACE_ORDER: '/order/customer/place-order',
+        ADMIN_CREATE_ORDER: '/order/admin/create-order',
         UPDATE_STATUS: (id) => `/order/${id}/status`,
-    },
-
-    // Category endpoints
-    CATEGORY: {
-        GET_ALL: '/category',
-    },
-
-    // File Upload endpoints
-    FILE_UPLOAD: {
-        UPLOAD: '/fileupload',
-        DELETE: (id) => `/fileupload/${id}`,
     },
 
     // Authentication endpoints
