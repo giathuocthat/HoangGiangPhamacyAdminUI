@@ -129,6 +129,18 @@ export const API_ENDPOINTS = {
         UPDATE: (id) => `/user/${id}`,
         GET_BY_ID: (id) => `/user/${id}`,
         GET_PROFILE: '/user/profile/me',
+        GET_ALL: '/user',
+        DELETE: (id) => `/user/${id}/deactivate`,
+    },
+
+    // Role endpoints
+    ROLE: {
+        GET_ALL: '/role',
+    },
+
+    ROLE_CLAIM: {
+        GET_ALL: '/roleclaim',
+        GET_BY_ROLE: (roleId) => `/roleclaim/role/${roleId}`,
     },
 
     // FileUpload endpoints

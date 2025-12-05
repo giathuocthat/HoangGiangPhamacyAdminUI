@@ -1,80 +1,111 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import AddRole from "../../core/modals/usermanagement/addrole";
 import EditRole from "../../core/modals/usermanagement/editrole";
 import { all_routes } from "../../routes/all_routes";
 import PrimeDataTable from "../../components/data-table";
-import { rolesList } from "../../core/json/roles-permission-data";
 import SearchFromApi from "../../components/data-table/search";
 import TableTopHead from "../../components/table-top-head";
 import DeleteModal from "../../components/delete-modal";
+import { roleApi } from "../../services/role.service";
 
 const RolesPermissions = () => {
-  const [listData, _setListData] = useState(rolesList);
+  const [listData, setListData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalRecords, _setTotalRecords] = useState(5);
+  const [totalRecords, setTotalRecords] = useState(0);
   const [rows, setRows] = useState(10);
   const [_searchQuery, setSearchQuery] = useState(undefined);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch roles from API
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        setLoading(true);
+        const res = await roleApi.getListRole();
+
+        // Map API response to table format
+        const mappedData = res.map((role, index) => ({
+          key: index,
+          id: role.id || index,
+          role: role.name || 'N/A',
+          createdDate: role.createdDate ? new Date(role.createdDate).toLocaleDateString() : 'N/A',
+          status: role.isActive ? 'Active' : 'Inactive',
+          rawData: role
+        }));
+
+        setListData(mappedData);
+        setTotalRecords(mappedData.length);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching roles:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchRoles();
+  }, []);
 
   const columns = [
-  {
-    header:
-    <div className="form-check form-check-md">
+    {
+      header:
+        <div className="form-check form-check-md">
           <input className="form-check-input" type="checkbox" id="select-all" />
         </div>,
 
-    body: () =>
-    <div className="form-check form-check-md">
+      body: () =>
+        <div className="form-check form-check-md">
           <input className="form-check-input" type="checkbox" />
         </div>,
 
-    sortable: false,
-    key: "select"
-  },
-  { header: "Role", field: "role", key: "role" },
-  { header: "Created Date", field: "createdDate", key: "createdDate" },
-  {
-    header: "Status",
-    field: "status",
-    key: "status",
-    body: (row) =>
-    <span className="badge badge-success d-inline-flex align-items-center badge-xs">
+      sortable: false,
+      key: "select"
+    },
+    { header: "Role", field: "role", key: "role" },
+    { header: "Created Date", field: "createdDate", key: "createdDate" },
+    {
+      header: "Status",
+      field: "status",
+      key: "status",
+      body: (row) =>
+        <span className="badge badge-success d-inline-flex align-items-center badge-xs">
           <i className="ti ti-point-filled me-1"></i>
           {row.status}
         </span>
 
-  },
-  {
-    header: "",
-    field: "actions",
-    key: "actions",
-    sortable: false,
-    body: (_row) =>
-    <div className="action-icon d-inline-flex">
+    },
+    {
+      header: "",
+      field: "actions",
+      key: "actions",
+      sortable: false,
+      body: (_row) =>
+        <div className="action-icon d-inline-flex">
           <Link
-        to={all_routes.permissions}
-        className="me-2 d-flex align-items-center p-2 border rounded">
-        
+            // to={`${all_routes.roleClaim}/${_row.id}`}
+            // to={all_routes.roleClaim}
+            to={`/role-claim/${_row.id}`}
+            className="me-2 d-flex align-items-center p-2 border rounded">
             <i className="ti ti-shield"></i>
           </Link>
           <Link
-        to="#"
-        className="me-2 d-flex align-items-center p-2 border rounded"
-        data-bs-toggle="modal"
-        data-bs-target="#edit-role">
-        
+            to="#"
+            className="me-2 d-flex align-items-center p-2 border rounded"
+            data-bs-toggle="modal"
+            data-bs-target="#edit-role">
+
             <i className="ti ti-edit"></i>
           </Link>
           <Link
-        to="#"
-        data-bs-toggle="modal" data-bs-target="#delete-modal"
-        className="d-flex align-items-center p-2 border rounded">
-        
+            to="#"
+            data-bs-toggle="modal" data-bs-target="#delete-modal"
+            className="d-flex align-items-center p-2 border rounded">
+
             <i className="ti ti-trash"></i>
           </Link>
         </div>
 
-  }];
+    }];
 
 
   const handleSearch = (value) => {
@@ -99,7 +130,7 @@ const RolesPermissions = () => {
                 className="btn btn-primary"
                 data-bs-toggle="modal"
                 data-bs-target="#add-units">
-                
+
                 <i className="feather icon-plus-circle me-2" />
                 Add Role
               </Link>
@@ -112,14 +143,14 @@ const RolesPermissions = () => {
                 callback={handleSearch}
                 rows={rows}
                 setRows={setRows} />
-              
+
               <div className="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
                 <div className="dropdown me-2">
                   <Link
                     to="#"
                     className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
                     data-bs-toggle="dropdown">
-                    
+
                     Status
                   </Link>
                   <ul className="dropdown-menu  dropdown-menu-end p-3">
@@ -148,7 +179,7 @@ const RolesPermissions = () => {
                   currentPage={currentPage}
                   setCurrentPage={setCurrentPage}
                   totalRecords={totalRecords} />
-                
+
               </div>
             </div>
           </div>

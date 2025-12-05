@@ -409,7 +409,7 @@ const OnlineOrder = () => {
 
   const columns = [
     {
-      title: "Số hiệu đơn hàng",
+      title: "Mã đơn hàng",
       dataIndex: "orderNumber",
       sorter: (a, b) => a.orderNumber.localeCompare(b.orderNumber),
       render: (text) => (
@@ -419,17 +419,13 @@ const OnlineOrder = () => {
       )
     },
     {
-      title: "Tên Khách hàng",
+      title: "Tên khách hàng",
       dataIndex: "customerName",
       sorter: (a, b) => a.customerName.localeCompare(b.customerName),
       render: (text) => (
         <div className="d-flex align-items-center">
-          <div className="avatar avatar-md me-2 bg-light-info rounded-circle d-flex align-items-center justify-content-center">
-            <span className="fw-semibold text-info">
-              {text?.charAt(0)?.toUpperCase() || 'G'}
-            </span>
-          </div>
-          <span>{text || 'Guest'}</span>
+
+          <span>{text || 'Khách'}</span>
         </div>
       )
     },
@@ -439,13 +435,13 @@ const OnlineOrder = () => {
       sorter: (a, b) => a.customerPhone.localeCompare(b.customerPhone)
     },
     {
-      title: "Ngày tạo đơn hàng",
+      title: "Ngày tạo",
       dataIndex: "createdDate",
       sorter: (a, b) => new Date(a.createdDate) - new Date(b.createdDate),
       render: (text) => formatCreatedDate(text)
     },
     {
-      title: "Tình trạng đơn hàng",
+      title: "Trạng thái đơn",
       dataIndex: "orderStatus",
       render: (text) => (
         <span className={`badge ${getStatusBadgeClass(text)}`}>
@@ -455,7 +451,7 @@ const OnlineOrder = () => {
       sorter: (a, b) => a.orderStatus.localeCompare(b.orderStatus)
     },
     {
-      title: "Tình trạng thanh toán",
+      title: "Trạng thái thanh toán",
       dataIndex: "paymentStatus",
       render: (text) => (
         <span className={`badge badge-xs shadow-none ${getPaymentStatusBadgeClass(text)}`}>
@@ -466,7 +462,7 @@ const OnlineOrder = () => {
       sorter: (a, b) => a.paymentStatus.localeCompare(b.paymentStatus)
     },
     {
-      title: "Tổng số tiền",
+      title: "Tổng tiền",
       dataIndex: "totalAmount",
       render: (text) => (
         <span className="fw-semibold">{formatCurrency(text)}</span>
@@ -474,7 +470,7 @@ const OnlineOrder = () => {
       sorter: (a, b) => a.totalAmount - b.totalAmount
     },
     {
-      title: "Actions",
+      title: "Thao tác",
       dataIndex: "action",
       render: (_, record) => (
         <div className="text-center d-flex justify-content-center gap-2">
@@ -491,7 +487,7 @@ const OnlineOrder = () => {
             title="Update Status"
           >
             <i className="feather icon-edit me-1"></i>
-            Check Status
+            Sửa
           </Link>
         </div>
       )
@@ -505,8 +501,8 @@ const OnlineOrder = () => {
           <div className="page-header">
             <div className="add-item d-flex">
               <div className="page-title">
-                <h4>Online Orders</h4>
-                <h6>Manage Your Online Orders</h6>
+                <h4>Đơn hàng trực tuyến</h4>
+                <h6>Quản lý đơn hàng trực tuyến</h6>
               </div>
             </div>
             <TableTopHead />
@@ -515,7 +511,7 @@ const OnlineOrder = () => {
                 to="/create-order"
                 className="btn btn-primary"
               >
-                <i className="ti ti-circle-plus me-1"></i> Create Order
+                <i className="ti ti-circle-plus me-1"></i> Tạo đơn hàng
               </Link>
             </div>
           </div>
@@ -533,10 +529,10 @@ const OnlineOrder = () => {
                     setCurrentPage(1);
                   }}
                 >
-                  <option value="10">10 / page</option>
-                  <option value="25">25 / page</option>
-                  <option value="50">50 / page</option>
-                  <option value="100">100 / page</option>
+                  <option value="10">10 / trang</option>
+                  <option value="25">25 / trang</option>
+                  <option value="50">50 / trang</option>
+                  <option value="100">100 / trang</option>
                 </select>
 
                 <button
@@ -545,7 +541,7 @@ const OnlineOrder = () => {
                   disabled={loading}
                 >
                   <i className="ti ti-refresh me-1"></i>
-                  Refresh
+                  Làm mới
                 </button>
               </div>
             </div>
@@ -554,9 +550,9 @@ const OnlineOrder = () => {
               {loading ? (
                 <div className="text-center py-5">
                   <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
+                    <span className="visually-hidden">Đang tải...</span>
                   </div>
-                  <p className="mt-2 text-muted">Loading orders...</p>
+                  <p className="mt-2 text-muted">Đang tải đơn hàng...</p>
                 </div>
               ) : orders.length === 0 ? (
                 <div className="custom-datatable-filter table-responsive">
@@ -566,13 +562,13 @@ const OnlineOrder = () => {
                     showSearch={true}
                     onSearch={handleSearch}
                     searchValue={searchQuery}
-                    searchPlaceholder="Search by order number, phone, or email..."
+                    searchPlaceholder="Tìm theo mã đơn, số điện thoại hoặc email..."
                     pagination={false}
                   />
                   <div className="text-center py-5">
                     <i className="ti ti-package" style={{ fontSize: '4rem', color: '#ccc' }}></i>
                     <p className="text-muted mt-3">
-                      {searchQuery ? 'No orders found matching your search.' : 'No orders available.'}
+                      {searchQuery ? 'Không tìm thấy đơn hàng phù hợp.' : 'Chưa có đơn hàng nào.'}
                     </p>
                   </div>
                 </div>
@@ -584,7 +580,7 @@ const OnlineOrder = () => {
                     showSearch={true}
                     onSearch={handleSearch}
                     searchValue={searchQuery}
-                    searchPlaceholder="Search by order number, phone, or email..."
+                    searchPlaceholder="Tìm theo mã đơn, số điện thoại hoặc email..."
                     pagination={{
                       current: currentPage,
                       pageSize: pageSize,
@@ -601,8 +597,8 @@ const OnlineOrder = () => {
               <div className="card-footer">
                 <div className="d-flex justify-content-between align-items-center">
                   <p className="mb-0 text-muted">
-                    Showing {((currentPage - 1) * pageSize) + 1} to{' '}
-                    {Math.min(currentPage * pageSize, totalRecords)} of {totalRecords} orders
+                    Hiển thị {((currentPage - 1) * pageSize) + 1} đến{' '}
+                    {Math.min(currentPage * pageSize, totalRecords)} trong tổng số {totalRecords} đơn hàng
                   </p>
                 </div>
               </div>

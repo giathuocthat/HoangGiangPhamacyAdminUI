@@ -41,7 +41,7 @@ const EditProduct = () => {
       sku: "",
       price: 0,
       originalPrice: 0,
-      stockQuantity: 0,
+      maxSalesQuantity: null,
       weight: 0,
       dimensions: "",
       imageUrl: "",
@@ -309,7 +309,7 @@ const EditProduct = () => {
         sku: "",
         price: 0,
         originalPrice: 0,
-        stockQuantity: 0,
+        maxSalesQuantity: null,
         weight: 0,
         dimensions: "",
         imageUrl: "",
@@ -429,7 +429,7 @@ const EditProduct = () => {
           sku: v.sku,
           price: parseFloat(v.price),
           originalPrice: parseFloat(v.originalPrice),
-          stockQuantity: parseInt(v.stockQuantity),
+          maxSalesQuantity: v.maxSalesQuantity ? parseInt(v.maxSalesQuantity) : null,
           weight: parseFloat(v.weight),
           dimensions: v.dimensions,
           imageUrl: v.imageUrl,
@@ -454,8 +454,8 @@ const EditProduct = () => {
         <div className="page-header">
           <div className="add-item d-flex">
             <div className="page-title">
-              <h4>Chỉnh sửa Sản phẩm</h4>
-              <h6>Cập nhật lại Thông tin chi tiết của Sản phẩm</h6>
+              <h4>Chỉnh sửa sản phẩm</h4>
+              <h6>Cập nhật thông tin sản phẩm</h6>
             </div>
           </div>
           <ul className="table-top-head">
@@ -463,7 +463,7 @@ const EditProduct = () => {
               <div className="page-btn">
                 <Link to={route.productlist} className="btn btn-secondary">
                   <i className="feather icon-arrow-left me-2" />
-                  Quay lại trang Sản phẩm
+                  Quay lại danh sách
                 </Link>
               </div>
             </li>
@@ -474,7 +474,7 @@ const EditProduct = () => {
           {/* General Information */}
           <div className="card">
             <div className="card-body">
-              <h4 className="card-title">Thông tin tổng quát sản phẩm</h4>
+              <h4 className="card-title">Thông tin chung</h4>
               <div className="row">
                 <div className="col-lg-6 col-sm-6 col-12">
                   <div className="mb-3">
@@ -549,7 +549,7 @@ const EditProduct = () => {
                 </div>
                 <div className="col-lg-12">
                   <div className="mb-3">
-                    <label className="form-label">Mô tả đầy đủ</label>
+                    <label className="form-label">Mô tả chi tiết</label>
                     <Editor
                       ref={editorRef}
                       value={fullDescription}
@@ -565,7 +565,7 @@ const EditProduct = () => {
           {/* Medical Details */}
           <div className="card mt-4">
             <div className="card-body">
-              <h4 className="card-title">Thông tin chi tiết sản phẩm</h4>
+              <h4 className="card-title">Thông tin y tế</h4>
               <div className="row">
                 <div className="col-lg-12">
                   <div className="mb-3">
@@ -580,34 +580,12 @@ const EditProduct = () => {
                 </div>
                 <div className="col-lg-12">
                   <div className="mb-3">
-                    <label className="form-label">Công dụng</label>
-                    <textarea
-                      className="form-control"
-                      rows="3"
-                      value={drugEfficacy}
-                      onChange={(e) => setDrugEfficacy(e.target.value)}
-                    ></textarea>
-                  </div>
-                </div>
-                <div className="col-lg-12">
-                  <div className="mb-3">
                     <label className="form-label">Hướng dẫn sử dụng</label>
                     <textarea
                       className="form-control"
                       rows="3"
                       value={usageInstructions}
                       onChange={(e) => setUsageInstructions(e.target.value)}
-                    ></textarea>
-                  </div>
-                </div>
-                <div className="col-lg-12">
-                  <div className="mb-3">
-                    <label className="form-label">Liều dùng</label>
-                    <textarea
-                      className="form-control"
-                      rows="3"
-                      value={dosageInstructions}
-                      onChange={(e) => setDosageInstructions(e.target.value)}
                     ></textarea>
                   </div>
                 </div>
@@ -693,10 +671,10 @@ const EditProduct = () => {
           {/* Pricing & Variants */}
           <div className="card mt-4">
             <div className="card-body">
-              <h4 className="card-title">Pricing & Variants</h4>
+              <h4 className="card-title">Giá bán & Biến thể</h4>
 
               <div className="mb-3">
-                <label className="form-label d-block">Product Type</label>
+                <label className="form-label d-block">Loại sản phẩm</label>
                 <div className="form-check form-check-inline">
                   <input
                     className="form-check-input"
@@ -710,7 +688,7 @@ const EditProduct = () => {
                       setVariants([variants[0]]);
                     }}
                   />
-                  <label className="form-check-label" htmlFor="single">Single Product</label>
+                  <label className="form-check-label" htmlFor="single">Sản phẩm đơn</label>
                 </div>
                 <div className="form-check form-check-inline">
                   <input
@@ -722,14 +700,14 @@ const EditProduct = () => {
                     checked={productType === "variable"}
                     onChange={() => setProductType("variable")}
                   />
-                  <label className="form-check-label" htmlFor="variable">Variable Product</label>
+                  <label className="form-check-label" htmlFor="variable">Sản phẩm có biến thể</label>
                 </div>
               </div>
 
               {variants.map((variant, index) => (
                 <div key={index} className="border p-3 mb-3 rounded">
                   <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h5>Variant {index + 1}</h5>
+                    <h5>Biến thể {index + 1}</h5>
                     {variants.length > 1 && (
                       <button type="button" className="btn btn-danger btn-sm" onClick={() => removeVariant(index)}>
                         <i className="feather icon-trash-2" />
@@ -751,7 +729,7 @@ const EditProduct = () => {
                     </div>
                     <div className="col-lg-4 col-sm-6 col-12">
                       <div className="mb-3">
-                        <label className="form-label">Price <span className="text-danger">*</span></label>
+                        <label className="form-label">Giá bán <span className="text-danger">*</span></label>
                         <input
                           type="number"
                           className="form-control"
@@ -763,7 +741,7 @@ const EditProduct = () => {
                     </div>
                     <div className="col-lg-4 col-sm-6 col-12">
                       <div className="mb-3">
-                        <label className="form-label">Original Price</label>
+                        <label className="form-label">Giá gốc</label>
                         <input
                           type="number"
                           className="form-control"
@@ -774,19 +752,20 @@ const EditProduct = () => {
                     </div>
                     <div className="col-lg-4 col-sm-6 col-12">
                       <div className="mb-3">
-                        <label className="form-label">Stock Quantity <span className="text-danger">*</span></label>
+                        <label className="form-label">Số lượng bán tối đa</label>
                         <input
                           type="number"
                           className="form-control"
-                          value={variant.stockQuantity}
-                          onChange={(e) => handleVariantChange(index, 'stockQuantity', e.target.value)}
-                          required
+                          value={variant.maxSalesQuantity || ''}
+                          onChange={(e) => handleVariantChange(index, 'maxSalesQuantity', e.target.value)}
+                          min="1"
+                          placeholder="Không bắt buộc - phải > 0 nếu nhập"
                         />
                       </div>
                     </div>
                     <div className="col-lg-4 col-sm-6 col-12">
                       <div className="mb-3">
-                        <label className="form-label">Weight (kg)</label>
+                        <label className="form-label">Trọng lượng (kg)</label>
                         <input
                           type="number"
                           step="0.01"
@@ -798,13 +777,13 @@ const EditProduct = () => {
                     </div>
                     <div className="col-lg-4 col-sm-6 col-12">
                       <div className="mb-3">
-                        <label className="form-label">Dimensions</label>
+                        <label className="form-label">Kích thước</label>
                         <input
                           type="text"
                           className="form-control"
                           value={variant.dimensions}
                           onChange={(e) => handleVariantChange(index, 'dimensions', e.target.value)}
-                          placeholder="LxWxH"
+                          placeholder="DxRxC"
                         />
                       </div>
                     </div>
@@ -813,7 +792,7 @@ const EditProduct = () => {
                     {productOptions.length > 0 && (
                       <div className="col-lg-12">
                         <div className="mb-3">
-                          <label className="form-label fw-bold">Variant Options</label>
+                          <label className="form-label fw-bold">Tùy chọn biến thể</label>
 
                           {/* Selected Options as PrimeReact Chips */}
                           <div className="mb-2">
@@ -831,7 +810,7 @@ const EditProduct = () => {
                                 ) : null;
                               })
                             ) : (
-                              <span className="text-muted">No options selected</span>
+                              <span className="text-muted">Chưa chọn tùy chọn nào</span>
                             )}
                           </div>
 
@@ -847,7 +826,7 @@ const EditProduct = () => {
                                     setVariantOption(index, e.value);
                                   }
                                 }}
-                                placeholder="Add option..."
+                                placeholder="Thêm tùy chọn..."
                               />
                             </div>
                           )}
@@ -857,7 +836,7 @@ const EditProduct = () => {
 
                     <div className="col-lg-12">
                       <div className="mb-3">
-                        <label className="form-label">Variant Image</label>
+                        <label className="form-label">Hình ảnh biến thể</label>
                         <div className="image-upload">
                           <input
                             type="file"
@@ -882,7 +861,7 @@ const EditProduct = () => {
 
               {productType === "variable" && (
                 <button type="button" className="btn btn-primary btn-sm" onClick={addVariant}>
-                  <i className="feather icon-plus me-2" /> Add Variant
+                  <i className="feather icon-plus me-2" /> Thêm biến thể
                 </button>
               )}
             </div>
@@ -891,10 +870,10 @@ const EditProduct = () => {
           <div className="col-lg-12 mt-4">
             <div className="d-flex align-items-center justify-content-end mb-4">
               <button type="button" className="btn btn-secondary me-2" onClick={() => navigate(route.productlist)}>
-                Cancel
+                Hủy
               </button>
               <button type="submit" className="btn btn-primary" disabled={isLoading || isUploading}>
-                {isLoading ? "Updating..." : "Update Product"}
+                {isLoading ? "Đang cập nhật..." : "Cập nhật sản phẩm"}
               </button>
             </div>
           </div>

@@ -190,6 +190,7 @@ export const all_routes = {
   users: "/users",
   rolespermission: "/roles-permissions",
   permissions: "/permissions",
+  editRole: "/edit-role",
   deleteaccount: "/delete-account",
   employeegrid: "/employees-grid",
   addemployee: "/add-employee",
@@ -283,6 +284,6 @@ export const all_routes = {
   cities: "/cities",
   activities: "/activities",
   pricing: "/pricing",
-  contact: "/contacts"
-
+  contact: "/contacts",
+  roleClaim: "/role-claim/:roleId"
 };
