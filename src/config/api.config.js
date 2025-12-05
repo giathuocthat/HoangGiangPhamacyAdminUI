@@ -138,6 +138,11 @@ export const API_ENDPOINTS = {
         GET_ALL: '/role',
     },
 
+    ROLE_CLAIM: {
+        GET_ALL: '/roleclaim',
+        GET_BY_ROLE: (roleId) => `/roleclaim/role/${roleId}`,
+    },
+
     // FileUpload endpoints
     FILE_UPLOAD: {
         UPLOAD_SINGLE: '/fileupload/upload',

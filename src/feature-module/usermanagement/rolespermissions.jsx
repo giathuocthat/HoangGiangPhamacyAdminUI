@@ -82,9 +82,10 @@ const RolesPermissions = () => {
       body: (_row) =>
         <div className="action-icon d-inline-flex">
           <Link
-            to={all_routes.permissions}
+            // to={`${all_routes.roleClaim}/${_row.id}`}
+            // to={all_routes.roleClaim}
+            to={`/role-claim/${_row.id}`}
             className="me-2 d-flex align-items-center p-2 border rounded">
-
             <i className="ti ti-shield"></i>
           </Link>
           <Link
