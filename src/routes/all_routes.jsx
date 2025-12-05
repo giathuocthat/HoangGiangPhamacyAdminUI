@@ -190,6 +190,7 @@ export const all_routes = {
   users: "/users",
   rolespermission: "/roles-permissions",
   permissions: "/permissions",
+  editRole: "/edit-role",
   deleteaccount: "/delete-account",
   employeegrid: "/employees-grid",
   addemployee: "/add-employee",
