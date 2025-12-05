@@ -38,7 +38,7 @@ const EditProduct = () => {
       sku: "",
       price: 0,
       originalPrice: 0,
-      stockQuantity: 0,
+      maxSalesQuantity: null,
       weight: 0,
       dimensions: "",
       imageUrl: "",
@@ -303,7 +303,7 @@ const EditProduct = () => {
         sku: "",
         price: 0,
         originalPrice: 0,
-        stockQuantity: 0,
+        maxSalesQuantity: null,
         weight: 0,
         dimensions: "",
         imageUrl: "",
@@ -420,7 +420,7 @@ const EditProduct = () => {
           sku: v.sku,
           price: parseFloat(v.price),
           originalPrice: parseFloat(v.originalPrice),
-          stockQuantity: parseInt(v.stockQuantity),
+          maxSalesQuantity: v.maxSalesQuantity ? parseInt(v.maxSalesQuantity) : null,
           weight: parseFloat(v.weight),
           dimensions: v.dimensions,
           imageUrl: v.imageUrl,
@@ -732,13 +732,14 @@ const EditProduct = () => {
                     </div>
                     <div className="col-lg-4 col-sm-6 col-12">
                       <div className="mb-3">
-                        <label className="form-label">Stock Quantity <span className="text-danger">*</span></label>
+                        <label className="form-label">Max Sales Quantity</label>
                         <input
                           type="number"
                           className="form-control"
-                          value={variant.stockQuantity}
-                          onChange={(e) => handleVariantChange(index, 'stockQuantity', e.target.value)}
-                          required
+                          value={variant.maxSalesQuantity || ''}
+                          onChange={(e) => handleVariantChange(index, 'maxSalesQuantity', e.target.value)}
+                          min="1"
+                          placeholder="Optional - must be > 0 if set"
                         />
                       </div>
                     </div>
