@@ -394,7 +394,7 @@ const Header = () => {
                 data-bs-toggle="dropdown">
 
                 <i className="ti ti-circle-plus me-1" />
-                Add New
+                Thêm mới
               </Link>
               <div className="dropdown-menu dropdown-xl dropdown-menu-center">
                 <div className="row g-2">
@@ -403,7 +403,7 @@ const Header = () => {
                       <span className="link-icon">
                         <i className="ti ti-brand-codepen" />
                       </span>
-                      <p>Category</p>
+                      <p>Danh mục sản phẩm</p>
                     </Link>
                   </div>
                   <div className="col-md-2">
@@ -411,17 +411,25 @@ const Header = () => {
                       <span className="link-icon">
                         <i className="ti ti-square-plus" />
                       </span>
-                      <p>Product</p>
+                      <p>Sản phẩm mới</p>
                     </Link>
                   </div>
                   <div className="col-md-2">
+                    <Link to={route.brandlist} className="link-item">
+                      <span className="link-icon">
+                        <i className="ti ti-shopping-bag" />
+                      </span>
+                      <p>Thương hiệu</p>
+                    </Link>
+                  </div>
+                  {/* <div className="col-md-2">
                     <Link to={route.categorylist} className="link-item">
                       <span className="link-icon">
                         <i className="ti ti-shopping-bag" />
                       </span>
                       <p>Purchase</p>
                     </Link>
-                  </div>
+                  </div> */}
                   <div className="col-md-2">
                     <Link to={route.onlineorder} className="link-item">
                       <span className="link-icon">

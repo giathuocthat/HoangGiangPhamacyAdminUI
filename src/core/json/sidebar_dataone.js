@@ -318,7 +318,7 @@ export const SidebarData1 = [
   activeRoute: "product",
   subRoutes: [
   {
-    tittle: "Products",
+    tittle: "Danh sách sản phẩm",
     hasSubRoute: false,
     showSubRoute: true,
     route: "/product-list",

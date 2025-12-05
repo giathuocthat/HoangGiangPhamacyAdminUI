@@ -59,15 +59,15 @@ const Sidebar = () => {
         <>
           {/* Logo */}
           <div className="sidebar-logo">
-            <Link to={route.newdashboard} className="logo logo-normal">
+            {/* <Link to={route.newdashboard} className="logo logo-normal">
               <img src={logo} alt="Img" />
-            </Link>
+            </Link> */}
             <Link to={route.newdashboard} className="logo logo-white">
               <img src={logoWhite} alt="Img" />
             </Link>
-            <Link to={route.newdashboard} className="logo-small">
+            {/* <Link to={route.newdashboard} className="logo-small">
               <img src={logoSmall} alt="Img" />
-            </Link>
+            </Link> */}
             <Link id="toggle_btn" to="#" onClick={handlesidebar}>
               <i className="feather icon-chevrons-left feather-16" />
             </Link>
