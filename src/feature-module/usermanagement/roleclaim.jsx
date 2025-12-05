@@ -2,15 +2,19 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import TableTopHead from "../../components/table-top-head";
 import { roleClaimApi } from "../../services/roleclaim.service";
+import { useParams } from 'react-router-dom';
 
 const RoleClaim = () => {
     const [permissions, setPermissions] = useState([]);
     const [groupedPermissions, setGroupedPermissions] = useState({});
     const [loading, setLoading] = useState(true);
 
+    const { roleId } = useParams();  // Lấy roleId từ URL
     // Mock API call to fetch permissions
     useEffect(() => {
-        const fetchRoleClaims = async (roleId) => {
+        const fetchRoleClaims = async () => {
+            if (!roleId) return; // Don't fetch if roleId is not available
+
             try {
                 setLoading(true);
                 const res = await roleClaimApi.getListRoleClaim(roleId)
@@ -23,7 +27,7 @@ const RoleClaim = () => {
             }
         };
         fetchRoleClaims();
-    }, []);
+    }, [roleId]);
 
     const fetchPermissions = async () => {
         setLoading(true);

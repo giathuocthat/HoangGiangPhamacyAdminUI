@@ -37,8 +37,6 @@ import TablesBasic from "../feature-module/uiinterface/table/tables-basic";
 import Pos from "../feature-module/pos/pos";
 
 
-
-
 const ProductList = lazy(
   () => import("../feature-module/inventory/productlist")
 );
@@ -299,6 +297,9 @@ const Permissions = lazy(
 );
 const EditRole = lazy(
   () => import("../feature-module/usermanagement/editRole")
+);
+const RoleClaim = lazy(
+  () => import("../feature-module/usermanagement/roleclaim")
 );
 const DeleteAccount = lazy(
   () => import("../feature-module/usermanagement/deleteaccount")
@@ -1193,6 +1194,13 @@ export const authRoutes = [
     path: routes.editRole,
     name: "editRole",
     element: <EditRole />,
+    route: Route
+  },
+  {
+    id: 106.6,
+    path: routes.roleClaim,
+    name: "roleClaim",
+    element: <RoleClaim />,
     route: Route
   },
   {

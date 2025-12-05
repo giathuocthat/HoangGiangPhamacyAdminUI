@@ -24,8 +24,8 @@ const AddUsers = () => {
         const res = await roleApi.getListRole();
 
         const formattedOptions = res.map(role => ({
-          label: role.name,
-          value: role.id
+          name: role.name,
+          id: role.id
         }));
 
         setRoleOptions(formattedOptions);
@@ -282,7 +282,7 @@ const AddUsers = () => {
                           <select value={selectedRole} onChange={(e) => handleRoleChange(e)} className="form-control" name="role">
                             {roleOptions.map((item) => (
                               <option key={item.id} value={item.id}>
-                                {item.label}
+                                {item.name}
                               </option>
                             ))}
                           </select>
