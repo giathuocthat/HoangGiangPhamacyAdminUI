@@ -45,6 +45,14 @@ class UserApiService extends ApiService {
     async updateUser(id, userData) {
         return this.put(API_ENDPOINTS.USER.UPDATE(id), userData);
     }
+
+    async getListUser() {
+        return this.get(API_ENDPOINTS.USER.GET_ALL);
+    }
+
+    async deleteUser(id) {
+        return this.delete(API_ENDPOINTS.USER.DELETE(id));
+    }
 }
 
 // Export singleton instance

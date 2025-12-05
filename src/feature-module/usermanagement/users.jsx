@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import AddUsers from "../../core/modals/usermanagement/addusers";
 import EditUser from "../../core/modals/usermanagement/edituser";
 
@@ -6,17 +7,87 @@ import TooltipIcons from "../../components/tooltip-content/tooltipIcons";
 import RefreshIcon from "../../components/tooltip-content/refresh";
 import CollapesIcon from "../../components/tooltip-content/collapes";
 import Table from "../../core/pagination/datatable";
-import { userlisadata } from "../../core/json/users";
+import { userApi } from "../../services/user.service";
 
 const Users = () => {
-  const dataSource = userlisadata;
+  const [dataSource, setDataSource] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  // Fetch users from API
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const res = await userApi.getListUser();
+
+      // Map API response to table format
+      const mappedData = res.map((user, index) => ({
+        key: index,
+        id: user.id || index,
+        userId: user.id,
+        username: user.userName || user.fullName || 'N/A',
+        fullName: user.fullName || 'N/A',
+        phone: user.phoneNumber || 'N/A',
+        phoneNumber: user.phoneNumber,
+        email: user.email || 'N/A',
+        role: user.role || 'User',
+        createdon: user.createdDate ? new Date(user.createdDate).toLocaleDateString() : 'N/A',
+        status: user.isActive ? 'Active' : 'Inactive',
+        img: user.avatar,
+        rawData: user
+      }));
+
+      setDataSource(mappedData);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  // Handle edit user
+  const handleEditUser = (user) => {
+    setSelectedUser(user);
+  };
+
+  const onHandleDeleteUser = (user) => {
+    setSelectedUser(user);
+  };
+
+  // Handle update success
+  const handleUpdateSuccess = () => {
+    fetchUsers(); // Refresh user list
+  };
+
+  const handleDeleteUser = async (userId) => {
+    try {
+      setLoading(true);
+      await userApi.deleteUser(userId);
+
+      // Close modal after successful deletion
+      const closeButton = document.getElementById('closeDeleteModal');
+      if (closeButton) {
+        closeButton.click();
+      }
+
+      fetchUsers(); // Refresh user list
+      setLoading(false);
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      setLoading(false);
+    }
+  };
 
   const columns = [
-  {
-    title: "User Name",
-    dataIndex: "username",
-    render: (text, record) =>
-    <span className="userimgname">
+    {
+      title: "User Name",
+      dataIndex: "username",
+      render: (text, record) =>
+        <span className="userimgname">
           <Link to="#" className="avatar avatar-md me-2">
             <img alt="" src={record.img} />
           </Link>
@@ -25,85 +96,86 @@ const Users = () => {
           </div>
         </span>,
 
-    sorter: (a, b) => a.username.length - b.username.length
-  },
+      sorter: (a, b) => a.username.length - b.username.length
+    },
 
-  {
-    title: "Phone",
-    dataIndex: "phone",
-    sorter: (a, b) => a.phone.length - b.phone.length
-  },
-  {
-    title: "Email",
-    dataIndex: "email",
-    sorter: (a, b) => a.email.length - b.email.length
-  },
-  {
-    title: "Role",
-    dataIndex: "role",
-    sorter: (a, b) => a.role.length - b.role.length
-  },
-  {
-    title: "Created On",
-    dataIndex: "createdon",
-    sorter: (a, b) => a.createdon.length - b.createdon.length
-  },
-  {
-    title: "Status",
-    dataIndex: "status",
-    render: (text) =>
-    <div>
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      sorter: (a, b) => a.phone.length - b.phone.length
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      sorter: (a, b) => a.email.length - b.email.length
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      sorter: (a, b) => a.role.length - b.role.length
+    },
+    {
+      title: "Created On",
+      dataIndex: "createdon",
+      sorter: (a, b) => a.createdon.length - b.createdon.length
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      render: (text) =>
+        <div>
           {text === "Active" &&
-      <span className="d-inline-flex align-items-center p-1 pe-2 rounded-1 text-white bg-success fs-10">
+            <span className="d-inline-flex align-items-center p-1 pe-2 rounded-1 text-white bg-success fs-10">
               {" "}
               <i className="ti ti-point-filled me-1 fs-11"></i>
               {text}
             </span>
-      }
+          }
           {text === "Inactive" &&
-      <span className="d-inline-flex align-items-center p-1 pe-2 rounded-1 text-white bg-danger fs-10">
+            <span className="d-inline-flex align-items-center p-1 pe-2 rounded-1 text-white bg-danger fs-10">
               {" "}
               <i className="ti ti-point-filled me-1 fs-11"></i>
               {text}
             </span>
-      }
+          }
         </div>,
 
-    sorter: (a, b) => a.status.length - b.status.length
-  },
-  {
-    title: "Actions",
-    dataIndex: "actions",
-    key: "actions",
-    render: () =>
-    <div className="action-table-data">
+      sorter: (a, b) => a.status.length - b.status.length
+    },
+    {
+      title: "Actions",
+      dataIndex: "actions",
+      key: "actions",
+      render: (_, record) =>
+        <div className="action-table-data">
           <div className="edit-delete-action">
             <Link className="me-2 p-2" to="#">
               <i
-            data-feather="eye"
-            className="feather feather-eye action-eye">
-          </i>
+                data-feather="eye"
+                className="feather feather-eye action-eye">
+              </i>
             </Link>
             <Link
-          className="me-2 p-2"
-          to="#"
-          data-bs-toggle="modal"
-          data-bs-target="#edit-units">
-          
+              className="me-2 p-2"
+              to="#"
+              data-bs-toggle="modal"
+              data-bs-target="#edit-units"
+              onClick={() => handleEditUser(record)}>
+
               <i data-feather="edit" className="feather-edit"></i>
             </Link>
-            <Link className="confirm-text p-2" to="#">
+            <Link className="confirm-text p-2" to="#" onClick={() => onHandleDeleteUser(record)} >
               <i
-            data-feather="trash-2"
-            className="feather-trash-2"
-            data-bs-toggle="modal"
-            data-bs-target="#delete-modal">
-          </i>
+                data-feather="trash-2"
+                className="feather-trash-2"
+                data-bs-toggle="modal"
+                data-bs-target="#delete-modal">
+              </i>
             </Link>
           </div>
         </div>
 
-  }];
+    }];
 
 
   return (
@@ -128,7 +200,7 @@ const Users = () => {
                 className="btn btn-added"
                 data-bs-toggle="modal"
                 data-bs-target="#add-units">
-                
+
                 <i className="ti ti-circle-plus me-1"></i>
                 Add New User
               </Link>
@@ -144,7 +216,7 @@ const Users = () => {
                     to="#"
                     className="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center"
                     data-bs-toggle="dropdown">
-                    
+
                     Status
                   </Link>
                   <ul className="dropdown-menu  dropdown-menu-end p-3">
@@ -165,7 +237,7 @@ const Users = () => {
 
             <div className="card-body">
               <div className="table-responsive">
-                <Table columns={columns} dataSource={dataSource} />
+                <Table columns={columns} dataSource={dataSource} key={"id"} />
               </div>
             </div>
           </div>
@@ -173,7 +245,11 @@ const Users = () => {
         </div>
       </div>
       <AddUsers />
-      <EditUser />
+      <EditUser
+        userId={selectedUser?.id}
+        userData={selectedUser}
+        onUpdateSuccess={handleUpdateSuccess}
+      />
       <div className="modal fade" id="delete-modal">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
@@ -188,16 +264,17 @@ const Users = () => {
                 </p>
                 <div className="modal-footer-btn mt-3 d-flex justify-content-center">
                   <button
+                    id="closeDeleteModal"
                     type="button"
                     className="btn me-2 btn-secondary fs-13 fw-medium p-2 px-3 shadow-none"
                     data-bs-dismiss="modal">
-                    
+
                     Cancel
                   </button>
-                  <button
+                  <button onClick={() => handleDeleteUser(selectedUser?.id)}
                     type="submit"
                     className="btn btn-primary fs-13 fw-medium p-2 px-3">
-                    
+
                     Yes Delete
                   </button>
                 </div>
