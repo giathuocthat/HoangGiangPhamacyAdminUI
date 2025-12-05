@@ -29,6 +29,9 @@ const AddProduct = () => {
   const [ingredients, setIngredients] = useState("");
   const [usageInstructions, setUsageInstructions] = useState("");
   const [contraindications, setContraindications] = useState("");
+  const [storageInstructions, setStorageInstructions] = useState("");
+  const [dosageInstructions, setDosageInstructions] = useState("");
+  const [drugEfficacy, setDrugEfficacy] = useState("");
 
   // Variants
   const [productType, setProductType] = useState("single");
@@ -390,6 +393,9 @@ const AddProduct = () => {
         ingredients: ingredients,
         usageInstructions: usageInstructions,
         contraindications: contraindications,
+        storageInstructions: storageInstructions,
+        dosageInstructions: dosageInstructions,
+        drugEfficacy: drugEfficacy,
         productVariants: variants.map(v => ({
           sku: v.sku,
           price: parseFloat(v.price),
@@ -419,8 +425,8 @@ const AddProduct = () => {
         <div className="page-header">
           <div className="add-item d-flex">
             <div className="page-title">
-              <h4>Create Product</h4>
-              <h6>Create new product</h6>
+              <h4>Thêm Sản Phẩm</h4>
+              <h6>Tạo sản phẩm để add vào Database</h6>
             </div>
           </div>
           <ul className="table-top-head">
@@ -428,7 +434,7 @@ const AddProduct = () => {
               <div className="page-btn">
                 <Link to={route.productlist} className="btn btn-secondary">
                   <i className="feather icon-arrow-left me-2" />
-                  Back to Product
+                  Quay lại trang Danh sách sản phẩm
                 </Link>
               </div>
             </li>
@@ -439,11 +445,11 @@ const AddProduct = () => {
           {/* General Information */}
           <div className="card">
             <div className="card-body">
-              <h4 className="card-title">General Information</h4>
+              <h4 className="card-title">Thông tin tổng quát</h4>
               <div className="row">
                 <div className="col-lg-6 col-sm-6 col-12">
                   <div className="mb-3">
-                    <label className="form-label">Product Name <span className="text-danger">*</span></label>
+                    <label className="form-label">Tên sản phẩm <span className="text-danger">*</span></label>
                     <input
                       type="text"
                       className="form-control"
@@ -468,42 +474,45 @@ const AddProduct = () => {
                 </div>
                 <div className="col-lg-6 col-sm-6 col-12">
                   <div className="mb-3">
-                    <label className="form-label">Category</label>
+                    <label className="form-label">Danh mục <span className="text-danger">*</span></label>
                     <CommonSelect
                       className="w-100"
                       options={categories}
                       value={selectedCategory}
                       onChange={(e) => setSelectedCategory(e.value)}
                       placeholder="Choose Category"
+                      required
                     />
                   </div>
                 </div>
                 <div className="col-lg-6 col-sm-6 col-12">
                   <div className="mb-3">
-                    <label className="form-label">Brand</label>
+                    <label className="form-label">Thương hiệu <span className="text-danger">*</span></label>
                     <CommonSelect
                       className="w-100"
                       options={brands}
                       value={selectedBrand}
                       onChange={(e) => setSelectedBrand(e.value)}
                       placeholder="Choose Brand"
+                      required
                     />
                   </div>
                 </div>
                 <div className="col-lg-6 col-sm-6 col-12">
                   <div className="mb-3">
-                    <label className="form-label">Registration Number</label>
+                    <label className="form-label">Số đăng ký <span className="text-danger">*</span></label>
                     <input
                       type="text"
                       className="form-control"
                       value={registrationNumber}
                       onChange={(e) => setRegistrationNumber(e.target.value)}
+                      required
                     />
                   </div>
                 </div>
                 <div className="col-lg-12">
                   <div className="mb-3">
-                    <label className="form-label">Short Description</label>
+                    <label className="form-label">Mô tả ngắn</label>
                     <textarea
                       className="form-control"
                       rows="3"
@@ -514,7 +523,7 @@ const AddProduct = () => {
                 </div>
                 <div className="col-lg-12">
                   <div className="mb-3">
-                    <label className="form-label">Full Description</label>
+                    <label className="form-label">Mô tả đầy đủ</label>
                     <Editor
                       ref={editorRef}
                       value={fullDescription}
@@ -530,11 +539,11 @@ const AddProduct = () => {
           {/* Medical Details */}
           <div className="card mt-4">
             <div className="card-body">
-              <h4 className="card-title">Medical Details</h4>
+              <h4 className="card-title">Thông tin chi tiết</h4>
               <div className="row">
                 <div className="col-lg-12">
                   <div className="mb-3">
-                    <label className="form-label">Ingredients</label>
+                    <label className="form-label">Thành phần</label>
                     <textarea
                       className="form-control"
                       rows="3"
@@ -545,7 +554,18 @@ const AddProduct = () => {
                 </div>
                 <div className="col-lg-12">
                   <div className="mb-3">
-                    <label className="form-label">Usage Instructions</label>
+                    <label className="form-label">Công dụng</label>
+                    <textarea
+                      className="form-control"
+                      rows="3"
+                      value={drugEfficacy}
+                      onChange={(e) => setDrugEfficacy(e.target.value)}
+                    ></textarea>
+                  </div>
+                </div>
+                <div className="col-lg-12">
+                  <div className="mb-3">
+                    <label className="form-label">Hướng dẫn sử dụng</label>
                     <textarea
                       className="form-control"
                       rows="3"
@@ -556,12 +576,34 @@ const AddProduct = () => {
                 </div>
                 <div className="col-lg-12">
                   <div className="mb-3">
-                    <label className="form-label">Contraindications</label>
+                    <label className="form-label">Liều dùng</label>
+                    <textarea
+                      className="form-control"
+                      rows="3"
+                      value={dosageInstructions}
+                      onChange={(e) => setDosageInstructions(e.target.value)}
+                    ></textarea>
+                  </div>
+                </div>
+                <div className="col-lg-12">
+                  <div className="mb-3">
+                    <label className="form-label">Chống chỉ định</label>
                     <textarea
                       className="form-control"
                       rows="3"
                       value={contraindications}
                       onChange={(e) => setContraindications(e.target.value)}
+                    ></textarea>
+                  </div>
+                </div>
+                <div className="col-lg-12">
+                  <div className="mb-3">
+                    <label className="form-label">Bảo quản</label>
+                    <textarea
+                      className="form-control"
+                      rows="3"
+                      value={storageInstructions}
+                      onChange={(e) => setStorageInstructions(e.target.value)}
                     ></textarea>
                   </div>
                 </div>
@@ -581,7 +623,7 @@ const AddProduct = () => {
                 <div className="d-flex align-items-center justify-content-between flex-fill">
                   <h5 className="d-flex align-items-center">
                     <i className="feather icon-image text-primary me-2" />
-                    <span>Images</span>
+                    <span>Thêm Ảnh sản phẩm</span>
                   </h5>
                 </div>
               </div>

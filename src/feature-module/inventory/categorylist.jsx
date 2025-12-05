@@ -7,6 +7,7 @@ import CommonFooter from "../../components/footer/commonFooter";
 import TableTopHead from "../../components/table-top-head";
 import DeleteModal from "../../components/delete-modal";
 import SearchFromApi from "../../components/data-table/search";
+import { toSlug } from "../../utils/helpFunctions";
 import './categorylist.css';
 
 // Call categoryAPI từ service
@@ -36,20 +37,6 @@ const CategoryList = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
-
-  // Tạo slug từ tên category
-  const toSlug = (str) => {
-    if (!str) return "";
-    return String(str)
-      .toLowerCase()
-      .replace(/đ/g, 'd')
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9\s-]/g, "")
-      .replace(/-+/g, "-")
-      .replace(/\s+/g, "-")
-      .trim();
-  };
 
   const handleSearch = (value) => {
     setSearchQuery(value);

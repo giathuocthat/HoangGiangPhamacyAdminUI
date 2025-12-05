@@ -2,8 +2,9 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { orderApi } from "../../../services/api.service";
 import { pdf, printer } from "../../../utils/imagepath";
+import { formatCreatedDate } from "../../../utils/helpFunctions";
 
-const OrderDetailModal = ({ order, onStatusUpdated }) => {
+const OrderDetailModal = ({ order, onStatusUpdated, isViewMode = false }) => {
   const [orderDetail, setOrderDetail] = useState(null);
   const [loading, setLoading] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
@@ -77,14 +78,7 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
 
   const displayOrder = orderDetail || order;
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('vi-VN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
-  };
+  
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('vi-VN', {
@@ -120,7 +114,7 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
           <div className="page-header p-4 border-bottom mb-0">
             <div className="add-item d-flex align-items-center">
               <div className="page-title modal-datail">
-                <h4 className="mb-0 me-2">Order Details</h4>
+                <h4 className="mb-0 me-2">{isViewMode ? 'Xem chi tiết Đơn hàng' : 'Manage Order'}</h4>
               </div>
             </div>
             <ul className="table-top-head">
@@ -151,7 +145,7 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
               >
-                <i className="feather icon-arrow-left me-2" /> Back to Orders
+                <i className="feather icon-arrow-left me-2" /> Quay lại "Danh sách Đơn hàng"
               </Link>
             </div>
           </div>
@@ -170,40 +164,45 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
               >
                 <div className="row sales-details-items d-flex">
                   <div className="col-md-6 details-item">
-                    <h6>Customer Info</h6>
+                    <h6>Thông tin Chủ đơn hàng</h6>
                     <h4 className="mb-1">{displayOrder.customerName || 'Guest'}</h4>
                     <p className="mb-0">
-                      Phone: <span>{displayOrder.customerPhone || 'N/A'}</span>
+                      Số điện thoại: <span>{displayOrder.customerPhone || 'N/A'}</span>
                     </p>
                     {displayOrder.customerEmail && (
                       <p className="mb-0">
                         Email: <span>{displayOrder.customerEmail}</span>
                       </p>
                     )}
+                    {displayOrder.shippingAddress && (
+                      <p className="mb-0">
+                        Địa chỉ: <span>{displayOrder.shippingAddress}</span>
+                      </p>
+                    )}
                   </div>
 
                   <div className="col-md-6 details-item">
-                    <h6>Order Info</h6>
+                    <h6>Thông tin đơn hàng</h6>
                     <p className="mb-0">
-                      Order Number:{" "}
+                      Số hiệu đơn hàng:{" "}
                       <span className="fs-16 text-primary ms-2">
                         {displayOrder.orderNumber}
                       </span>
                     </p>
                     <p className="mb-0">
-                      Date:{" "}
+                      Ngày tạo:{" "}
                       <span className="ms-2 text-gray-9">
-                        {formatDate(displayOrder.createdDate)}
+                        {formatCreatedDate(displayOrder.createdDate)}
                       </span>
                     </p>
                     <p className="mb-0">
-                      Order Status:{" "}
+                      Tình trạng đơn hàng:{" "}
                       <span className={`badge ${getStatusBadgeClass(displayOrder.orderStatus)} ms-2`}>
                         {displayOrder.orderStatus}
                       </span>
                     </p>
                     <p className="mb-0">
-                      Payment Status:{" "}
+                      Tình trạng thanh toán:{" "}
                       <span className={`badge ${getPaymentStatusBadgeClass(displayOrder.paymentStatus)} badge-xs shadow-none d-inline-flex align-items-center ms-2`}>
                         <i className="ti ti-point-filled me-1" />
                         {displayOrder.paymentStatus}
@@ -212,8 +211,8 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
                   </div>
                 </div>
 
-                {/* Status Update Section */}
-                {getValidNextStatuses(displayOrder.orderStatus).length > 0 && (
+                {/* Status Update Section - Only show if NOT in View Mode */}
+                {!isViewMode && getValidNextStatuses(displayOrder.orderStatus).length > 0 && (
                   <div className="row mt-4">
                     <div className="col-12">
                       <div className="alert alert-info d-flex align-items-center justify-content-between">
@@ -248,16 +247,16 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
                   </div>
                 )}
 
-                <h5 className="order-text mt-4">Order Summary</h5>
+                <h5 className="order-text mt-4">Tóm tắt đơn hàng</h5>
                 <div className="table-responsive no-pagination mb-3">
                   <table className="table datanew">
                     <thead>
                       <tr>
-                        <th>Product</th>
+                        <th>Tên sản phẩm</th>
                         <th>Variant SKU</th>
-                        <th>Quantity</th>
-                        <th>Unit Price</th>
-                        <th>Total</th>
+                        <th>Số lượng</th>
+                        <th>Giá tiền mỗi đơn vị</th>
+                        <th>Tổng giá tiền</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -297,27 +296,27 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
                   <div className="total-order w-100 max-widthauto m-auto mb-4">
                     <ul className="border-1 rounded-1">
                       <li className="border-bottom">
-                        <h4 className="border-end">Sub Total</h4>
+                        <h4 className="border-end">Tổng phụ (Sub Total)</h4>
                         <h5>{formatCurrency(displayOrder.subTotal || displayOrder.totalAmount)}</h5>
                       </li>
                       <li className="border-bottom">
-                        <h4 className="border-end">Shipping Fee</h4>
+                        <h4 className="border-end">Phí giao hàng</h4>
                         <h5>{formatCurrency(displayOrder.shippingFee || 0)}</h5>
                       </li>
                       <li className="border-bottom">
-                        <h4 className="border-end">Discount</h4>
+                        <h4 className="border-end">Giảm giá</h4>
                         <h5>{formatCurrency(displayOrder.discountAmount || 0)}</h5>
                       </li>
                       <li className="border-bottom">
-                        <h4 className="border-end">Grand Total</h4>
+                        <h4 className="border-end">Số tiền tổng cộng (Grand Total)</h4>
                         <h5>{formatCurrency(displayOrder.totalAmount)}</h5>
                       </li>
                       <li className="border-bottom">
-                        <h4 className="border-end">Paid</h4>
+                        <h4 className="border-end">Đã trả</h4>
                         <h5>{formatCurrency(displayOrder.paymentStatus === 'Paid' ? displayOrder.totalAmount : 0)}</h5>
                       </li>
                       <li className="border-bottom">
-                        <h4 className="border-end">Due</h4>
+                        <h4 className="border-end">Còn thiếu (Due)</h4>
                         <h5>{formatCurrency(displayOrder.paymentStatus === 'Paid' ? 0 : displayOrder.totalAmount)}</h5>
                       </li>
                     </ul>
@@ -335,9 +334,12 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
             >
               Close
             </button>
-            <button type="button" className="btn btn-primary">
-              Save Changes
-            </button>
+            {/* Ẩn nút Save khi ở chế độ view */}
+            {!isViewMode && (
+              <button type="button" className="btn btn-primary" data-bs-dismiss="modal">
+                Done
+              </button>
+            )}
           </div>
         </div>
       </div>

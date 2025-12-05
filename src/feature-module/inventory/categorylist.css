@@ -10,7 +10,7 @@
 .p-treetable .p-treetable-tbody tr[aria-level="1"] > td {
     font-weight: bold; 
     background-color: #f8f9fa !important; 
-    border-top: 2px solid #ccc !important; 
+    border-top: 1px solid #ccc !important; 
 }
 /* Cấp 2, 3, ... (tùy chọn) */
 .p-treetable .p-treetable-tbody tr[aria-level="2"] > td {

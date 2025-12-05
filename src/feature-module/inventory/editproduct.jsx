@@ -30,6 +30,9 @@ const EditProduct = () => {
   const [ingredients, setIngredients] = useState("");
   const [usageInstructions, setUsageInstructions] = useState("");
   const [contraindications, setContraindications] = useState("");
+  const [storageInstructions, setStorageInstructions] = useState("");
+  const [dosageInstructions, setDosageInstructions] = useState("");
+  const [drugEfficacy, setDrugEfficacy] = useState("");
 
   // Variants
   const [productType, setProductType] = useState("single");
@@ -125,6 +128,9 @@ const EditProduct = () => {
       setIngredients(product.ingredients || "");
       setUsageInstructions(product.usageInstructions || "");
       setContraindications(product.contraindications || "");
+      setStorageInstructions(product.storageInstructions || "");
+      setDosageInstructions(product.dosageInstructions || "");
+      setDrugEfficacy(product.drugEfficacy || "");
 
       // Set category and brand (will be matched after options are loaded)
       if (product.categoryId) {
@@ -415,6 +421,9 @@ const EditProduct = () => {
         ingredients: ingredients,
         usageInstructions: usageInstructions,
         contraindications: contraindications,
+        storageInstructions: storageInstructions,
+        dosageInstructions: dosageInstructions,
+        drugEfficacy: drugEfficacy,
         productVariants: variants.map(v => ({
           id: v.id || null,
           sku: v.sku,
@@ -445,8 +454,8 @@ const EditProduct = () => {
         <div className="page-header">
           <div className="add-item d-flex">
             <div className="page-title">
-              <h4>Edit Product</h4>
-              <h6>Update product information</h6>
+              <h4>Chỉnh sửa Sản phẩm</h4>
+              <h6>Cập nhật lại Thông tin chi tiết của Sản phẩm</h6>
             </div>
           </div>
           <ul className="table-top-head">
@@ -454,7 +463,7 @@ const EditProduct = () => {
               <div className="page-btn">
                 <Link to={route.productlist} className="btn btn-secondary">
                   <i className="feather icon-arrow-left me-2" />
-                  Back to Product
+                  Quay lại trang Sản phẩm
                 </Link>
               </div>
             </li>
@@ -465,11 +474,11 @@ const EditProduct = () => {
           {/* General Information */}
           <div className="card">
             <div className="card-body">
-              <h4 className="card-title">General Information</h4>
+              <h4 className="card-title">Thông tin tổng quát sản phẩm</h4>
               <div className="row">
                 <div className="col-lg-6 col-sm-6 col-12">
                   <div className="mb-3">
-                    <label className="form-label">Product Name <span className="text-danger">*</span></label>
+                    <label className="form-label">Tên sản phẩm <span className="text-danger">*</span></label>
                     <input
                       type="text"
                       className="form-control"
@@ -494,7 +503,7 @@ const EditProduct = () => {
                 </div>
                 <div className="col-lg-6 col-sm-6 col-12">
                   <div className="mb-3">
-                    <label className="form-label">Category</label>
+                    <label className="form-label">Danh mục</label>
                     <CommonSelect
                       className="w-100"
                       options={categories}
@@ -506,7 +515,7 @@ const EditProduct = () => {
                 </div>
                 <div className="col-lg-6 col-sm-6 col-12">
                   <div className="mb-3">
-                    <label className="form-label">Brand</label>
+                    <label className="form-label">Thương hiệu</label>
                     <CommonSelect
                       className="w-100"
                       options={brands}
@@ -518,7 +527,7 @@ const EditProduct = () => {
                 </div>
                 <div className="col-lg-6 col-sm-6 col-12">
                   <div className="mb-3">
-                    <label className="form-label">Registration Number</label>
+                    <label className="form-label">Số đăng ký</label>
                     <input
                       type="text"
                       className="form-control"
@@ -529,7 +538,7 @@ const EditProduct = () => {
                 </div>
                 <div className="col-lg-12">
                   <div className="mb-3">
-                    <label className="form-label">Short Description</label>
+                    <label className="form-label">Mô tả ngắn</label>
                     <textarea
                       className="form-control"
                       rows="3"
@@ -540,7 +549,7 @@ const EditProduct = () => {
                 </div>
                 <div className="col-lg-12">
                   <div className="mb-3">
-                    <label className="form-label">Full Description</label>
+                    <label className="form-label">Mô tả đầy đủ</label>
                     <Editor
                       ref={editorRef}
                       value={fullDescription}
@@ -556,11 +565,11 @@ const EditProduct = () => {
           {/* Medical Details */}
           <div className="card mt-4">
             <div className="card-body">
-              <h4 className="card-title">Medical Details</h4>
+              <h4 className="card-title">Thông tin chi tiết sản phẩm</h4>
               <div className="row">
                 <div className="col-lg-12">
                   <div className="mb-3">
-                    <label className="form-label">Ingredients</label>
+                    <label className="form-label">Thành phần</label>
                     <textarea
                       className="form-control"
                       rows="3"
@@ -571,7 +580,18 @@ const EditProduct = () => {
                 </div>
                 <div className="col-lg-12">
                   <div className="mb-3">
-                    <label className="form-label">Usage Instructions</label>
+                    <label className="form-label">Công dụng</label>
+                    <textarea
+                      className="form-control"
+                      rows="3"
+                      value={drugEfficacy}
+                      onChange={(e) => setDrugEfficacy(e.target.value)}
+                    ></textarea>
+                  </div>
+                </div>
+                <div className="col-lg-12">
+                  <div className="mb-3">
+                    <label className="form-label">Hướng dẫn sử dụng</label>
                     <textarea
                       className="form-control"
                       rows="3"
@@ -582,12 +602,34 @@ const EditProduct = () => {
                 </div>
                 <div className="col-lg-12">
                   <div className="mb-3">
-                    <label className="form-label">Contraindications</label>
+                    <label className="form-label">Liều dùng</label>
+                    <textarea
+                      className="form-control"
+                      rows="3"
+                      value={dosageInstructions}
+                      onChange={(e) => setDosageInstructions(e.target.value)}
+                    ></textarea>
+                  </div>
+                </div>
+                <div className="col-lg-12">
+                  <div className="mb-3">
+                    <label className="form-label">Chống chỉ định</label>
                     <textarea
                       className="form-control"
                       rows="3"
                       value={contraindications}
                       onChange={(e) => setContraindications(e.target.value)}
+                    ></textarea>
+                  </div>
+                </div>
+                <div className="col-lg-12">
+                  <div className="mb-3">
+                    <label className="form-label">Hướng dẫn Bảo quản</label>
+                    <textarea
+                      className="form-control"
+                      rows="3"
+                      value={storageInstructions}
+                      onChange={(e) => setStorageInstructions(e.target.value)}
                     ></textarea>
                   </div>
                 </div>

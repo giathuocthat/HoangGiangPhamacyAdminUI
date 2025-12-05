@@ -69,49 +69,43 @@ class ApiService {
     //     }
     // }
 
+    // FIX CHO METHOD request() trong ApiService class
+
     async request(url, options = {}) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
-        // 1. CHUẨN BỊ HEADERS BAN ĐẦU
-        const finalHeaders = {
-            ...this.defaultHeaders,
-            ...options.headers,
-        };
-
-        // 2. QUAN TRỌNG: NẾU BODY LÀ FORM DATA, PHẢI XÓA CONTENT-TYPE MẶC ĐỊNH.
-        // Trình duyệt sẽ tự thêm Content-Type: multipart/form-data kèm boundary.
-        if (options.body instanceof FormData) {
-            delete finalHeaders['Content-Type'];
-            delete finalHeaders['content-type'];
-        }
-
         try {
-            // Merge headers - options.headers should override defaultHeaders
-            const mergedHeaders = {
+            // 1. CHUẨN BỊ HEADERS
+            let finalHeaders = {
                 ...this.defaultHeaders,
                 ...options.headers,
             };
 
-            // Remove any headers that are explicitly set to undefined/null
-            Object.keys(mergedHeaders).forEach(key => {
-                if (mergedHeaders[key] === undefined || mergedHeaders[key] === null) {
-                    delete mergedHeaders[key];
+            // 2. XỬ LÝ FORM DATA - Xóa Content-Type để browser tự set
+            if (options.body instanceof FormData) {
+                delete finalHeaders['Content-Type'];
+                delete finalHeaders['content-type'];
+            }
+
+            // 3. XÓA CÁC HEADERS undefined/null
+            Object.keys(finalHeaders).forEach(key => {
+                if (finalHeaders[key] === undefined || finalHeaders[key] === null) {
+                    delete finalHeaders[key];
                 }
             });
 
+            // 4. GỌI FETCH
             const response = await fetch(url, {
                 ...options,
-                headers: finalHeaders, // SỬ DỤNG HEADERS ĐÃ XỬ LÝ
-                headers: mergedHeaders,
+                headers: finalHeaders,
                 signal: controller.signal,
             });
 
             clearTimeout(timeoutId);
 
-            // Handle non-OK responses
+            // 5. XỬ LÝ LỖI
             if (!response.ok) {
-                // Thử đọc response.json() để lấy thông báo lỗi chi tiết từ server
                 const errorData = await response.json().catch(() => ({}));
                 const errorMessage = errorData.message || `HTTP Error: ${response.status} ${response.statusText}`;
 
@@ -121,13 +115,15 @@ class ApiService {
                 throw error;
             }
 
-            // Parse JSON response (hoặc response rỗng nếu 204 No Content)
+            // 6. PARSE RESPONSE
             const contentType = response.headers.get("content-type");
             if (contentType && contentType.includes("application/json")) {
-                const data = await response.json();
-                return data;
+                return await response.json();
             }
-            return response.text().then(text => text || {});
+            
+            const text = await response.text();
+            return text || {};
+            
         } catch (error) {
             clearTimeout(timeoutId);
 
@@ -483,15 +479,6 @@ class ProductApiService extends ApiService {
     }
 
     /**
-     * Create a new product
-     * @param {Object} productData - Product data to create
-     * @returns {Promise} Created product
-     */
-    async createProduct(productData) {
-        return this.post(API_ENDPOINTS.PRODUCT.GET_ALL, productData); // Assuming POST /product creates a product
-    }
-
-    /**
      * Update an existing product
      * @param {number} id - Product ID
      * @param {Object} productData - Product data to update
@@ -502,7 +489,21 @@ class ProductApiService extends ApiService {
     }
 
     async getPagedProducts(options = {}) {
-        return this.get(API_ENDPOINTS.PRODUCT.GET_PAGED, options);
+        //return this.get(API_ENDPOINTS.PRODUCT.GET_PAGED, options);
+        const params = {
+        pageNumber: options.pageNumber || options.page || 1,
+        pageSize: 100, // Mặc định 100
+        // pageSize: options.pageSize || options.rows
+        };
+
+        // Optional filters
+        if (options.product) params.product = options.product;
+        if (options.category) params.category = options.category;
+        if (options.brand) params.brand = options.brand;
+        if (options.sortField) params.sortField = options.sortField;
+        if (options.sortOrder) params.sortOrder = options.sortOrder;
+
+        return this.get(API_ENDPOINTS.PRODUCT.GET_PAGED, params);
     }
 
     async addToCart(cartData) {
@@ -873,13 +874,22 @@ class FileUploadApiService extends ApiService {
             description
         });
 
+        // Tạo FormData
         const formData = new FormData();
-        // Try uppercase 'File' - ASP.NET Core usually expects PascalCase
         formData.append('File', file);
-        if (uploadSource !== null) formData.append('UploadSource', uploadSource);
-        if (relatedEntityId !== null) formData.append('RelatedEntityId', relatedEntityId);
-        if (vendorId !== null) formData.append('VendorId', vendorId);
-        if (description !== null) formData.append('Description', description);
+        
+        if (uploadSource !== null && uploadSource !== undefined) {
+            formData.append('UploadSource', uploadSource);
+        }
+        if (relatedEntityId !== null && relatedEntityId !== undefined) {
+            formData.append('RelatedEntityId', relatedEntityId);
+        }
+        if (vendorId !== null && vendorId !== undefined) {
+            formData.append('VendorId', vendorId);
+        }
+        if (description !== null && description !== undefined) {
+            formData.append('Description', description);
+        }
 
         // Log FormData contents
         console.log('FormData entries:');
@@ -890,17 +900,14 @@ class FileUploadApiService extends ApiService {
         const url = `${this.baseURL}${API_ENDPOINTS.FILE_UPLOAD.UPLOAD_SINGLE}`;
         console.log('Upload URL:', url);
 
-        // For FormData, we must NOT set Content-Type - let browser set it with boundary
-        // Set to undefined so it gets removed in the request method
-        const headers = {
-            'Content-Type': undefined,  // This will be removed by the request method
-            'Accept': 'application/json'
-        };
-
+        // QUAN TRỌNG: Không set Content-Type cho FormData
+        // Browser sẽ tự động set với boundary
         return this.request(url, {
             method: 'POST',
             body: formData,
-            headers: headers
+            headers: {
+                'Content-Type': undefined  // Sẽ bị xóa trong request method
+            }
         });
     }
 

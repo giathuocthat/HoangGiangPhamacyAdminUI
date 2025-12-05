@@ -190,15 +190,25 @@ const ProductDetail = () => {
                 </div>
 
                 {/* Thông tin dược lý (Quan trọng) */}
-                <div className="medical-info-section bg-light p-3 rounded">
-                    <div className="mb-3">
+                <div className="medical-info-section">
+                    {/* <div className="mb-3">
                         <h6 className="fw-bold text-dark"><i className="feather icon-activity me-2" />Thành phần (Ingredients)</h6>
                         <p>{product.ingredients || 'Đang cập nhật'}</p>
                     </div>
                     
                     <div className="mb-3">
-                        <h6 className="fw-bold text-dark"><i className="feather icon-book-open me-2" />Hướng dẫn sử dụng (Usage)</h6>
+                        <h6 className="fw-bold text-dark"><i className="feather icon-book-open me-2" />Công dụng (Drug Efficacy)</h6>
+                        <p style={{ whiteSpace: 'pre-line' }}>{product.drugEfficacy || 'Đang cập nhật'}</p>
+                    </div>
+
+                    <div className="mb-3">
+                        <h6 className="fw-bold text-dark"><i className="feather icon-book me-2" />Hướng dẫn sử dụng (Usage)</h6>
                         <p style={{ whiteSpace: 'pre-line' }}>{product.usageInstructions || 'Đang cập nhật'}</p>
+                    </div>
+                    
+                    <div className="mb-3">
+                        <h6 className="fw-bold text-dark"><i className="feather icon-droplet me-2" />Liều dùng (Dosage Instructions)</h6>
+                        <p style={{ whiteSpace: 'pre-line' }}>{product.dosageInstructions || 'Đang cập nhật'}</p>
                     </div>
 
                     <div className="mb-3">
@@ -209,12 +219,12 @@ const ProductDetail = () => {
                     <div className="mb-0">
                         <h6 className="fw-bold text-dark"><i className="feather icon-package me-2" />Bảo quản (Storage)</h6>
                         <p>{product.storageInstructions || 'Nơi khô ráo, thoáng mát'}</p>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Mô tả đầy đủ (HTML) */}
                 {product.fullDescription && (
-                    <div className="mt-4">
+                    <div className="mt-4 bg-light p-3 rounded">
                         <h5 className="fw-bold mb-3">Chi tiết sản phẩm</h5>
                         <div 
                             className="product-description-content"

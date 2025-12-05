@@ -10,7 +10,7 @@ import TableTopHead from "../../components/table-top-head";
 import DeleteModal from "../../components/delete-modal";
 import SearchFromApi from "../../components/data-table/search";
 import ImageLightbox from "../../components/image-lightbox"; 
-
+import formatCreatedDate from "../../utils/helpFunctions";
 // Modals
 import Brand from "../../core/modals/inventory/brand"; 
 
@@ -20,27 +20,6 @@ import Brand from "../../core/modals/inventory/brand";
  * @param {string} dateString 
  * @returns {string} Ngày tháng đã định dạng hoặc 'N/A'
  */
-const formatCreatedDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    // 1. Tạo đối tượng Date từ chuỗi
-    const date = new Date(dateString);
-    // Kiểm tra tính hợp lệ
-    if (isNaN(date)) return 'Invalid Date';
-    // 2. Lấy các thành phần
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
-    const year = date.getFullYear();
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-    // 3. Lấy tên thứ trong tuần (Tiếng Việt)
-    // getDay() trả về 0 (CN) đến 6 (T7)
-    const dayNames = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
-    const dayOfWeek = dayNames[date.getDay()];
-    // 4. Trả về định dạng mong muốn
-    return `${day}/${month}/${year} - ${dayOfWeek} - ${hours}:${minutes}:${seconds}`;
-};
-
 
 const ProductList = () => {
   // ==================== INITIALIZATION & STATE MANAGEMENT ====================
@@ -73,7 +52,7 @@ const ProductList = () => {
     setLoading(true);
     setFetchError(null);
     try {
-      const response = await productApi.getProducts(
+      const response = await productApi.getPagedProducts(
         currentPage,
         rows,
         _searchQuery,
@@ -233,11 +212,11 @@ const ProductList = () => {
 
   const columns = [
     { field: 'id', header: 'ID', sortable: true, style: { width: '5%' } },
-    { field: 'thumbnailUrl', header: 'Image', body: renderImageColumn, style: { width: '10%' } },
+    { field: 'thumbnailUrl', header: 'Ảnh sản phẩm', body: renderImageColumn, style: { width: '10%' } },
     { field: 'name', header: 'Tên sản phẩm', sortable: true, style: { width: '20%' } },
     { field: 'brand', header: 'Thương hiệu', sortable: true, body: renderBrandColumn, style: { width: '15%' } },
     { field: 'category', header: 'Danh mục', sortable: true, body: renderCategoryColumn, style: { width: '15%' } },
-    { field: 'ingredients', header: 'Thành phần', sortable: true, style: { width: '10%' } },
+    //{ field: 'ingredients', header: 'Thành phần', sortable: true, style: { width: '10%' } },
     { field: 'createdDate', header: 'Ngày tạo', sortable: true, body: renderCreatedDateColumn, style: { width: '15%' } },
     { header: 'Action', body: renderActionColumn, style: { width: '10%', textAlign: 'center' } },
   ];
@@ -250,7 +229,7 @@ const ProductList = () => {
         <div className="page-header">
           <div className="add-item d-flex">
             <div className="page-title">
-              <h4>Product List</h4>
+              <h4>Danh sách Sản phẩm</h4>
             </div>
           </div>
           <ul className="table-top-head">
