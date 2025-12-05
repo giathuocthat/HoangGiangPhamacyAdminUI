@@ -135,7 +135,7 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
             <div className="page-header p-4 border-bottom mb-0">
               <div className="add-item d-flex align-items-center">
                 <div className="page-title modal-datail">
-                  <h4 className="mb-0 me-2">Order Details</h4>
+                  <h4 className="mb-0 me-2">Chi tiết đơn hàng</h4>
                 </div>
               </div>
               <ul className="table-top-head">
@@ -166,7 +166,7 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
                   className="btn btn-secondary"
                   data-bs-dismiss="modal"
                 >
-                  <i className="feather icon-arrow-left me-2" /> Back to Orders
+                  <i className="feather icon-arrow-left me-2" /> Quay lại danh sách
                 </Link>
               </div>
             </div>
@@ -185,10 +185,10 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
                 >
                   <div className="row sales-details-items d-flex">
                     <div className="col-md-6 details-item">
-                      <h6>Customer Info</h6>
-                      <h4 className="mb-1">{displayOrder.customerName || 'Guest'}</h4>
+                      <h6>Thông tin khách hàng</h6>
+                      <h4 className="mb-1">{displayOrder.customerName || 'Khách'}</h4>
                       <p className="mb-0">
-                        Phone: <span>{displayOrder.customerPhone || 'N/A'}</span>
+                        SĐT: <span>{displayOrder.customerPhone || 'N/A'}</span>
                       </p>
                       {displayOrder.customerEmail && (
                         <p className="mb-0">
@@ -198,27 +198,27 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
                     </div>
 
                     <div className="col-md-6 details-item">
-                      <h6>Order Info</h6>
+                      <h6>Thông tin đơn hàng</h6>
                       <p className="mb-0">
-                        Order Number:{" "}
+                        Mã đơn:{" "}
                         <span className="fs-16 text-primary ms-2">
                           {displayOrder.orderNumber}
                         </span>
                       </p>
                       <p className="mb-0">
-                        Date:{" "}
+                        Ngày:{" "}
                         <span className="ms-2 text-gray-9">
                           {formatDate(displayOrder.createdDate)}
                         </span>
                       </p>
                       <p className="mb-0">
-                        Order Status:{" "}
+                        Trạng thái đơn:{" "}
                         <span className={`badge ${getStatusBadgeClass(displayOrder.orderStatus)} ms-2`}>
                           {displayOrder.orderStatus}
                         </span>
                       </p>
                       <p className="mb-0">
-                        Payment Status:{" "}
+                        Trạng thái thanh toán:{" "}
                         <span className={`badge ${getPaymentStatusBadgeClass(displayOrder.paymentStatus)} badge-xs shadow-none d-inline-flex align-items-center ms-2`}>
                           <i className="ti ti-point-filled me-1" />
                           {displayOrder.paymentStatus}
@@ -233,8 +233,8 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
                       <div className="col-12">
                         <div className="alert alert-info d-flex align-items-center justify-content-between">
                           <div>
-                            <strong>Update Order Status:</strong>
-                            <span className="ms-2">Current status is <strong>{displayOrder.orderStatus}</strong></span>
+                            <strong>Cập nhật trạng thái đơn:</strong>
+                            <span className="ms-2">Trạng thái hiện tại là <strong>{displayOrder.orderStatus}</strong></span>
                           </div>
                           <div className="d-flex gap-2">
                             {getValidNextStatuses(displayOrder.orderStatus).map((status) => (
@@ -248,10 +248,10 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
                                 {updatingStatus ? (
                                   <>
                                     <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                                    Updating...
+                                    Đang cập nhật...
                                   </>
                                 ) : (
-                                  <>Change to {status}</>
+                                  <>Chuyển sang {status}</>
                                 )}
                               </button>
                             ))}
@@ -261,16 +261,16 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
                     </div>
                   )}
 
-                  <h5 className="order-text mt-4">Order Summary</h5>
+                  <h5 className="order-text mt-4">Tóm tắt đơn hàng</h5>
                   <div className="table-responsive no-pagination mb-3">
                     <table className="table datanew">
                       <thead>
                         <tr>
-                          <th>Product</th>
-                          <th>Variant SKU</th>
-                          <th>Quantity</th>
-                          <th>Unit Price</th>
-                          <th>Total</th>
+                          <th>Sản phẩm</th>
+                          <th>Mã SKU</th>
+                          <th>Số lượng</th>
+                          <th>Đơn giá</th>
+                          <th>Thành tiền</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -278,9 +278,9 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
                           <tr>
                             <td colSpan="5" className="text-center">
                               <div className="spinner-border spinner-border-sm text-primary" role="status">
-                                <span className="visually-hidden">Loading...</span>
+                                <span className="visually-hidden">Đang tải...</span>
                               </div>
-                              <span className="ms-2">Loading order items...</span>
+                              <span className="ms-2">Đang tải sản phẩm...</span>
                             </td>
                           </tr>
                         ) : orderDetail?.orderItems && orderDetail.orderItems.length > 0 ? (
@@ -296,7 +296,7 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
                         ) : (
                           <tr>
                             <td colSpan="5" className="text-center text-muted">
-                              No items found
+                              Không có sản phẩm
                             </td>
                           </tr>
                         )}
@@ -310,27 +310,27 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
                     <div className="total-order w-100 max-widthauto m-auto mb-4">
                       <ul className="border-1 rounded-1">
                         <li className="border-bottom">
-                          <h4 className="border-end">Sub Total</h4>
+                          <h4 className="border-end">Tạm tính</h4>
                           <h5>{formatCurrency(displayOrder.subTotal || displayOrder.totalAmount)}</h5>
                         </li>
                         <li className="border-bottom">
-                          <h4 className="border-end">Shipping Fee</h4>
+                          <h4 className="border-end">Phí vận chuyển</h4>
                           <h5>{formatCurrency(displayOrder.shippingFee || 0)}</h5>
                         </li>
                         <li className="border-bottom">
-                          <h4 className="border-end">Discount</h4>
+                          <h4 className="border-end">Giảm giá</h4>
                           <h5>{formatCurrency(displayOrder.discountAmount || 0)}</h5>
                         </li>
                         <li className="border-bottom">
-                          <h4 className="border-end">Grand Total</h4>
+                          <h4 className="border-end">Tổng cộng</h4>
                           <h5>{formatCurrency(displayOrder.totalAmount)}</h5>
                         </li>
                         <li className="border-bottom">
-                          <h4 className="border-end">Paid</h4>
+                          <h4 className="border-end">Đã thanh toán</h4>
                           <h5>{formatCurrency(displayOrder.paymentStatus === 'Paid' ? displayOrder.totalAmount : 0)}</h5>
                         </li>
                         <li className="border-bottom">
-                          <h4 className="border-end">Due</h4>
+                          <h4 className="border-end">Còn nợ</h4>
                           <h5>{formatCurrency(displayOrder.paymentStatus === 'Paid' ? 0 : displayOrder.totalAmount)}</h5>
                         </li>
                       </ul>
@@ -346,10 +346,10 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
                 className="btn btn-secondary me-2"
                 data-bs-dismiss="modal"
               >
-                Close
+                Đóng
               </button>
               <button type="button" className="btn btn-primary">
-                Save Changes
+                Lưu thay đổi
               </button>
             </div>
           </div>
@@ -362,7 +362,7 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Confirm Status Change</h5>
+                <h5 className="modal-title">Xác nhận thay đổi trạng thái</h5>
                 <button
                   type="button"
                   className="btn-close"
@@ -372,8 +372,8 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
               </div>
               <div className="modal-body">
                 <p>
-                  Are you sure you want to change the order status from{' '}
-                  <strong>{displayOrder.orderStatus}</strong> to{' '}
+                  Bạn có chắc chắn muốn thay đổi trạng thái đơn hàng từ{' '}
+                  <strong>{displayOrder.orderStatus}</strong> sang{' '}
                   <strong>{pendingStatus}</strong>?
                 </p>
               </div>
@@ -383,14 +383,14 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
                   className="btn btn-secondary"
                   onClick={cancelStatusUpdate}
                 >
-                  Cancel
+                  Hủy
                 </button>
                 <button
                   type="button"
                   className="btn btn-primary"
                   onClick={confirmStatusUpdate}
                 >
-                  Confirm
+                  Xác nhận
                 </button>
               </div>
             </div>
