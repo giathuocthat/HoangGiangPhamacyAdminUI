@@ -1,10 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table } from "antd";
 
 const Datatable = ({ props, columns, dataSource }) => {
   const [, setSearchText] = useState("");
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [filteredDataSource, setFilteredDataSource] = useState(dataSource);
+
+  // Update filteredDataSource when dataSource prop changes
+  useEffect(() => {
+    setFilteredDataSource(dataSource);
+  }, [dataSource]);
+
   const onSelectChange = (newSelectedRowKeys) => {
     setSelectedRowKeys(newSelectedRowKeys);
   };
@@ -12,9 +18,9 @@ const Datatable = ({ props, columns, dataSource }) => {
   const handleSearch = (value) => {
     setSearchText(value);
     const filteredData = dataSource.filter((record) =>
-    Object.values(record).some((field) =>
-    String(field).toLowerCase().includes(value.toLowerCase())
-    )
+      Object.values(record).some((field) =>
+        String(field).toLowerCase().includes(value.toLowerCase())
+      )
     );
     setFilteredDataSource(filteredData);
   };
@@ -39,7 +45,7 @@ const Datatable = ({ props, columns, dataSource }) => {
                 className="form-control form-control-sm"
                 placeholder="Search"
                 aria-controls="DataTables_Table_0" />
-              
+
             </label>
           </div>
         </div>
@@ -55,12 +61,12 @@ const Datatable = ({ props, columns, dataSource }) => {
         pagination={{
           locale: { items_per_page: "" },
           nextIcon:
-          <span>
+            <span>
               <i className="fa fa-angle-right" />
             </span>,
 
           prevIcon:
-          <span>
+            <span>
               <i className="fa fa-angle-left" />
             </span>,
 
@@ -68,7 +74,7 @@ const Datatable = ({ props, columns, dataSource }) => {
           showSizeChanger: true,
           pageSizeOptions: ["10", "20", "30"]
         }} />
-      
+
     </>);
 
 };

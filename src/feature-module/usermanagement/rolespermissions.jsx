@@ -1,20 +1,50 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import AddRole from "../../core/modals/usermanagement/addrole";
 import EditRole from "../../core/modals/usermanagement/editrole";
 import { all_routes } from "../../routes/all_routes";
 import PrimeDataTable from "../../components/data-table";
-import { rolesList } from "../../core/json/roles-permission-data";
 import SearchFromApi from "../../components/data-table/search";
 import TableTopHead from "../../components/table-top-head";
 import DeleteModal from "../../components/delete-modal";
+import { roleApi } from "../../services/role.service";
 
 const RolesPermissions = () => {
-  const [listData, _setListData] = useState(rolesList);
+  const [listData, setListData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalRecords, _setTotalRecords] = useState(5);
+  const [totalRecords, setTotalRecords] = useState(0);
   const [rows, setRows] = useState(10);
   const [_searchQuery, setSearchQuery] = useState(undefined);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch roles from API
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        setLoading(true);
+        const res = await roleApi.getListRole();
+
+        // Map API response to table format
+        const mappedData = res.map((role, index) => ({
+          key: index,
+          id: role.id || index,
+          role: role.name || 'N/A',
+          createdDate: role.createdDate ? new Date(role.createdDate).toLocaleDateString() : 'N/A',
+          status: role.isActive ? 'Active' : 'Inactive',
+          rawData: role
+        }));
+
+        setListData(mappedData);
+        setTotalRecords(mappedData.length);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching roles:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchRoles();
+  }, []);
 
   const columns = [
     {
@@ -58,8 +88,10 @@ const RolesPermissions = () => {
             <i className="ti ti-shield"></i>
           </Link>
           <Link
-            to={all_routes.editRole}
-            className="me-2 d-flex align-items-center p-2 border rounded">
+            to="#"
+            className="me-2 d-flex align-items-center p-2 border rounded"
+            data-bs-toggle="modal"
+            data-bs-target="#edit-role">
 
             <i className="ti ti-edit"></i>
           </Link>
