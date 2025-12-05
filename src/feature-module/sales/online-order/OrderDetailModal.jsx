@@ -23,8 +23,8 @@ const OrderDetailModal = ({ order, onStatusUpdated }) => {
       'Confirmed': ['Processing', 'Cancelled'],
       'Processing': ['InTransit', 'Cancelled'],
       'InTransit': ['Shipping', 'Cancelled'],
-      'Shipping': ['Deliveried', 'Cancelled'],
-      'Deliveried': ['Completed'],
+      'Shipping': ['Delivered', 'Cancelled'],
+      'Delivered': ['Completed'],
       'Completed': [],
       'Cancelled': []
     };
