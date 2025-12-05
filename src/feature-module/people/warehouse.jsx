@@ -15,55 +15,40 @@ const Warehouse = () => {
   const [totalRecords, _setTotalRecords] = useState(5);
   const [rows, setRows] = useState(10);
   const [_searchQuery, setSearchQuery] = useState(undefined);
-  const [selectedCity, setSelectedCity] = useState("");
-  const [selectedState, setSelectedState] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [selectedContactPerson, setSelectedContactPerson] = useState("");
+  const [selectedProvince, setselectedProvince] = useState("");
+  const [selectedWard, setselectedWard] = useState("");
   const handleSearch = (value) => {
     setSearchQuery(value);
   };
-  const cityOptions = [
+  const provinceOptions = [
   { label: "Select", value: "" },
   { label: "Los Angles", value: "los-angles" },
   { label: "New York City", value: "new-york-city" },
   { label: "Houston", value: "houston" }];
 
-
-  const stateOptions = [
+  const wardOptions = [
   { label: "Select", value: "" },
   { label: "California", value: "california" },
   { label: "New York", value: "new-york" },
   { label: "Texas", value: "texas" }];
 
-
-  const countryOptions = [
-  { label: "Select", value: "" },
-  { label: "United States", value: "united-states" },
-  { label: "Canada", value: "canada" },
-  { label: "Germany", value: "germany" }];
-
-  const contactPersonOptions = [
-  { label: "Select", value: "" },
-  { label: "Steven", value: "steven" },
-  { label: "Gravely", value: "gravely" }];
-
   const columns = [
-  {
-    header:
-    <label className="checkboxs">
-          <input type="checkbox" id="select-all" />
-          <span className="checkmarks" />
-        </label>,
+  // {
+  //   header:
+  //   <label className="checkboxs">
+  //         <input type="checkbox" id="select-all" />
+  //         <span className="checkmarks" />
+  //       </label>,
 
-    body: () =>
-    <label className="checkboxs">
-          <input type="checkbox" />
-          <span className="checkmarks" />
-        </label>,
+  //   body: () =>
+  //   <label className="checkboxs">
+  //         <input type="checkbox" />
+  //         <span className="checkmarks" />
+  //       </label>,
 
-    sortable: false,
-    key: "checked"
-  },
+  //   sortable: false,
+  //   key: "checked"
+  // },
   { header: "Warehouse", field: "warehouse", key: "warehouse" },
   {
     header: "Contact Person",
@@ -222,7 +207,7 @@ const Warehouse = () => {
                   <div className="col-lg-12">
                     <div className="mb-3">
                       <label className="form-label">
-                        Warehouse <span className="text-danger">*</span>
+                        Code <span className="text-danger">*</span>
                       </label>
                       <input type="text" className="form-control" />
                     </div>
@@ -230,16 +215,25 @@ const Warehouse = () => {
                   <div className="col-lg-12">
                     <div className="mb-3">
                       <label className="form-label">
-                        Contact Person <span className="text-danger">*</span>
+                        Warehouse <span className="text-danger">*</span>
                       </label>
-                      <CommonSelect
-                        className="w-100"
-                        options={contactPersonOptions}
-                        value={selectedContactPerson}
-                        onChange={(e) => setSelectedContactPerson(e.value)}
-                        placeholder="Select Contact Person"
-                        filter={false} />
-                      
+                      <input type="text" className="form-control" />
+                    </div>
+                  </div>
+                    <div className="col-lg-12">
+                    <div className="mb-3">
+                      <label className="form-label">
+                        Địa chỉ <span className="text-danger">*</span>
+                      </label>
+                      <input type="text" className="form-control" />
+                    </div>
+                  </div>
+                  <div className="col-lg-12">
+                    <div className="mb-3">
+                      <label className="form-label">
+                        Số điện thoại <span className="text-danger">*</span>
+                      </label>
+                      <input type="text" className="form-control" />
                     </div>
                   </div>
                   <div className="col-lg-12">
@@ -250,38 +244,16 @@ const Warehouse = () => {
                       <input type="email" className="form-control" />
                     </div>
                   </div>
-                  <div className="col-lg-6">
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Phone <span className="text-danger">*</span>
-                      </label>
-                      <input type="text" className="form-control" />
-                    </div>
-                  </div>
-                  <div className="col-lg-6">
-                    <div className="mb-3">
-                      <label className="form-label">Phone(Work)</label>
-                      <input type="text" className="form-control" />
-                    </div>
-                  </div>
-                  <div className="col-lg-12">
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Address <span className="text-danger">*</span>
-                      </label>
-                      <input type="text" className="form-control" />
-                    </div>
-                  </div>
                   <div className="col-lg-6 col-sm-10 col-10">
                     <div className="mb-3">
                       <label className="form-label">
-                        City <span className="text-danger">*</span>
+                        Tỉnh thành <span className="text-danger">*</span>
                       </label>
                       <CommonSelect
                         className="w-100"
-                        options={cityOptions}
-                        value={selectedCity}
-                        onChange={(e) => setSelectedCity(e.value)}
+                        options={provinceOptions}
+                        value={selectedProvince}
+                        onChange={(e) => setselectedProvince(e.value)}
                         placeholder="Select City"
                         filter={false} />
                       
@@ -290,41 +262,34 @@ const Warehouse = () => {
                   <div className="col-lg-6 col-sm-10 col-10">
                     <div className="mb-3">
                       <label className="form-label">
-                        State <span className="text-danger">*</span>
+                        Phường <span className="text-danger">*</span>
                       </label>
                       <CommonSelect
                         className="w-100"
-                        options={stateOptions}
-                        value={selectedState}
-                        onChange={(e) => setSelectedState(e.value)}
+                        options={wardOptions}
+                        value={selectedWard}
+                        onChange={(e) => setselectedWard(e.value)}
                         placeholder="Select State"
                         filter={false} />
                       
                     </div>
                   </div>
-                  <div className="col-lg-6 col-sm-10 col-10">
-                    <div className="mb-3">
+                  <div className="mb-3">
                       <label className="form-label">
-                        Country <span className="text-danger">*</span>
-                      </label>
-                      <CommonSelect
-                        className="w-100"
-                        options={countryOptions}
-                        value={selectedCountry}
-                        onChange={(e) => setSelectedCountry(e.value)}
-                        placeholder="Select Country"
-                        filter={false} />
-                      
-                    </div>
-                  </div>
-                  <div className="col-lg-6">
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Postal Code <span className="text-danger">*</span>
+                        Tên Người quản lý <span className="text-danger">*</span>
                       </label>
                       <input type="text" className="form-control" />
                     </div>
                   </div>
+                  <div className="col-lg-12">
+                    <div className="mb-3">
+                      <label className="form-label">
+                        Notes <span className="text-danger">*</span>
+                      </label>
+                      <input type="text" className="form-control" />
+                    </div>
+                  </div>
+                  <div className="col-lg-12">
                   <div className="col-md-12">
                     <div className="mb-0">
                       <div className="status-toggle modal-status d-flex justify-content-between align-items-center">
@@ -393,21 +358,6 @@ const Warehouse = () => {
                   <div className="col-lg-12">
                     <div className="mb-3">
                       <label className="form-label">
-                        Contact Person <span className="text-danger">*</span>
-                      </label>
-                      <CommonSelect
-                        className="w-100"
-                        options={contactPersonOptions}
-                        value={selectedContactPerson}
-                        onChange={(e) => setSelectedContactPerson(e.value)}
-                        placeholder="Select Contact Person"
-                        filter={false} />
-                      
-                    </div>
-                  </div>
-                  <div className="col-lg-12">
-                    <div className="mb-3">
-                      <label className="form-label">
                         Email <span className="text-danger">*</span>
                       </label>
                       <input
@@ -458,9 +408,9 @@ const Warehouse = () => {
                       </label>
                       <CommonSelect
                         className="w-100"
-                        options={cityOptions}
-                        value={selectedCity}
-                        onChange={(e) => setSelectedCity(e.value)}
+                        options={provinceOptions}
+                        value={selectedProvince}
+                        onChange={(e) => setselectedProvince(e.value)}
                         placeholder="Select City"
                         filter={false} />
                       
@@ -473,41 +423,15 @@ const Warehouse = () => {
                       </label>
                       <CommonSelect
                         className="w-100"
-                        options={stateOptions}
-                        value={selectedState}
-                        onChange={(e) => setSelectedState(e.value)}
+                        options={wardOptions}
+                        value={selectedWard}
+                        onChange={(e) => setselectedWard(e.value)}
                         placeholder="Select State"
                         filter={false} />
                       
                     </div>
                   </div>
-                  <div className="col-lg-6 col-sm-10 col-10">
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Country <span className="text-danger">*</span>
-                      </label>
-                      <CommonSelect
-                        className="w-100"
-                        options={countryOptions}
-                        value={selectedCountry}
-                        onChange={(e) => setSelectedCountry(e.value)}
-                        placeholder="Select Country"
-                        filter={false} />
-                      
-                    </div>
-                  </div>
-                  <div className="col-lg-6">
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Postal Code <span className="text-danger">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        defaultValue={10176} />
-                      
-                    </div>
-                  </div>
+  
                   <div className="col-md-12">
                     <div className="mb-0">
                       <div className="status-toggle modal-status d-flex justify-content-between align-items-center">

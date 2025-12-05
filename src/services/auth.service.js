@@ -1,5 +1,5 @@
 import { ApiService } from './api.service';
-import { API_ENDPOINTS } from '../config/api.config';
+import { API_CONFIG, API_ENDPOINTS } from '../config/api.config';
 
 /**
  * Authentication API Service

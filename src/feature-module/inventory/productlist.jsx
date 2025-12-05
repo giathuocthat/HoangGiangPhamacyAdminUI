@@ -10,7 +10,7 @@ import TableTopHead from "../../components/table-top-head";
 import DeleteModal from "../../components/delete-modal";
 import SearchFromApi from "../../components/data-table/search";
 import ImageLightbox from "../../components/image-lightbox"; 
-import formatCreatedDate from "../../utils/helpFunctions";
+import {formatCreatedDate} from "../../utils/helpFunctions";
 // Modals
 import Brand from "../../core/modals/inventory/brand"; 
 
