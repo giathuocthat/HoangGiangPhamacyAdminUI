@@ -661,7 +661,7 @@ const AddProduct = () => {
               {variants.map((variant, index) => (
                 <div key={index} className="border p-3 mb-3 rounded">
                   <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h5>Variant {index + 1}</h5>
+                    <h5>Biến thể {index + 1}</h5>
                     {variants.length > 1 && (
                       <button type="button" className="btn btn-danger btn-sm" onClick={() => removeVariant(index)}>
                         <i className="feather icon-trash-2" />
@@ -746,7 +746,7 @@ const AddProduct = () => {
                     {productOptions.length > 0 && (
                       <div className="col-lg-12">
                         <div className="mb-3">
-                          <label className="form-label fw-bold">Variant Options</label>
+                          <label className="form-label fw-bold">Tùy chọn biến thể</label>
 
                           {/* Selected Options as PrimeReact Chips */}
                           <div className="mb-2">
@@ -764,7 +764,7 @@ const AddProduct = () => {
                                 ) : null;
                               })
                             ) : (
-                              <span className="text-muted">No options selected</span>
+                              <span className="text-muted">Chưa chọn tùy chọn nào</span>
                             )}
                           </div>
 
@@ -780,7 +780,7 @@ const AddProduct = () => {
                                     setVariantOption(index, e.value);
                                   }
                                 }}
-                                placeholder="Add option..."
+                                placeholder="Thêm tùy chọn..."
                               />
                             </div>
                           )}
@@ -815,7 +815,7 @@ const AddProduct = () => {
 
               {productType === "variable" && (
                 <button type="button" className="btn btn-primary btn-sm" onClick={addVariant}>
-                  <i className="feather icon-plus me-2" /> Add Variant
+                  <i className="feather icon-plus me-2" /> Thêm biến thể
                 </button>
               )}
             </div>
@@ -824,10 +824,10 @@ const AddProduct = () => {
           <div className="col-lg-12 mt-4">
             <div className="d-flex align-items-center justify-content-end mb-4">
               <button type="button" className="btn btn-secondary me-2" onClick={() => navigate(route.productlist)}>
-                Cancel
+                Hủy
               </button>
               <button type="submit" className="btn btn-primary" disabled={isLoading || isUploading}>
-                {isLoading ? "Saving..." : "Add Product"}
+                {isLoading ? "Đang lưu..." : "Thêm sản phẩm"}
               </button>
             </div>
           </div>
