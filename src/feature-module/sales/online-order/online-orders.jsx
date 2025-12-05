@@ -117,11 +117,7 @@ const OnlineOrder = () => {
       sorter: (a, b) => a.customerName.localeCompare(b.customerName),
       render: (text) => (
         <div className="d-flex align-items-center">
-          <div className="avatar avatar-md me-2 bg-light-info rounded-circle d-flex align-items-center justify-content-center">
-            <span className="fw-semibold text-info">
-              {text?.charAt(0)?.toUpperCase() || 'G'}
-            </span>
-          </div>
+
           <span>{text || 'Guest'}</span>
         </div>
       )
