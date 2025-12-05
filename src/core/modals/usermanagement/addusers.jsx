@@ -5,16 +5,41 @@ import { userApi } from "../../../services/user.service";
 import { Modal } from 'bootstrap';
 import { ListBox } from "primereact/listbox";
 import { Dropdown } from "primereact/dropdown";
+import { useEffect } from "react";
+import { roleApi } from "../../../services/role.service";
 
 const AddUsers = () => {
-  const status = [
-    { value: "Choose", label: "Choose" },
-    { value: "Admin", label: "Admin" },
-    { value: "Sale", label: "Sale" }];
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setConfirmPassword] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState(null);
+
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [roleOptions, setRoleOptions] = useState([]);
+
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        setIsLoading(true);
+        const res = await roleApi.getListRole();
+
+        const formattedOptions = res.map(role => ({
+          label: role.name,
+          value: role.id
+        }));
+
+        setRoleOptions(formattedOptions);
+        setIsLoading(false);
+
+      } catch (error) {
+        console.error('Error fetching roles:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchRoles();
+  }, []);
+
 
   // Form state
   const [formData, setFormData] = useState({
@@ -23,12 +48,14 @@ const AddUsers = () => {
     passWord: "",
     confirmPassword: "",
     fullName: "",
-    phone: ""
+    phone: "",
+    role: ""
   });
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
 
   const handleTogglePassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -36,6 +63,14 @@ const AddUsers = () => {
 
   const handleToggleConfirmPassword = () => {
     setConfirmPassword((prevShowPassword) => !prevShowPassword);
+  };
+
+  const handleRoleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   // Handle input changes
@@ -87,7 +122,8 @@ const AddUsers = () => {
         email: formData.email,
         passWord: formData.passWord,
         fullName: formData.fullName,
-        phone: formData.phone
+        phone: formData.phone,
+        role: formData.role
       };
 
       // Call API to create user
@@ -105,7 +141,7 @@ const AddUsers = () => {
         fullName: "",
         phone: ""
       });
-      setSelectedStatus(null);
+      setSelectedRole(null);
 
       setTimeout(() => {
         const buttonElement = document.getElementById('closeModal');
@@ -243,9 +279,9 @@ const AddUsers = () => {
                         <div className="input-blocks">
                           <label>Role</label>
 
-                          <select value={selectedStatus} onChange={(e) => setSelectedStatus(e.value)} className="form-control">
-                            {status.map((item) => (
-                              <option key={item.value} value={item.value}>
+                          <select value={selectedRole} onChange={(e) => handleRoleChange(e)} className="form-control" name="role">
+                            {roleOptions.map((item) => (
+                              <option key={item.id} value={item.id}>
                                 {item.label}
                               </option>
                             ))}
