@@ -52,7 +52,7 @@ const ProductList = () => {
     setLoading(true);
     setFetchError(null);
     try {
-      const response = await productApi.getPagedProducts(
+      const response = await productApi.getProducts(
         currentPage,
         rows,
         _searchQuery,

@@ -203,7 +203,7 @@ const OrderDetailModal = ({ order, onStatusUpdated, isViewMode = false }) => {
                       <p className="mb-0">
                         Ngày:{" "}
                         <span className="ms-2 text-gray-9">
-                          {formatDate(displayOrder.createdDate)}
+                          {formatCreatedDate(displayOrder.createdDate)}
                         </span>
                       </p>
                       <p className="mb-0">
